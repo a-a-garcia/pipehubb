@@ -1,0 +1,78 @@
+CORE
++ Create a loan
++ View loans
++ Update loans
++ Delete loans
++ Kanban style, ability to drag and drop loans
++ clicking on a loan shows loan details, and activity log, tasks and file notes
+
+ADVANCED
++ User Authentication 
+    - Google 
+    - Credentials 
++ Pagination (?)
++ Dashboard 
+    - Graph displaying amount of loans in each stage
+    - Fetch latest loans
+        - Interacted with, or recently created
+    - Summary card 
+        - amount of loans in each stage
++ Color customization by user
++ AI chat WebSocket
++ Ability to create loan teams 
+    - Designate users as loan officer or sales support
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Ideas Space
+- How will this be differentiated from HubSpot ? 
+    Less feature overload/catered to loan officers/loan support team, but how? Think about it...
+
+1.0 Features
+
+1. Create a loan
+    - Either
+        A) Separate forms for purchase and refi
+        B) Certain forms will be disabled depending on what type of transaction is selected.
+2. View (Read) a loan
+3. Update a loan on the view loan page.
+4. Each loan will have an acitivies page showing all activities
+5. Each loan, on creation, automatically goes into prospect stage.
+6. On the dashboard, loans must be able to be moved to any stage that user wishes - activity log will update accordingly.
+7. Each loan should have a task log that can be added to. An alert will flash on the view loan page if there is a task that has at least one task that's marked as highly important
+9. Activities should automatically trigger the creation of a log in the activity log 
+    1 - Creation of a loan.
+    2 - Update of a loan.
+
+Tasks
+___
+1.Tasks should have the ability to marked as highly important which will trigger an alert on the Activity page 
+
+
+Backlog
+___
+Tasks
+1. Add more functionality than just ability to mark task as complete, specifically ability to create a "log" for that specific task. Useful if task is something like "call client to discuss rate lock", but LO was not able to get ahold of client. Need to figure out subtasks.
+2. Store completed tasks in history somewhere (in 1.0, tasks will just be deleted if they are marked as complete)
+
+WebSocket
+1. Add an AI Chatbot or Web Socket of some support
+
+Login / Registration
+1. IMPORTANT as this is supposed to be for TEAMS so it must be able to be logged in by multiple people. Loan Teams must be able to be created
+    On register, user must select whether they are a Loan Officer or Sales Support. Important as only loan team members should be able to access specific loan team's loans.
+
+Deployment
+
+SEO consideration
