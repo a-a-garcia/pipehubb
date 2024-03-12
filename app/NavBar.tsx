@@ -11,8 +11,28 @@ import {
   Box,
   Button,
 } from "@radix-ui/themes";
+import NextLink from "next/link";
 
 const NavBar = () => {
+  const navLinks = [
+    {
+      name: "Login",
+      href: "/login",
+    },
+    {
+      name: "Sign Up",
+      href: "/signup",
+    },
+    {
+      name: "Logout",
+      href: "/logout",
+    },
+    {
+      name: "Settings",
+      href: "/settings",
+    },
+  ];
+
   return (
     <nav
       className="bg-darkGrey
@@ -20,21 +40,29 @@ const NavBar = () => {
     >
       <Container>
         <Flex justify={"between"} align={"center"}>
-          <Image src={logo} alt="Pipehub logo" className="size-20" />
+          <NextLink href="/">
+            <Image src={logo} alt="Pipehub logo" className="size-20" />
+          </NextLink>
 
           <Box>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
-                <Button variant="soft">
+                <Button variant="soft" className="hover:cursor-pointer">
                   <RxDropdownMenu className="size-8 text-white" />
                 </Button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content variant="soft">
                 <DropdownMenu.Label>Hi, USER.</DropdownMenu.Label>
-                <DropdownMenuItem>Sign Up</DropdownMenuItem>
-                <DropdownMenuItem>Login</DropdownMenuItem>
-                <DropdownMenuItem>Logout</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
+                {navLinks.map((navLink) => {
+                  return (
+                    <DropdownMenuItem
+                      key={navLink.name}
+                      className="hover:cursor-pointer"
+                    >
+                      <NextLink href={navLink.href}>{navLink.name}</NextLink>
+                    </DropdownMenuItem>
+                  );
+                })}
               </DropdownMenu.Content>
             </DropdownMenu.Root>
           </Box>

@@ -1,29 +1,38 @@
-import { Card, Flex, Grid, Text } from "@radix-ui/themes";
+import { Button, Card, Flex, Grid, Heading, Text } from "@radix-ui/themes";
 import Image from "next/image";
 import Logo from "../public/images/pipeHubb_logo_with_text.png";
 
 export default function Home() {
   return (
-    <Grid
-      columns={{ initial: "1", md: "2" }}
-      gap="9"
-      width={"auto"}
-      className="pt-36"
-    >
+    <div className="flex flex-col items-center md:flex-row md:items-stretch md:pt-24">
       <Image
         src={Logo}
         alt="PipeHubb logo, with 'Pipehubb' as text underneath"
       ></Image>
-      <Card className="!bg-cactus">
-        <Text>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae
-          amet cupiditate expedita iure, accusamus dolorem qui nesciunt voluptas
-          odit nihil a reiciendis voluptate sed consequatur facilis omnis esse
-          architecto labore fugiat dolores. Natus enim provident officia
-          aspernatur molestias obcaecati repellat fugiat eligendi autem ipsum,
-          adipisci iure velit totam sit libero!
-        </Text>
+      <Card className="!bg-cactus shadow-md p-5 mt-10 md:mt-0" size={"5"}>
+        <Flex direction={"column"} gap={"5"}>
+          <Heading className="text-deepPink" size={"8"}>
+            [pie-YEE-puh-HUH-buh] (noun):{" "}
+          </Heading>
+          <Text size={"7"} className="font-medium">
+            Sales pipeline software designed specifically with the loan officer
+            team in mind.
+          </Text>
+          <Flex
+            justify={"center"}
+            gap={"5"}
+            direction="column"
+            align={"center"}
+          >
+            <Button className="hover:cursor-pointer" size={"3"}>
+              Log In
+            </Button>
+            <Button className="hover:cursor-pointer" size={"3"}>
+              Sign Up
+            </Button>
+          </Flex>
+        </Flex>
       </Card>
-    </Grid>
+    </div>
   );
 }

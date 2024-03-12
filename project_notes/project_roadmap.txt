@@ -76,3 +76,20 @@ Login / Registration
 Deployment
 
 SEO consideration
+
+____
+
+Debugging
+
+Bug: Tailwind class will not apply for pipeline stage color.
+
+* You cannot apply tailwind classes with something like
+
+    <Heading
+        className={classNames(`!bg-${stage.color}`....)}
+        size={"4"}
+    >
+
+You can try using the style object instead....
+
+

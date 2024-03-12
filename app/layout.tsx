@@ -23,9 +23,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <Theme accentColor="ruby">
           <NavBar />
-          <Container>
-            <main>{children}</main>
-          </Container>
+          <main className="p-5">
+            <Container>{children}</Container>
+          </main>
         </Theme>
       </body>
     </html>
