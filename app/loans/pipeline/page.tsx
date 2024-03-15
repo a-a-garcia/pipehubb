@@ -61,7 +61,7 @@ const PipelinePage = () => {
           <Flex justify={"between"} align="center">
             <Heading size={"5"}>Welcome to your pipeline, $USER</Heading>
             <NextLink href="/loans/new">
-              <Button>+ New Loan</Button>
+              <Button className="hover:cursor-pointer">+ New Loan</Button>
             </NextLink>
           </Flex>
         </Card>
@@ -80,7 +80,12 @@ const PipelinePage = () => {
                   <Flex direction={"column"} gap="5">
                     {sampleLoans.map((loan) => (
                       <div key={loan.borrowerName}>
-                        <Box className="text-white p- text-nowrap rounded-md text-center p-1">
+                        <Box
+                          className="text-white p- text-nowrap
+                        overflow-hidden
+                        rounded-md text-center p-1"
+                          style={{ backgroundColor: stage.color }}
+                        >
                           <Text>{loan.borrowerName}</Text>
                         </Box>
                         <Card size="2">

@@ -81,7 +81,7 @@ ____
 
 Debugging
 
-Bug: Tailwind class will not apply for pipeline stage color.
+1. Bug: Tailwind class will not apply for pipeline stage color.
 
 * You cannot apply tailwind classes with something like
 
@@ -93,3 +93,28 @@ Bug: Tailwind class will not apply for pipeline stage color.
 You can try using the style object instead....
 
 
+2. Bug: Changing default font did not work via radix UI docs or nextjs docs
+
+* Fix - look at layout.tsx
+
+    import "./theme-config.css";
+    import { Inter } from 'next/font/google';
+    import "./globals.css";
+
+    ...
+    <body className={inter.variable}>
+    ...
+
+    - create a theme-config.css file in /app
+
+    ".radix-themes {
+    --default-font-family: var(--font-inter) !important
+    }"
+
+3. Bug: Could not submit form when building it with react-hook-form
+
+* Fix - You cannot directly nest <Select> or <TextField> or any Radix Ui Theme component directly and give it {...register("borrowerName")} etc prop to track the input. you must use the <Controller> component and it's render prop in order for the input to properly be tracked. 
+
+4. "Cannot read properties of undefined (reading 'trim')"
+
+* Fix if you are using the .trim() method (which i am on the create and edit loan validation schema,) you must do `...: undefined` as you must account for undefined/null since .trim() can't work on an empty value like undefined

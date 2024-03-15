@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import "@radix-ui/themes/styles.css";
-import { Inter } from "next/font/google";
+import "./theme-config.css";
+import { Roboto_Flex } from 'next/font/google';
 import "./globals.css";
 import NavBar from "./NavBar";
 import { Container, Theme } from "@radix-ui/themes";
 
-const inter = Inter({ subsets: ["latin"] });
+const roboto_flex = Roboto_Flex({
+  subsets: ["latin"],
+  display: "swap",
+  variable: '--font-roboto-flex',
+})
 
 export const metadata: Metadata = {
   title: "PipeHubb",
@@ -20,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={roboto_flex.variable}>
         <Theme accentColor="ruby">
           <NavBar />
           <main className="p-5">

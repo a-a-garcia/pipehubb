@@ -15,8 +15,9 @@
 }
 
 body {
-  background-color: #F0DCCA !important
+  background-color: #F0DCCA !important;
 }
+
 
 @layer utilities {
   .text-balance {

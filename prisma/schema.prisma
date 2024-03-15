@@ -16,11 +16,13 @@ datasource db {
 model Loan {
   id              Int             @id @default(autoincrement())
   borrowerName    String          @db.VarChar(255)
-  borrowerEmail   String          @db.VarChar(255)
-  loan_amount     Int
-  transactionType TransactionType
+  pipelineStage   PipelineStage   @default(PROSPECT)
+  loanAmount      Int?
+  transactionType TransactionType?
+  referralSource  String?         @db.VarChar(255)
+  borrowerEmail   String?         @db.VarChar(255)
   propertyAddress String?         @db.VarChar(255)
-  borrowerPhone   Int?
+  borrowerPhone   String?         @db.VarChar(50)
   purchasePrice   Int?
   creditScore     Int?
   createdAt       DateTime        @default(now())
@@ -30,4 +32,13 @@ model Loan {
 enum TransactionType {
   PURCHASE
   REFINANCE
+}
+
+enum PipelineStage {
+  PROSPECT
+  APPLICATION
+  PROCESSING
+  UNDERWRITING
+  CONDITIONAL
+  CLOSED
 }

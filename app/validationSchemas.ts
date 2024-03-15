@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
 export const createLoanSchema = z.object({
-    transactionType: z.string().min(1, "Transaction Type cannot be blank.").max(100),
+    transactionType: z.string().min(1, "Transaction Type cannot be blank.").max(100).optional(),
 
     borrowerName: z.string().min(1, "Name must be at least 1 character.").max(255, "Name must be less than 255 characters."),
-
+    
+    loanAmount: z.number().min(1, "Loan amount must be at least $1.").optional(),
+    
     borrowerEmail: z.string().email("Invalid email address.").min(1, "Email cannot be blank.").max(255, "Email must be less than 255 characters.").optional(),
-
-    loanAmount: z.number().min(1, "Loan amount must be at least $1."),
 
     propertyAddress: z.string().min(1, "Property address cannot be blank.").max(255, "Property address must be less than 255 characters.").optional(),
 
