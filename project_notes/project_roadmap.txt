@@ -90,6 +90,7 @@ Debugging
         size={"4"}
     >
 
+string interpolation doesn't work for applying tailwind dynamically
 You can try using the style object instead....
 
 
@@ -117,4 +118,38 @@ You can try using the style object instead....
 
 4. "Cannot read properties of undefined (reading 'trim')"
 
-* Fix if you are using the .trim() method (which i am on the create and edit loan validation schema,) you must do `...: undefined` as you must account for undefined/null since .trim() can't work on an empty value like undefined
+* Fix if you are using the .trim() method (which i am on the create and edit loan validation schema,) you must do `...: undefined` as you must account for undefined/since .trim() can't work on an empty value like undefined
+
+
+5. loanAmount field seemingly was required even though i didnt use `required` - the real issue was that it was treating the input as empty or invalid(?) because there was a type mismatch between number/string
+
+* Fix - react-hook-form TREATS EVERYTHING AS A STRING so if your input is of type number, you must cast the input into a number on submission
+
+if using a normal input
+
+<input
+  type="number"
+  {...register("test", {
+    valueAsNumber: true,
+  })}
+/>
+
+Using a standard function in this case because we are using <Controller> components
+
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value ? parseInt(value) : undefined
+                              );
+                            }}
+
+Additionally, a custom function had to be applied to each and every field 
+
+
+onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value ? parseInt(value) : undefined
+                              );
+
+Otherwise, adding stuff to an input and then deleting it, then trying to submit the form will result in failure to submit the form

@@ -7,13 +7,15 @@ export const createLoanSchema = z.object({
     
     loanAmount: z.number().min(1, "Loan amount must be at least $1.").optional(),
     
-    borrowerEmail: z.string().email("Invalid email address.").min(1, "Email cannot be blank.").max(255, "Email must be less than 255 characters.").optional(),
+    borrowerEmail: z.string().min(1, "Email cannot be blank.").max(255, "Email must be less than 255 characters.").optional(),
 
-    propertyAddress: z.string().min(1, "Property address cannot be blank.").max(255, "Property address must be less than 255 characters.").optional(),
+    propertyAddress: z.string().max(255, "Property address must be less than 255 characters.").optional(),
 
     purchasePrice: z.number().min(1, "Purchase price must be at least $1.").optional(),
 
     creditScore: z.number().min(300, "Credit score must be at least 300.").max(850, "Credit score must be less than 850.").optional(),
 
     borrowerPhone: z.string().min(1, "Phone number cannot be blank.").max(20, "Phone number must be less than 20 characters.").optional(),
+
+    referralSource: z.string().min(1, "Referral source cannot be blank.").max(255, "Referral source must be less than 255 characters.").optional(),
 })
