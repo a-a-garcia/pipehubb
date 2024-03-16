@@ -24,7 +24,7 @@ import Spinner from "@/app/components/Spinner";
 
 type LoanFormData = z.infer<typeof createLoanSchema>;
 
-function NewLoanPage() {
+async function NewLoanPage() {
   const {
     control,
     handleSubmit,
@@ -71,13 +71,13 @@ function NewLoanPage() {
             <h2 className="text-white mb-2">Required: </h2>
             <Flex gap={"5"} direction={"column"}>
               <Card className="!bg-cactus">
-                <Flex direction={"column"} gap="1" align={"start"}>
+                <Flex direction={"column"} gap="1">
                   <Controller
                     control={control}
                     name="borrowerName"
                     render={({ field }) => {
                       return (
-                        <div>
+                        <div className="w-100 md:w-1/2">
                           <Text>Borrower Name:</Text>
                           <ErrorMessage>
                             {errors.borrowerName?.message}
@@ -123,13 +123,13 @@ function NewLoanPage() {
                 ></Controller>
               </Card>
               <Card className="!bg-cactus">
-                <Flex direction={"column"} gap="1" align={"start"}>
+                <Flex direction={"column"} gap="1">
                   <Controller
                     control={control}
                     name="loanAmount"
                     render={({ field }) => {
                       return (
-                        <div>
+                        <div className="w-100 md:w-1/2">
                           <Text>Loan Amount:</Text>
                           <ErrorMessage>
                             {errors.loanAmount?.message}
@@ -152,13 +152,13 @@ function NewLoanPage() {
                 </Flex>
               </Card>
               <Card className="!bg-cactus">
-                <Flex direction={"column"} gap="1" align={"start"}>
+                <Flex direction={"column"} gap="1">
                   <Controller
                     control={control}
                     name="propertyAddress"
                     render={({ field }) => {
                       return (
-                        <div>
+                        <div className="w-100 md:w-1/2">
                           <Text>Subject Property Address: </Text>
                           <ErrorMessage>
                             {errors.propertyAddress?.message}
@@ -178,13 +178,13 @@ function NewLoanPage() {
                 </Flex>
               </Card>
               <Card className="!bg-cactus">
-                <Flex direction={"column"} gap="1" align={"start"}>
+                <Flex direction={"column"} gap="1">
                   <Controller
                     control={control}
                     name="borrowerEmail"
                     render={({ field }) => {
                       return (
-                        <div>
+                        <div className="w-100 md:w-1/2">
                           <Text>Borrower Email: </Text>
                           <ErrorMessage>
                             {errors.borrowerEmail?.message}
@@ -209,7 +209,11 @@ function NewLoanPage() {
                   name="borrowerPhone"
                   render={({ field }) => {
                     return (
-                      <Flex direction={"column"} gap="1" align={"start"}>
+                      <Flex
+                        direction={"column"}
+                        gap="1"
+                        className="w-100 md:w-1/2"
+                      >
                         <Text>Borrower Phone Number: </Text>
                         <ErrorMessage>
                           {errors.borrowerPhone?.message}
@@ -240,7 +244,11 @@ function NewLoanPage() {
                   name="purchasePrice"
                   render={({ field }) => {
                     return (
-                      <Flex direction={"column"} gap="1" align={"start"}>
+                      <Flex
+                        direction={"column"}
+                        gap="1"
+                        className="w-100 md:w-1/2"
+                      >
                         <Text>Purchase Price (if applicable): </Text>
                         <ErrorMessage>
                           {errors.purchasePrice?.message}
@@ -264,7 +272,11 @@ function NewLoanPage() {
                   name="creditScore"
                   render={({ field }) => {
                     return (
-                      <Flex direction={"column"} gap="1" align={"start"}>
+                      <Flex
+                        direction={"column"}
+                        gap="1"
+                        className="w-1/2 md:w-1/4"
+                      >
                         <Text>Credit Score: </Text>
                         <ErrorMessage>
                           {errors.creditScore?.message}
@@ -290,7 +302,11 @@ function NewLoanPage() {
                   name="referralSource"
                   render={({ field }) => {
                     return (
-                      <Flex direction={"column"} gap="1" align={"start"}>
+                      <Flex
+                        direction={"column"}
+                        gap="1"
+                        className="w-100 md:w-1/2"
+                      >
                         <Text>Referral Source:</Text>
                         <ErrorMessage>
                           {errors.referralSource?.message}
