@@ -153,3 +153,41 @@ onChange={(e) => {
                               );
 
 Otherwise, adding stuff to an input and then deleting it, then trying to submit the form will result in failure to submit the form
+
+6. " pipelineStages.forEach(stage => {
+            loansByStage[stage] = loans.filter(loan => loan.pipelineStage === stage)
+        })
+        
+
+    error: 
+    Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.ts(7053)
+        "
+
+    Fix: type loansByStage like so:
+    
+     const loansByStage: {[key: string]: any} = {};
+
+     why?
+
+     The syntax you see here is called an index signature in TypeScript. It is used to define the types of properties that can be accessed using square bracket notation on an object.
+
+In this specific code snippet, the index signature is added to the loansByStage object. The index signature is defined as [key: string]: any. Let's break it down:
+
+[key: string] represents the index parameter. It specifies that any string can be used as the key to access properties of the object.
+: any is the type annotation for the value associated with the key. In this case, it is set to any, which means that the value can be of any type.
+So, by adding this index signature, you are essentially saying that the loansByStage object can have properties with any string key and any corresponding value type.
+
+7. "Element implicitly has an 'any' type because index expression is not of type 'number'. "
+
+on line "loans[data.value]" in pipeline/page.tsx
+
+ Prisma does generate TypeScript types based on your database schema. However, the error you're seeing is not related to the shape of the Loan object, but rather the shape of the loans object (the object you get when you call the API to get all loans).
+
+In your code, you're using data.value as an index to access a property of loans. TypeScript needs to know that loans is an object with string keys and Loan[] values.
+
+Since loans is set with the data fetched from your API, you can type the state like this:
+
+const [loans, setLoans] = useState<Record<string, Loan[]>>({});
+
+This tells TypeScript that loans is an object with string keys and values that are arrays of Loan objects. Now, when you use data.value as an index to access a property of loans, TypeScript knows that it's a string and the error should be resolved.
