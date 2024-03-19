@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import "@radix-ui/themes/styles.css";
 import "./theme-config.css";
-import { Roboto_Flex } from 'next/font/google';
+import { Roboto_Flex } from "next/font/google";
 import "./globals.css";
 import NavBar from "./NavBar";
 import { Container, Theme } from "@radix-ui/themes";
+import ReactQueryClientProvider from "./api/ReactQueryProviderClient";
 
 const roboto_flex = Roboto_Flex({
   subsets: ["latin"],
   display: "swap",
-  variable: '--font-roboto-flex',
-})
+  variable: "--font-roboto-flex",
+});
 
 export const metadata: Metadata = {
   title: "PipeHubb",
@@ -26,12 +27,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={roboto_flex.variable}>
-        <Theme accentColor="ruby">
-          <NavBar />
-          <main className="p-5">
-            <Container>{children}</Container>
-          </main>
-        </Theme>
+        <ReactQueryClientProvider>
+          <Theme accentColor="ruby">
+            <NavBar />
+            <main className="p-5">
+              <Container>{children}</Container>
+            </main> 
+          </Theme>
+        </ReactQueryClientProvider>
       </body>
     </html>
   );

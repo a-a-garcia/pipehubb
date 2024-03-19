@@ -1,6 +1,7 @@
 import { Loan } from "@prisma/client";
 import { Box, Card, Flex, Text } from "@radix-ui/themes";
 import React from "react";
+import NextLink from "next/link";
 
 interface Props {
   loan: Loan;
@@ -11,20 +12,20 @@ const LoanCard = ({ loan, bgColor }: Props) => {
   return (
     <div key={loan.borrowerName}>
       <Box
-        className="text-white p- text-nowrap
-                                        overflow-hidden
-                                        rounded-md text-center p-1"
+        className="text-white p- text-nowrap overflow-hidden rounded-md text-center p-1"
         style={{ backgroundColor: bgColor }}
       >
         <Text>{loan.borrowerName}</Text>
       </Box>
-      <Card size="2">
-        <Flex justify={"center"} align={"center"} direction={"column"}>
-          <Box>
-            <Text>Loan Amount: ${loan.loanAmount}</Text>
-          </Box>
-        </Flex>
-      </Card>
+      <NextLink href={"/loans/" + loan.id}>
+        <Card size="2">
+          <Flex justify={"center"} align={"center"} direction={"column"}>
+            <Box>
+              <Text>Loan Amount: ${loan.loanAmount}</Text>
+            </Box>
+          </Flex>
+        </Card>
+      </NextLink>
     </div>
   );
 };

@@ -36,7 +36,7 @@ export async function GET(request:NextRequest) {
 
     try {
         // initialze object to store loans for each stage
-        const loansByStage: {[key: string]: {}} = {};
+        const loansByStage: Record<string, {}> = {};
         // get all loans
         const loans = await prisma.loan.findMany();
 
@@ -51,3 +51,4 @@ export async function GET(request:NextRequest) {
         return NextResponse.json({message: "An error occurred"}, {status: 500})
     }
 }
+

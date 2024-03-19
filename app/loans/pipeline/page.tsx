@@ -1,28 +1,22 @@
 "use client";
+import Skeleton from "@/app/components/Skeleton";
+import { Loan } from "@prisma/client";
 import {
-  Box,
   Button,
   Card,
   Flex,
   Grid,
-  Heading,
-  Inset,
-  Text,
+  Heading
 } from "@radix-ui/themes";
-import React, { useEffect, useState } from "react";
 import NextLink from "next/link";
+import { useEffect, useState } from "react";
 import LoanCard from "./LoanCard";
-import { Loan } from "@prisma/client";
-import { Pipe } from "stream";
-
-interface PipelineData {
-  name: string;
-  value: string;
-  color: string;
-}
+import HeaderOne from "@/app/components/HeaderOne";
+import { loansDisplayData, loansDisplayDataInterface } from "@/app/loans/loansDisplayData"
 
 const PipelinePage = () => {
   const [loans, setLoans] = useState<Record<string, Loan[]>>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchLoans = async () => {
@@ -30,57 +24,18 @@ const PipelinePage = () => {
       const data = await response.json();
       console.log(data);
       setLoans(data);
+      setIsLoading(false);
     };
     fetchLoans();
   }, []);
 
-  const pipelineData = [
-    {
-      name: "Prospect",
-      value: "PROSPECT",
-      color: "rgb(124 58 237)",
-    },
-    {
-      name: "Application",
-      value: "APPLICATION",
-      color: "rgb(37 99 235)",
-    },
-    {
-      name: "Processing",
-      value: "PROCESSING",
-      color: "rgb(202 138 4)",
-    },
-    {
-      name: "Underwriting",
-      value: "UNDERWRITING",
-      color: "rgb(234 88 12)",
-    },
-    {
-      name: "Conditional",
-      value: "CONDITIONAL",
-      color: "rgb(219 39 119)",
-    },
-    {
-      name: "Closed/Funded",
-      value: "CLOSED",
-      color: "rgb(22 163 74)",
-    },
-  ];
-
   return (
     <div>
       <Flex direction={"column"} gap={"5"}>
-        <Card className="!bg-cactus">
-          <Flex justify={"between"} align="center">
-            <Heading size={"5"}>Welcome to your pipeline, $USER</Heading>
-            <NextLink href="/loans/new">
-              <Button className="hover:cursor-pointer">+ New Loan</Button>
-            </NextLink>
-          </Flex>
-        </Card>
+        <HeaderOne />
         <Card className="!bg-maroon">
           <Grid columns={{ initial: "1", md: "6" }} gap={"4"}>
-            {pipelineData.map((data: PipelineData) => (
+            {loansDisplayData.map((data: loansDisplayDataInterface) => (
               <div key={data.name}>
                 <Heading
                   style={{ backgroundColor: data.color }}
@@ -91,6 +46,7 @@ const PipelinePage = () => {
                 </Heading>
                 <Card>
                   <Flex direction={"column"} gap="5">
+                    {isLoading && <Skeleton count={5} height={"5rem"} />}
                     {(loans[data.value] || []).map((loan: Loan) => {
                       return (
                         <LoanCard

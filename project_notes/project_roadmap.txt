@@ -191,3 +191,15 @@ Since loans is set with the data fetched from your API, you can type the state l
 const [loans, setLoans] = useState<Record<string, Loan[]>>({});
 
 This tells TypeScript that loans is an object with string keys and values that are arrays of Loan objects. Now, when you use data.value as an index to access a property of loans, TypeScript knows that it's a string and the error should be resolved.
+
+8. "((loanKey) => {
+                return (
+                    <Card>
+                        {loanKey}
+                        {loan[loanKey]!}
+                    </Card>
+                )
+              })}"
+    
+    Error: "Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ id: number; borrowerName: string; pipelineStage: PipelineStage; loanAmount: number | null; transactionType: TransactionType | null; referralSource: string | null; ... 6 more ...; updatedAt: Date; }'.
+  No index signature with a parameter of type 'string' was found on type '{ id: number; borrowerName: string; pipelineStage: PipelineStage; loanAmount: number | null; transactionType: TransactionType | null; referralSource: string | null; ... 6 more ...; updatedAt: Date; }'.ts(7053)"
