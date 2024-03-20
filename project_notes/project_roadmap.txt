@@ -192,7 +192,7 @@ const [loans, setLoans] = useState<Record<string, Loan[]>>({});
 
 This tells TypeScript that loans is an object with string keys and values that are arrays of Loan objects. Now, when you use data.value as an index to access a property of loans, TypeScript knows that it's a string and the error should be resolved.
 
-8. "((loanKey) => {
+8. @loans/[id]/page.tsx: "((loanKey) => {
                 return (
                     <Card>
                         {loanKey}
@@ -203,3 +203,30 @@ This tells TypeScript that loans is an object with string keys and values that a
     
     Error: "Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ id: number; borrowerName: string; pipelineStage: PipelineStage; loanAmount: number | null; transactionType: TransactionType | null; referralSource: string | null; ... 6 more ...; updatedAt: Date; }'.
   No index signature with a parameter of type 'string' was found on type '{ id: number; borrowerName: string; pipelineStage: PipelineStage; loanAmount: number | null; transactionType: TransactionType | null; referralSource: string | null; ... 6 more ...; updatedAt: Date; }'.ts(7053)"
+
+9. @loans/[id]/page.tsx: What does `keyof typeof loan` mean?
+
+loan[loanKey as keyof typeof loan];
+
+The keyof keyword in TypeScript is used to create a type representing the keys of an object.
+
+When you use keyof typeof loan, you're doing two things:
+
+typeof loan: This gets the type of the loan object.
+keyof typeof loan: This gets the keys of the type of the loan object.
+So, keyof typeof loan is a type that represents the keys of the loan object. For example, if loan is an object like { id: 1, name: 'Loan 1' }, then keyof typeof loan would be a type that could be either 'id' or 'name'.
+
+This is useful when you want to ensure that a variable can only be one of the keys of a specific object. In your code, loanKey is being used as a key to access a value from the loan object, so it makes sense to type it as keyof typeof loan to ensure that it can only be a key that exists on the loan object.
+
+10. @loans/[id]/page.tsx: Type 'string | Date | null' is not assignable to type 'ReactNode'.
+  Type 'Date' is not assignable to type 'ReactNode'.ts(2322)
+
+  Solved with creating a separate variable `rawValue`
+
+  The code you've shared is attempting to handle different types of values that might be present in the loan object. It's using a rawValue variable to hold the original value from the loan object, and a value variable to hold the processed value that will be used in the React component.
+
+The value variable is declared as string | number | null, which means it can hold a string, a number, or null. However, when used in a React component, the value needs to be a ReactNode, which can be a string, a number, a boolean, null, undefined, or a React element.
+
+The error Type 'string | Date | null' is not assignable to type 'ReactNode'. Type 'Date' is not assignable to type 'ReactNode'.ts(2322) is occurring because at some point in your code, you're trying to assign a Date object to a variable or property that should be a ReactNode. Date objects are not valid ReactNode values.
+
+In the code you've shared, the value variable is correctly converted to a string when loanKey is "createdAt" or "updatedAt". If rawValue is an instance of Date and loanKey is not "createdAt" or "updatedAt", an error is thrown. In all other cases, rawValue is assigned to value directly.

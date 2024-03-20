@@ -1,6 +1,6 @@
 "use client";
 import { Loan } from "@prisma/client";
-import { Card, Flex, Heading, Button, Grid, Box } from "@radix-ui/themes";
+import { Card, Flex, Heading, Button, Grid, Box, Tabs } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import NextLink from "next/link";
 import { Text } from "@radix-ui/themes";
@@ -8,6 +8,8 @@ import {
   loansDisplayData,
   loansDisplayDataInterface,
 } from "../loansDisplayData";
+import ActivityLog from "@/app/components/ActivityLog";
+import prisma from "@/prisma/client";
 
 interface Props {
   params: {
@@ -24,13 +26,14 @@ function formatKeyDisplay(key: string) {
 const LoanDetailPage = ({ params }: Props) => {
   const [loan, setLoan] = useState<Loan | null>(null);
   const [loanColor, setLoanColor] = useState<string>("");
+  const [activityLog, setActivityLog] = useState<[]>([]);
 
   useEffect(() => {
     const fetchLoan = async () => {
       const response = await fetch(`/api/loans/${params.id}`);
       const loan = await response.json();
       setLoan(loan);
-      console.log(loan);
+
       const loanStage = loan.pipelineStage;
       loansDisplayData.map((displayData) => {
         if (displayData.value === loanStage) {
@@ -39,7 +42,13 @@ const LoanDetailPage = ({ params }: Props) => {
       });
     };
 
+    const fetchActivityLog = async () => {
+      const response = await fetch(`/api/activitylog/${params.id}`);
+      const activityLog = await response.json();
+      setActivityLog(activityLog);
+    };
     fetchLoan();
+    fetchActivityLog();
   }, []);
 
   return (
@@ -76,22 +85,26 @@ const LoanDetailPage = ({ params }: Props) => {
                 if (loanKey === "id") return null;
 
                 if (loan && loanKey in loan) {
-                  let value: string | number | Date | null =
+                  let rawValue: string | number | Date | null =
                     loan[loanKey as keyof typeof loan];
+                  let value: string | number | null;
+
+                  if (rawValue === null) return null;
 
                   if (loanKey === "createdAt" || loanKey === "updatedAt") {
-                    value = new Date(value!).toLocaleString(undefined, {
+                    value = new Date(rawValue!).toLocaleString(undefined, {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
                       hour: "numeric",
                       minute: "numeric",
                     });
+                  } else if (rawValue instanceof Date) {
+                    throw new Error("Unexpected Date for field " + loanKey);
+                  } else {
+                    value = rawValue;
                   }
-                  if (typeof value === "number") {
-                    value = value.toString();
-                  }
-                  console.log(typeof value);
+
                   return (
                     <Card className="text-black">
                       <Flex direction={"column"} align={"center"}>
@@ -106,7 +119,35 @@ const LoanDetailPage = ({ params }: Props) => {
             </Box>
           </Flex>
         </Card>
-        <Card className="!bg-maroon"></Card>
+        <Card className="!bg-maroon">
+          <Card>
+            <Tabs.Root defaultValue="activityLog">
+              <Tabs.List>
+                <Tabs.Trigger
+                  value="activityLog"
+                  className="hover:cursor-pointer"
+                >
+                  Activity Log
+                </Tabs.Trigger>
+                <Tabs.Trigger value="tasks" className="hover:cursor-pointer">
+                  Tasks
+                </Tabs.Trigger>
+                <Tabs.Trigger
+                  value="fileNotes"
+                  className="hover:cursor-pointer"
+                >
+                  File Notes
+                </Tabs.Trigger>
+              </Tabs.List>
+
+              <Box>
+                <Tabs.Content value="activityLog">
+                  <ActivityLog activityLog={activityLog} />
+                </Tabs.Content>
+              </Box>
+            </Tabs.Root>
+          </Card>
+        </Card>
       </Grid>
     </div>
   );

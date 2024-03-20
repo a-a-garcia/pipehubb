@@ -19,3 +19,9 @@ export const createLoanSchema = z.object({
 
     referralSource: z.string().min(1, "Referral source cannot be blank.").max(255, "Referral source must be less than 255 characters.").optional(),
 })
+
+export const createActivityLogSchema = z.object({
+    loanId: z.number().min(1, "Loan ID must be at least 1."),
+
+    message: z.string().min(1, "Message cannot be blank.").max(255, "Message must be less than 255 characters.")
+})
