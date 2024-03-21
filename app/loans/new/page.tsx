@@ -21,6 +21,7 @@ import { z } from "zod";
 import { IoMdAlert } from "react-icons/io";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import Spinner from "@/app/components/Spinner";
+import { Loan } from "@prisma/client";
 
 type LoanFormData = z.infer<typeof createLoanSchema>;
 
@@ -35,19 +36,38 @@ async function NewLoanPage() {
 
   const [validationErrors, setValidationErrors] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newlyCreatedLoan, setNewlyCreatedLoan] = useState<Loan>();
 
   const router = useRouter();
 
   const submitForm = handleSubmit(async (data) => {
     try {
       setIsSubmitting(true);
-      await axios.post("/api/loans", data);
-      router.push("/loans/pipeline");
+      const response = await axios.post("/api/loans", data);
+      const newLoan = response.data;
+      setNewlyCreatedLoan(newLoan);
+      await loanCreationActivity(newLoan);
     } catch {
       console.error("Failed to create loan");
       setValidationErrors("Failed to create loan");
     }
   });
+
+  const loanCreationActivity = async (newLoan: Loan) => {
+    try {
+      if (newLoan) {
+        await axios.post("/api/activitylog", {
+          loanId: newLoan.id,
+          message: `USER created a new loan for new borrower ${newLoan.borrowerName}.`,
+        });
+        console.log('SUCCESS: Created activity log for loan creation')
+      }
+      router.push("/loans/pipeline");
+    } catch {
+      console.error("Failed to create activity log for loan creation");
+      setValidationErrors("Failed to create activity log for loan creation");
+    }
+  };
 
   return (
     <div>
@@ -70,7 +90,7 @@ async function NewLoanPage() {
           <Box className="border border-deepPink p-5 rounded-md">
             <h2 className="text-white mb-2">Required: </h2>
             <Flex gap={"5"} direction={"column"}>
-              <Card className="!bg-cactus">
+              <Card>
                 <Flex direction={"column"} gap="1">
                   <Controller
                     control={control}
@@ -94,7 +114,7 @@ async function NewLoanPage() {
           <Box className="mt-4 border border-maroon p-5 rounded-md">
             <h2 className="text-white mb-2">Other fields:</h2>
             <Grid gap={"5"} columns={{ initial: "1", md: "2" }}>
-              <Card className="!bg-cactus">
+              <Card>
                 <Controller
                   control={control}
                   name="transactionType"
@@ -122,7 +142,7 @@ async function NewLoanPage() {
                   }}
                 ></Controller>
               </Card>
-              <Card className="!bg-cactus">
+              <Card>
                 <Flex direction={"column"} gap="1">
                   <Controller
                     control={control}
@@ -151,7 +171,7 @@ async function NewLoanPage() {
                   ></Controller>
                 </Flex>
               </Card>
-              <Card className="!bg-cactus">
+              <Card>
                 <Flex direction={"column"} gap="1">
                   <Controller
                     control={control}
@@ -177,7 +197,7 @@ async function NewLoanPage() {
                   ></Controller>
                 </Flex>
               </Card>
-              <Card className="!bg-cactus">
+              <Card>
                 <Flex direction={"column"} gap="1">
                   <Controller
                     control={control}
@@ -203,7 +223,7 @@ async function NewLoanPage() {
                   ></Controller>
                 </Flex>
               </Card>
-              <Card className="!bg-cactus">
+              <Card>
                 <Controller
                   control={control}
                   name="borrowerPhone"
@@ -238,7 +258,7 @@ async function NewLoanPage() {
                   }}
                 ></Controller>
               </Card>
-              <Card className="!bg-cactus">
+              <Card>
                 <Controller
                   control={control}
                   name="purchasePrice"
@@ -266,7 +286,7 @@ async function NewLoanPage() {
                   }}
                 ></Controller>
               </Card>
-              <Card className="!bg-cactus">
+              <Card>
                 <Controller
                   control={control}
                   name="creditScore"
@@ -296,7 +316,7 @@ async function NewLoanPage() {
                   }}
                 ></Controller>
               </Card>
-              <Card className="!bg-cactus">
+              <Card>
                 <Controller
                   control={control}
                   name="referralSource"

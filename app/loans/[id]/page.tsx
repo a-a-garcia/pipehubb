@@ -10,6 +10,9 @@ import {
 } from "../loansDisplayData";
 import ActivityLog from "@/app/components/ActivityLog";
 import prisma from "@/prisma/client";
+import { IoArrowBackCircleOutline } from "react-icons/io5";
+import { IoArrowForwardCircleOutline } from "react-icons/io5";
+import { set } from "zod";
 
 interface Props {
   params: {
@@ -27,6 +30,10 @@ const LoanDetailPage = ({ params }: Props) => {
   const [loan, setLoan] = useState<Loan | null>(null);
   const [loanColor, setLoanColor] = useState<string>("");
   const [activityLog, setActivityLog] = useState<[]>([]);
+  const [forwardButtonInfo, setForwardButtonInfo] =
+    useState<loansDisplayDataInterface>();
+  const [backButtonInfo, setBackButtonInfo] =
+    useState<loansDisplayDataInterface>();
 
   useEffect(() => {
     const fetchLoan = async () => {
@@ -35,11 +42,26 @@ const LoanDetailPage = ({ params }: Props) => {
       setLoan(loan);
 
       const loanStage = loan.pipelineStage;
+
       loansDisplayData.map((displayData) => {
         if (displayData.value === loanStage) {
           setLoanColor(displayData.color);
         }
       });
+
+      const currentIndex = loansDisplayData.findIndex(
+        (displayData) => displayData.value === loanStage
+      );
+      console.log(currentIndex);
+
+      if (currentIndex !== -1) {
+        if (currentIndex < loansDisplayData.length) {
+          const nextStage = loansDisplayData[currentIndex + 1];
+          const previousStage = loansDisplayData[currentIndex - 1];
+          setForwardButtonInfo(nextStage);
+          setBackButtonInfo(previousStage);
+        }
+      }
     };
 
     const fetchActivityLog = async () => {
@@ -47,9 +69,10 @@ const LoanDetailPage = ({ params }: Props) => {
       const activityLog = await response.json();
       setActivityLog(activityLog);
     };
+
     fetchLoan();
     fetchActivityLog();
-  }, []);
+  }, [forwardButtonInfo, backButtonInfo]);
 
   return (
     <div>
@@ -58,6 +81,26 @@ const LoanDetailPage = ({ params }: Props) => {
           <Heading size={"5"}>
             You're viewing {loan?.borrowerName}'s loan.
           </Heading>
+          <Flex gap={"3"}>
+            {backButtonInfo && (
+              <Button
+                className="hover:cursor-pointer"
+                style={{ backgroundColor: backButtonInfo?.color }}
+              >
+                <IoArrowBackCircleOutline />
+                Return loan to {backButtonInfo?.value} stage
+              </Button>
+            )}
+            {forwardButtonInfo && (
+              <Button
+                className="hover:cursor-pointer"
+                style={{ backgroundColor: forwardButtonInfo?.color }}
+              >
+                Advance loan to {forwardButtonInfo?.value} stage
+                <IoArrowForwardCircleOutline />
+              </Button>
+            )}
+          </Flex>
         </Flex>
       </Card>
 
@@ -71,7 +114,7 @@ const LoanDetailPage = ({ params }: Props) => {
           <Flex direction={"column"} gap="4">
             <Card style={{ backgroundColor: loanColor }}>
               <Flex direction={"column"} align={"center"}>
-                <Text>{loan?.pipelineStage}</Text>
+                <Text>Current Stage: {loan?.pipelineStage}</Text>
                 <Text>{loan?.borrowerName}</Text>
               </Flex>
             </Card>

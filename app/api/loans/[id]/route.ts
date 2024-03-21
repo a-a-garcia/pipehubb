@@ -16,3 +16,16 @@ export async function GET(response: NextResponse, {params} : {params: {id: strin
     }
 }
 
+export async function PATCH(request: NextResponse, { params } : {params : {id: string}}) {
+    console.log(request, params)
+    try {
+        // prisma.loan.update( {
+        //     where: { id: parseInt(params.id) },
+        //     data: {
+        //         pipelineStage:
+        //     }
+        // })
+    } catch {
+
+    }
+}

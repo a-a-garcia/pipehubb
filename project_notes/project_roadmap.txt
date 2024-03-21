@@ -230,3 +230,40 @@ The value variable is declared as string | number | null, which means it can hol
 The error Type 'string | Date | null' is not assignable to type 'ReactNode'. Type 'Date' is not assignable to type 'ReactNode'.ts(2322) is occurring because at some point in your code, you're trying to assign a Date object to a variable or property that should be a ReactNode. Date objects are not valid ReactNode values.
 
 In the code you've shared, the value variable is correctly converted to a string when loanKey is "createdAt" or "updatedAt". If rawValue is an instance of Date and loanKey is not "createdAt" or "updatedAt", an error is thrown. In all other cases, rawValue is assigned to value directly.
+
+11. Could not get activity on creation of loan with this code
+
+```
+ const submitForm = handleSubmit(async (data) => {
+    try {
+      setIsSubmitting(true);
+      const newLoan = await axios.post("/api/loans", data);
+      setNewlyCreatedLoan(newLoan.data);
+      loanCreationActivity();
+      router.push("/loans/pipeline");
+    } catch {
+      console.error("Failed to create loan");
+      setValidationErrors("Failed to create loan");
+    }
+  });
+
+  const loanCreationActivity = async () => {
+    try {
+      if (newlyCreatedLoan) {
+        await axios.post("/api/activitylog", {
+          loanId: newlyCreatedLoan.id,
+          message: `USER created a new loan for new borrower ${newlyCreatedLoan.borrowerName}.`,
+        });
+        console.log('SUCCESS: Created activity log for loan creation')
+      }
+      router.push("/loans/pipeline");
+    } catch {
+      console.error("Failed to create activity log for loan creation");
+      setValidationErrors("Failed to create activity log for loan creation");
+    }
+  };
+  ```
+
+Solution: The loanCreationActivity function is called immediately after the axios.post request to create a new loan, but this doesn't necessarily mean that the newLoan data has been set in the state. The setNewlyCreatedLoan function updates the state asynchronously, which means there might be a delay before the new state is available.
+
+One way to ensure that loanCreationActivity has the data it needs is to pass the newLoan data directly to it, rather than relying on the state.
