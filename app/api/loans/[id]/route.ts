@@ -1,5 +1,5 @@
 import prisma from "@/prisma/client";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(response: NextResponse, {params} : {params: {id: string}}) {
     try {
@@ -16,16 +16,17 @@ export async function GET(response: NextResponse, {params} : {params: {id: strin
     }
 }
 
-export async function PATCH(request: NextResponse, { params } : {params : {id: string}}) {
-    console.log(request, params)
+export async function PATCH(request: NextRequest, { params } : {params : {id: string}}) {
+    const body = await request.json();
     try {
-        // prisma.loan.update( {
-        //     where: { id: parseInt(params.id) },
-        //     data: {
-        //         pipelineStage:
-        //     }
-        // })
+        await prisma.loan.update( {
+            where: { id: parseInt(params.id) },
+            data: {
+                pipelineStage: body.pipelineStage
+            }
+        })
+        return NextResponse.json({message: "Loan successfully updated", status: 200})
     } catch {
-
+        return NextResponse.json({message: "An error occurred"}, {status: 500})
     }
 }

@@ -12,14 +12,16 @@ import ActivityLog from "@/app/components/ActivityLog";
 import prisma from "@/prisma/client";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 import { IoArrowForwardCircleOutline } from "react-icons/io5";
-import { set } from "zod";
+import { number, set } from "zod";
 
+//interface to get params from the URL
 interface Props {
   params: {
     id: string;
   };
 }
 
+//formats "updatedAt" to more human readable "Last Updated At"
 function formatKeyDisplay(key: string) {
   const result = key.replace(/([A-Z])/g, " $1");
   if (key === "updatedAt") return "Last Updated At";
@@ -30,9 +32,10 @@ const LoanDetailPage = ({ params }: Props) => {
   const [loan, setLoan] = useState<Loan | null>(null);
   const [loanColor, setLoanColor] = useState<string>("");
   const [activityLog, setActivityLog] = useState<[]>([]);
-  const [forwardButtonInfo, setForwardButtonInfo] =
+  const [currentStageIndex, setCurrentStageIndex] = useState<number>(0);
+  const [nextStageInfo, setNextStageInfo] =
     useState<loansDisplayDataInterface>();
-  const [backButtonInfo, setBackButtonInfo] =
+  const [previousStageInfo, setPreviousStageInfo] =
     useState<loansDisplayDataInterface>();
 
   useEffect(() => {
@@ -41,38 +44,58 @@ const LoanDetailPage = ({ params }: Props) => {
       const loan = await response.json();
       setLoan(loan);
 
-      const loanStage = loan.pipelineStage;
-
+      // mapping over loansDisplayData, and if an item's .value matches loanStage, dynamically set the color
       loansDisplayData.map((displayData) => {
-        if (displayData.value === loanStage) {
+        if (displayData.value === loan.pipelineStage) {
           setLoanColor(displayData.color);
         }
       });
 
-      const currentIndex = loansDisplayData.findIndex(
-        (displayData) => displayData.value === loanStage
+      // find the current index with .findIndex, which returns the index of the first element in the array that satisfies the provided testing function
+      setCurrentStageIndex(
+        loansDisplayData.findIndex(
+          (displayData) => displayData.value === loan?.pipelineStage
+        )
       );
-      console.log(currentIndex);
-
-      if (currentIndex !== -1) {
-        if (currentIndex < loansDisplayData.length) {
-          const nextStage = loansDisplayData[currentIndex + 1];
-          const previousStage = loansDisplayData[currentIndex - 1];
-          setForwardButtonInfo(nextStage);
-          setBackButtonInfo(previousStage);
-        }
-      }
     };
 
+    // fetches the activity log for the loan
     const fetchActivityLog = async () => {
       const response = await fetch(`/api/activitylog/${params.id}`);
       const activityLog = await response.json();
       setActivityLog(activityLog);
     };
 
+    //function calls
     fetchLoan();
     fetchActivityLog();
-  }, [forwardButtonInfo, backButtonInfo]);
+  }, []);
+
+  // separate useEffect to handle the forward and back buttons
+  useEffect(() => {
+    //logic to prevent forward and back buttons from rendering when there is no next or previous stage
+    if (currentStageIndex !== -1) {
+      if (currentStageIndex < loansDisplayData.length) {
+        setNextStageInfo(loansDisplayData[currentStageIndex + 1]);
+        setPreviousStageInfo(loansDisplayData[currentStageIndex - 1]);
+      }
+    }
+
+    // the state for these must be placed in the dependency array so the value is immediately updated once state is set (calling the setter schedules an update, but doesn't immediately update the state value)
+  }, [currentStageIndex, nextStageInfo, previousStageInfo]);
+
+  const handleStageChange = async (stageInfo: loansDisplayDataInterface) => {
+    //patch request to update the pipelineStage
+    await fetch(`/api/loans/${params.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ pipelineStage: stageInfo.value }),
+    });
+    //refresh the page to reflect the change
+    window.location.reload();
+  };
 
   return (
     <div>
@@ -82,21 +105,23 @@ const LoanDetailPage = ({ params }: Props) => {
             You're viewing {loan?.borrowerName}'s loan.
           </Heading>
           <Flex gap={"3"}>
-            {backButtonInfo && (
+            {previousStageInfo && (
               <Button
+                onClick={() => handleStageChange(previousStageInfo)}
                 className="hover:cursor-pointer"
-                style={{ backgroundColor: backButtonInfo?.color }}
+                style={{ backgroundColor: previousStageInfo?.color }}
               >
                 <IoArrowBackCircleOutline />
-                Return loan to {backButtonInfo?.value} stage
+                Return loan to {previousStageInfo?.value} stage
               </Button>
             )}
-            {forwardButtonInfo && (
+            {nextStageInfo && (
               <Button
+                onClick={() => handleStageChange(nextStageInfo)}
                 className="hover:cursor-pointer"
-                style={{ backgroundColor: forwardButtonInfo?.color }}
+                style={{ backgroundColor: nextStageInfo?.color }}
               >
-                Advance loan to {forwardButtonInfo?.value} stage
+                Advance loan to {nextStageInfo?.value} stage
                 <IoArrowForwardCircleOutline />
               </Button>
             )}
@@ -113,8 +138,8 @@ const LoanDetailPage = ({ params }: Props) => {
         <Card className="!bg-maroon text-white">
           <Flex direction={"column"} gap="4">
             <Card style={{ backgroundColor: loanColor }}>
-              <Flex direction={"column"} align={"center"}>
-                <Text>Current Stage: {loan?.pipelineStage}</Text>
+              <Flex direction={"column"} align={"center"} justify={"center"}>
+                <Text>{loan?.pipelineStage}</Text>
                 <Text>{loan?.borrowerName}</Text>
               </Flex>
             </Card>
@@ -180,6 +205,13 @@ const LoanDetailPage = ({ params }: Props) => {
                   className="hover:cursor-pointer"
                 >
                   File Notes
+                </Tabs.Trigger>
+
+                <Tabs.Trigger
+                  value="documentChecklist"
+                  className="hover:cursor-pointer"
+                >
+                  Document Checklist
                 </Tabs.Trigger>
               </Tabs.List>
 
