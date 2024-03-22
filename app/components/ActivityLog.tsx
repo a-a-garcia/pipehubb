@@ -2,6 +2,8 @@ import { Card, Flex, Inset, Text } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { set } from "zod";
+import Image from "next/image";
+import logo from "@/public/images/pipeHubb_logo_transparent.png";
 
 interface ActivityLog {
   id: number;
@@ -29,8 +31,8 @@ const ActivityLog = ({ activityLog }: { activityLog: ActivityLog[] }) => {
                     </Text>
                 </Inset>
                 <Text>
-                  <Flex align={"center"} className="mt-2">
-                    <FaCheckCircle className="mr-2" />
+                  <Flex align={"center"} className="mt-2" gap="2">
+                    <Image src={logo} alt="Pipehubb logo" width="25"/>
                     <Text>{activity.message}</Text>
                   </Flex>
                 </Text>

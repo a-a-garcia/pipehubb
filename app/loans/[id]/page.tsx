@@ -1,6 +1,17 @@
 "use client";
 import { Loan } from "@prisma/client";
-import { Card, Flex, Heading, Button, Grid, Box, Tabs } from "@radix-ui/themes";
+import {
+  Card,
+  Flex,
+  Heading,
+  Button,
+  Grid,
+  Box,
+  Tabs,
+  Separator,
+  AlertDialog,
+  AlertDialogAction,
+} from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import NextLink from "next/link";
 import { Text } from "@radix-ui/themes";
@@ -13,6 +24,12 @@ import prisma from "@/prisma/client";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 import { IoArrowForwardCircleOutline } from "react-icons/io5";
 import { number, set } from "zod";
+import Skeleton from "@/app/components/Skeleton";
+import Spinner from "@/app/components/Spinner";
+import { FaEdit } from "react-icons/fa";
+import { FaTrashCan } from "react-icons/fa6";
+import Image from "next/image";
+import logo from "@/public/images/pipeHubb_logo_transparent.png";
 
 //interface to get params from the URL
 interface Props {
@@ -30,13 +47,20 @@ function formatKeyDisplay(key: string) {
 
 const LoanDetailPage = ({ params }: Props) => {
   const [loan, setLoan] = useState<Loan | null>(null);
+
   const [loanColor, setLoanColor] = useState<string>("");
+
   const [activityLog, setActivityLog] = useState<[]>([]);
+
   const [currentStageIndex, setCurrentStageIndex] = useState<number>(0);
+
   const [nextStageInfo, setNextStageInfo] =
     useState<loansDisplayDataInterface>();
+
   const [previousStageInfo, setPreviousStageInfo] =
     useState<loansDisplayDataInterface>();
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchLoan = async () => {
@@ -51,6 +75,7 @@ const LoanDetailPage = ({ params }: Props) => {
         }
       });
 
+      setIsLoading(false);
       // find the current index with .findIndex, which returns the index of the first element in the array that satisfies the provided testing function
       setCurrentStageIndex(
         loansDisplayData.findIndex(
@@ -99,130 +124,249 @@ const LoanDetailPage = ({ params }: Props) => {
 
   return (
     <div>
-      <Card className="!bg-cactus">
-        <Flex justify={"between"} align="center">
-          <Heading size={"5"}>
-            You're viewing {loan?.borrowerName}'s loan.
-          </Heading>
-          <Flex gap={"3"}>
-            {previousStageInfo && (
-              <Button
-                onClick={() => handleStageChange(previousStageInfo)}
-                className="hover:cursor-pointer"
-                style={{ backgroundColor: previousStageInfo?.color }}
-              >
-                <IoArrowBackCircleOutline />
-                Return loan to {previousStageInfo?.value} stage
-              </Button>
-            )}
-            {nextStageInfo && (
-              <Button
-                onClick={() => handleStageChange(nextStageInfo)}
-                className="hover:cursor-pointer"
-                style={{ backgroundColor: nextStageInfo?.color }}
-              >
-                Advance loan to {nextStageInfo?.value} stage
-                <IoArrowForwardCircleOutline />
-              </Button>
-            )}
+      {isLoading ? (
+        <div>
+          <Flex justify={"center"}>
+            <Text size="4">
+              Loading...
+              <Spinner />
+            </Text>
           </Flex>
-        </Flex>
-      </Card>
-
+          <Skeleton height={"3rem"} />
+        </div>
+      ) : (
+        <Card className="!bg-cactus">
+          <Flex justify={"between"} align="center">
+            <Heading size={"5"}>
+              You're viewing {loan?.borrowerName}'s loan.
+            </Heading>
+          </Flex>
+        </Card>
+      )}
       <Grid
         columns={{ initial: "1", md: "2" }}
         style={{ gridTemplateColumns: "1fr 3fr" }}
         gap="5"
         className="mt-5"
       >
-        <Card className="!bg-maroon text-white">
-          <Flex direction={"column"} gap="4">
-            <Card style={{ backgroundColor: loanColor }}>
-              <Flex direction={"column"} align={"center"} justify={"center"}>
-                <Text>{loan?.pipelineStage}</Text>
-                <Text>{loan?.borrowerName}</Text>
-              </Flex>
-            </Card>
-            <Box>
-              <Card className="!bg-darkGrey text-white">
-                <Flex direction={"column"} align={"center"}>
-                  <Text>Loan Details</Text>
+        {isLoading ? (
+          <Skeleton height={"40rem"} />
+        ) : (
+          <Card className="!bg-maroon text-white">
+            <Flex direction={"column"} gap="4">
+              <Card style={{ backgroundColor: loanColor }}>
+                <Flex direction={"column"} align={"center"} justify={"center"}>
+                  <Text>{loan?.pipelineStage}</Text>
+                  <Text>{loan?.borrowerName}</Text>
                 </Flex>
               </Card>
-              {Object.keys(loan || {}).map((loanKey) => {
-                if (loanKey === "id") return null;
+              <Box>
+                <Card className="!bg-darkGrey text-white">
+                  <Flex direction={"column"} align={"center"}>
+                    <Text>Loan Details</Text>
+                  </Flex>
+                </Card>
+                {Object.keys(loan || {}).map((loanKey) => {
+                  if (loanKey === "id") return null;
 
-                if (loan && loanKey in loan) {
-                  let rawValue: string | number | Date | null =
-                    loan[loanKey as keyof typeof loan];
-                  let value: string | number | null;
+                  if (loan && loanKey in loan) {
+                    let rawValue: string | number | Date | null =
+                      loan[loanKey as keyof typeof loan];
+                    let value: string | number | null;
 
-                  if (rawValue === null) return null;
+                    if (rawValue === null) return null;
 
-                  if (loanKey === "createdAt" || loanKey === "updatedAt") {
-                    value = new Date(rawValue!).toLocaleString(undefined, {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "numeric",
-                    });
-                  } else if (rawValue instanceof Date) {
-                    throw new Error("Unexpected Date for field " + loanKey);
-                  } else {
-                    value = rawValue;
+                    if (loanKey === "createdAt" || loanKey === "updatedAt") {
+                      value = new Date(rawValue!).toLocaleString(undefined, {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "numeric",
+                      });
+                    } else if (rawValue instanceof Date) {
+                      throw new Error("Unexpected Date for field " + loanKey);
+                    } else {
+                      value = rawValue;
+                    }
+
+                    return (
+                      <Card className="text-black">
+                        <Flex direction={"column"} align={"center"}>
+                          <Text>{formatKeyDisplay(loanKey)}: </Text>
+                          <Card>{value}</Card>
+                        </Flex>
+                      </Card>
+                    );
                   }
+                  return null;
+                })}
+              </Box>
+            </Flex>
+          </Card>
+        )}
 
-                  return (
-                    <Card className="text-black">
-                      <Flex direction={"column"} align={"center"}>
-                        <Text>{formatKeyDisplay(loanKey)}: </Text>
-                        <Card>{value}</Card>
+        {isLoading ? (
+          <Skeleton height={"40rem"} />
+        ) : (
+          <Card className="!bg-maroon">
+            <Card>
+              <Tabs.Root defaultValue="activityLog">
+                <Tabs.List>
+                  <Tabs.Trigger
+                    value="activityLog"
+                    className="hover:cursor-pointer"
+                  >
+                    Activity Log
+                  </Tabs.Trigger>
+                  <Tabs.Trigger value="tasks" className="hover:cursor-pointer">
+                    Tasks
+                  </Tabs.Trigger>
+                  <Tabs.Trigger
+                    value="fileNotes"
+                    className="hover:cursor-pointer"
+                  >
+                    File Notes
+                  </Tabs.Trigger>
+
+                  <Tabs.Trigger
+                    value="documentChecklist"
+                    className="hover:cursor-pointer"
+                  >
+                    Document Checklist
+                  </Tabs.Trigger>
+
+                  <Tabs.Trigger
+                    value="loanActions"
+                    className="hover:cursor-pointer"
+                  >
+                    Loan Actions
+                  </Tabs.Trigger>
+                </Tabs.List>
+
+                <Box>
+                  <Tabs.Content value="activityLog">
+                    <ActivityLog activityLog={activityLog} />
+                  </Tabs.Content>
+                </Box>
+
+                <Box>
+                  <Tabs.Content value="tasks">
+                    <Text>Tasks</Text>
+                  </Tabs.Content>
+                </Box>
+
+                <Box>
+                  <Tabs.Content value="fileNotes">
+                    <Text>File Notes</Text>
+                  </Tabs.Content>
+                </Box>
+
+                <Box>
+                  <Tabs.Content value="documentChecklist">
+                    <Text>Document Checklist</Text>
+                  </Tabs.Content>
+                </Box>
+
+                <Box>
+                  <Tabs.Content value="loanActions">
+                    <Card className="mt-5 !bg-cactus">
+                      <Flex gap={"3"} direction={"column"}>
+                        <Flex direction={"column"} gap="4" align={"center"}>
+                          <Button
+                            color="indigo"
+                            className="hover:cursor-pointer"
+                          >
+                            <FaEdit />
+                            <Text>Edit loan</Text>
+                          </Button>
+
+                          {/* to be put in it's own component */}
+                          <AlertDialog.Root>
+                            <AlertDialog.Trigger>
+                              <Button
+                                color="red"
+                                className="hover:cursor-pointer"
+                              >
+                                <FaTrashCan />
+                                <Text>Delete loan</Text>
+                              </Button>
+                            </AlertDialog.Trigger>
+                            <AlertDialog.Content>
+                              <AlertDialog.Title>
+                                <Flex justify={"between"} align={"center"}>
+                                  <Text>Are you sure?</Text>
+                                  <Image
+                                    src={logo}
+                                    alt="Pipehubb Logo"
+                                    width="35"
+                                  ></Image>
+                                </Flex>
+                              </AlertDialog.Title>
+                              <Separator my="3" size="4" />
+                              <AlertDialog.Description size="2">
+                                This action cannot be undone.
+                              </AlertDialog.Description>
+
+                              <Flex gap="3" mt="4" justify="end">
+                                <AlertDialog.Cancel>
+                                  <Button
+                                    variant="soft"
+                                    color="gray"
+                                    className="hover:cursor-pointer"
+                                  >
+                                    Cancel
+                                  </Button>
+                                </AlertDialog.Cancel>
+                                <AlertDialog.Action>
+                                  <Button
+                                    variant="solid"
+                                    color="red"
+                                    className="hover:cursor-pointer"
+                                  >
+                                    Delete Loan
+                                  </Button>
+                                </AlertDialog.Action>
+                              </Flex>
+                            </AlertDialog.Content>
+                          </AlertDialog.Root>
+                        </Flex>
+
+                        <Separator my="3" size="4" />
+                        <Flex justify={"between"}>
+                          {previousStageInfo && (
+                            <Button
+                              onClick={() =>
+                                handleStageChange(previousStageInfo)
+                              }
+                              className="hover:cursor-pointer"
+                              style={{
+                                backgroundColor: previousStageInfo?.color,
+                              }}
+                            >
+                              <IoArrowBackCircleOutline />
+                              Return loan to {previousStageInfo?.value} stage
+                            </Button>
+                          )}
+                          {nextStageInfo && (
+                            <Button
+                              onClick={() => handleStageChange(nextStageInfo)}
+                              className="hover:cursor-pointer"
+                              style={{ backgroundColor: nextStageInfo?.color }}
+                            >
+                              Advance loan to {nextStageInfo?.value} stage
+                              <IoArrowForwardCircleOutline />
+                            </Button>
+                          )}
+                        </Flex>
                       </Flex>
                     </Card>
-                  );
-                }
-                return null;
-              })}
-            </Box>
-          </Flex>
-        </Card>
-        <Card className="!bg-maroon">
-          <Card>
-            <Tabs.Root defaultValue="activityLog">
-              <Tabs.List>
-                <Tabs.Trigger
-                  value="activityLog"
-                  className="hover:cursor-pointer"
-                >
-                  Activity Log
-                </Tabs.Trigger>
-                <Tabs.Trigger value="tasks" className="hover:cursor-pointer">
-                  Tasks
-                </Tabs.Trigger>
-                <Tabs.Trigger
-                  value="fileNotes"
-                  className="hover:cursor-pointer"
-                >
-                  File Notes
-                </Tabs.Trigger>
-
-                <Tabs.Trigger
-                  value="documentChecklist"
-                  className="hover:cursor-pointer"
-                >
-                  Document Checklist
-                </Tabs.Trigger>
-              </Tabs.List>
-
-              <Box>
-                <Tabs.Content value="activityLog">
-                  <ActivityLog activityLog={activityLog} />
-                </Tabs.Content>
-              </Box>
-            </Tabs.Root>
+                  </Tabs.Content>
+                </Box>
+              </Tabs.Root>
+            </Card>
           </Card>
-        </Card>
+        )}
       </Grid>
     </div>
   );
