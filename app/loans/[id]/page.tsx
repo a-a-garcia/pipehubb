@@ -122,6 +122,20 @@ const LoanDetailPage = ({ params }: Props) => {
     window.location.reload();
   };
 
+  const handleDelete = async () => {
+    try {
+      fetch(`/api/loans/${params.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      window.location.href = "/loans/pipeline";
+    } catch {
+      console.error("An error occurred");
+    }
+  };
+
   return (
     <div>
       {isLoading ? (
@@ -320,6 +334,7 @@ const LoanDetailPage = ({ params }: Props) => {
                                 </AlertDialog.Cancel>
                                 <AlertDialog.Action>
                                   <Button
+                                    onClick={handleDelete}
                                     variant="solid"
                                     color="red"
                                     className="hover:cursor-pointer"
