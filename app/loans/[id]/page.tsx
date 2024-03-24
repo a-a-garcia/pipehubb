@@ -287,14 +287,15 @@ const LoanDetailPage = ({ params }: Props) => {
                     <Card className="mt-5 !bg-cactus">
                       <Flex gap={"3"} direction={"column"}>
                         <Flex direction={"column"} gap="4" align={"center"}>
-                          <Button
-                            color="indigo"
-                            className="hover:cursor-pointer"
-                          >
-                            <FaEdit />
-                            <Text>Edit loan</Text>
-                          </Button>
-
+                          <NextLink href={`/loans/edit/${loan?.id}`}>
+                            <Button
+                              color="indigo"
+                              className="hover:cursor-pointer"
+                            >
+                              <FaEdit />
+                              <Text>Edit loan</Text>
+                            </Button>
+                          </NextLink>
                           {/* to be put in it's own component */}
                           <AlertDialog.Root>
                             <AlertDialog.Trigger>
