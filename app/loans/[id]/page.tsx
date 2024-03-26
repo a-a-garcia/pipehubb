@@ -30,6 +30,7 @@ import { FaEdit } from "react-icons/fa";
 import { FaTrashCan } from "react-icons/fa6";
 import Image from "next/image";
 import logo from "@/public/images/pipeHubb_logo_transparent.png";
+import FileNotes from "@/app/components/FileNotes";
 
 //interface to get params from the URL
 interface Props {
@@ -49,8 +50,6 @@ const LoanDetailPage = ({ params }: Props) => {
   const [loan, setLoan] = useState<Loan | null>(null);
 
   const [loanColor, setLoanColor] = useState<string>("");
-
-  const [activityLog, setActivityLog] = useState<[]>([]);
 
   const [currentStageIndex, setCurrentStageIndex] = useState<number>(0);
 
@@ -84,16 +83,8 @@ const LoanDetailPage = ({ params }: Props) => {
       );
     };
 
-    // fetches the activity log for the loan
-    const fetchActivityLog = async () => {
-      const response = await fetch(`/api/activitylog/${params.id}`);
-      const activityLog = await response.json();
-      setActivityLog(activityLog);
-    };
-
     //function calls
     fetchLoan();
-    fetchActivityLog();
   }, []);
 
   // separate useEffect to handle the forward and back buttons
@@ -118,6 +109,17 @@ const LoanDetailPage = ({ params }: Props) => {
       },
       body: JSON.stringify({ pipelineStage: stageInfo.value }),
     });
+
+    await fetch(`/api/activitylog`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ 
+        loanId: parseInt(params.id),
+        message: `USER moved loan to ${stageInfo.value} stage.`
+      })
+    })
     //refresh the page to reflect the change
     window.location.reload();
   };
@@ -260,7 +262,7 @@ const LoanDetailPage = ({ params }: Props) => {
 
                 <Box>
                   <Tabs.Content value="activityLog">
-                    <ActivityLog activityLog={activityLog} />
+                    <ActivityLog loan={loan!} />
                   </Tabs.Content>
                 </Box>
 
@@ -272,7 +274,7 @@ const LoanDetailPage = ({ params }: Props) => {
 
                 <Box>
                   <Tabs.Content value="fileNotes">
-                    <Text>File Notes</Text>
+                    <FileNotes loan={loan!} />
                   </Tabs.Content>
                 </Box>
 
@@ -292,8 +294,8 @@ const LoanDetailPage = ({ params }: Props) => {
                               color="indigo"
                               className="hover:cursor-pointer"
                             >
-                              <FaEdit />
                               <Text>Edit loan</Text>
+                              <FaEdit />
                             </Button>
                           </NextLink>
                           {/* to be put in it's own component */}
@@ -303,8 +305,8 @@ const LoanDetailPage = ({ params }: Props) => {
                                 color="red"
                                 className="hover:cursor-pointer"
                               >
-                                <FaTrashCan />
                                 <Text>Delete loan</Text>
+                                <FaTrashCan />
                               </Button>
                             </AlertDialog.Trigger>
                             <AlertDialog.Content>

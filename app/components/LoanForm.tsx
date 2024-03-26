@@ -84,7 +84,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
       if (updatedLoan) {
         await axios.post("/api/activitylog", {
           loanId: updatedLoan.id,
-          message: `USER updated loan information for borrower ${updatedLoan.borrowerName}.`,
+          message: `USER updated loan details for borrower ${updatedLoan.borrowerName}.`,
         });
         console.log(`SUCCESS: Created activity log for loan update`);
         router.push("/loans/pipeline");

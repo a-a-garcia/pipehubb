@@ -3,7 +3,8 @@ import { NextResponse } from "next/server"
 
 export async function GET(response: NextResponse, {params} : {params: {id: string}}) {
     const loansActivityLog = await prisma.activityLog.findMany({
-        where: { loanId: parseInt(params.id) }
+        where: { loanId: parseInt(params.id) },
+        orderBy: { createdAt: "desc"}
     })
 
     if (!loansActivityLog) {

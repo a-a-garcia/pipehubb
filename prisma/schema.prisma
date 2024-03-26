@@ -14,20 +14,21 @@ datasource db {
 }
 
 model Loan {
-  id              Int             @id @default(autoincrement())
-  borrowerName    String          @db.VarChar(255)
-  pipelineStage   PipelineStage   @default(PROSPECT)
+  id              Int              @id @default(autoincrement())
+  borrowerName    String           @db.VarChar(255)
+  pipelineStage   PipelineStage    @default(PROSPECT)
   loanAmount      Int?
   transactionType TransactionType?
-  referralSource  String?         @db.VarChar(255)
-  borrowerEmail   String?         @db.VarChar(255)
-  propertyAddress String?         @db.VarChar(255)
-  borrowerPhone   String?         @db.VarChar(50)
+  referralSource  String?          @db.VarChar(255)
+  borrowerEmail   String?          @db.VarChar(255)
+  propertyAddress String?          @db.VarChar(255)
+  borrowerPhone   String?          @db.VarChar(50)
   purchasePrice   Int?
   creditScore     Int?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
   activityLog     ActivityLog[]
+  fileNotes       FileNotes[]
 }
 
 enum TransactionType {
@@ -45,12 +46,21 @@ enum PipelineStage {
 }
 
 model ActivityLog {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   loanId    Int
-  loan      Loan      @relation(fields: [loanId], references: [id])
+  loan      Loan     @relation(fields: [loanId], references: [id])
   message   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // The @relation directive in the ActivityLog model establishes the relationship between the two models. The fields: [loanId] part indicates that the loanId field in the ActivityLog model is used to connect it to the Loan model. The references: [id] part indicates that the loanId field in the ActivityLog model corresponds to the id field in the Loan model.
+
+model FileNotes {
+  id        Int      @id @default(autoincrement())
+  loanId    Int
+  loan      Loan     @relation(fields: [loanId], references: [id])
+  note      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
