@@ -32,6 +32,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
     formState: { errors },
   } = useForm<LoanFormData>({
     resolver: zodResolver(createLoanSchema),
+    mode: "onSubmit"
   });
 
   const [validationErrors, setValidationErrors] = useState("");
@@ -196,7 +197,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? null : parseInt(value)
+                                value === "" ? undefined : parseInt(value)
                               );
                             }}
                           />
@@ -224,7 +225,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                             type="text"
                             onChange={(e) => {
                               const value = e.target.value;
-                              field.onChange(value === "" ? null : value);
+                              field.onChange(value === "" ? undefined : value);
                             }}
                           />
                         </div>
@@ -249,9 +250,10 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                           <TextField.Input
                             {...field}
                             type="email"
+                            value={field.value?.toString() || ''}
                             onChange={(e) => {
-                              const value = e.target.value;
-                              field.onChange(value === "" ? null : value);
+                              const value = e.target.value.trim();
+                              field.onChange(value === "" ? undefined : value);
                             }}
                           />
                         </div>
@@ -316,7 +318,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                           {...field}
                           onChange={(e) => {
                             const value = e.target.value;
-                            field.onChange(value === "" ? null : parseInt(value));
+                            field.onChange(value === "" ? undefined : parseInt(value));
                           }}
                           type="number"
                         />
@@ -348,7 +350,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                           max={850}
                           onChange={(e) => {
                             const value = e.target.value;
-                            field.onChange(value === "" ? null : parseInt(value));
+                            field.onChange(value === "" ? undefined : parseInt(value));
                           }}
                         />
                       </Flex>
@@ -377,7 +379,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                           type="text"
                           onChange={(e) => {
                             const value = e.target.value;
-                            field.onChange(value === "" ? null : value);
+                            field.onChange(value === "" ? undefined : value);
                           }}
                         />
                       </Flex>
@@ -388,8 +390,8 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
             </Grid>
           </Box>
           <Flex justify={"end"} className="mt-4">
-            <Button disabled={isSubmitting}>
-              <input type="submit" />
+            <Button disabled={isSubmitting} className="hover:cursor-pointer">
+              <input type="submit" className="hover:cursor-pointer" />
               {isSubmitting ? <Spinner /> : ""}
             </Button>
           </Flex>
