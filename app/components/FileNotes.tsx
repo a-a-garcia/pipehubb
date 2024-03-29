@@ -7,6 +7,7 @@ import logo from "@/public/images/pipeHubb_logo_transparent.png";
 import { format } from "date-fns";
 import { Loan } from "@prisma/client";
 import { MdOutlineCreate } from "react-icons/md";
+import NextLink from "next/link";
 
 interface FileNotes {
   id: number;
@@ -26,6 +27,7 @@ const FileNotes = ({ loan }: { loan: Loan }) => {
     const fetchFileNotes = async () => {
       const response = await fetch(`/api/filenotes/${loan.id}`);
       const fileNotes = await response.json();
+      console.log(fileNotes)
       setFetchedFileNotes(fileNotes);
     };
     fetchFileNotes();
@@ -34,10 +36,12 @@ const FileNotes = ({ loan }: { loan: Loan }) => {
   return (
     <Flex direction={"column"} gap={"4"}>
       <Flex className="mt-4" justify={"end"}>
-        <Button>
-          Create Note
-          <MdOutlineCreate />
-        </Button>
+        <NextLink href={`/loans/create-note/${loan.id}`}>
+          <Button>
+            Create Note
+            <MdOutlineCreate />
+          </Button>
+        </NextLink>
       </Flex>
       {fetchedFileNotes &&
         fetchedFileNotes.map((note) => {
@@ -52,7 +56,7 @@ const FileNotes = ({ loan }: { loan: Loan }) => {
                 >
                   <Flex justify={"between"} align={"center"}>
                     <Avatar
-                      size="2"
+                      size="1"
                       src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
                       fallback="A"
                       className="mr-2"

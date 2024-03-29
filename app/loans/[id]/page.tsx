@@ -31,6 +31,7 @@ import { FaTrashCan } from "react-icons/fa6";
 import Image from "next/image";
 import logo from "@/public/images/pipeHubb_logo_transparent.png";
 import FileNotes from "@/app/components/FileNotes";
+import DocumentChecklist from "@/app/components/DocumentChecklist";
 
 //interface to get params from the URL
 interface Props {
@@ -280,7 +281,7 @@ const LoanDetailPage = ({ params }: Props) => {
 
                 <Box>
                   <Tabs.Content value="documentChecklist">
-                    <Text>Document Checklist</Text>
+                    <DocumentChecklist loan={loan!}/>
                   </Tabs.Content>
                 </Box>
 
