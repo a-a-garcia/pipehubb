@@ -4,7 +4,7 @@ import "./theme-config.css";
 import { Roboto_Flex } from "next/font/google";
 import "./globals.css";
 import NavBar from "./NavBar";
-import { Container, Theme } from "@radix-ui/themes";
+import { Container, Theme, ThemePanel } from "@radix-ui/themes";
 import ReactQueryClientProvider from "./api/ReactQueryProviderClient";
 
 const roboto_flex = Roboto_Flex({
@@ -28,11 +28,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={roboto_flex.variable}>
         <ReactQueryClientProvider>
-          <Theme accentColor="ruby">
+          <Theme accentColor="gray">
             <NavBar />
             <main className="p-5">
               <Container>{children}</Container>
-            </main> 
+            </main>
           </Theme>
         </ReactQueryClientProvider>
       </body>

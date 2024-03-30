@@ -100,7 +100,7 @@ const CreateNotePage = ({ params }: { params: { id: string } }) => {
             <Flex justify={"end"}>
               <Button
                 type="submit"
-                className="hover:cursor-pointer"
+                className="hover:cursor-pointer myCustomButton"
                 disabled={isSubmitting}
               >
                 <MdOutlineCreate />

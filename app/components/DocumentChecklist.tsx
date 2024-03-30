@@ -5,11 +5,15 @@ import {
 import {
   Avatar,
   Badge,
+  Box,
+  Button,
   Card,
   Checkbox,
   Flex,
   Heading,
+  HoverCard,
   Inset,
+  Select,
   Table,
   Text,
 } from "@radix-ui/themes";
@@ -17,6 +21,10 @@ import { format, set } from "date-fns";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import logo from "@/public/images/pipeHubb_logo_transparent.png";
+import { FaEdit } from "react-icons/fa";
+import { FaCircleExclamation, FaTrashCan } from "react-icons/fa6";
+import { MdOutlineCreate } from "react-icons/md";
+import { AiOutlineClear } from "react-icons/ai";
 
 const formatDate = (date: Date) => {
   return format(new Date(date), "MM/dd/yyyy, HH:mm aa");
@@ -43,7 +51,12 @@ const DocumentChecklist = ({ loan }: { loan: Loan }) => {
 
   return (
     <div>
-      <Card className="!bg-cactus mt-4">
+      <Box className="mt-4">
+        <Flex justify={"end"}>
+          <Button className="myCustomButton hover:cursor-pointer">
+            Create Checklist Item(s) <MdOutlineCreate />
+          </Button>
+        </Flex>
         <Card className="mt-4">
           <Inset
             clip="border-box"
@@ -51,25 +64,57 @@ const DocumentChecklist = ({ loan }: { loan: Loan }) => {
             p="current"
             className="!bg-darkGrey"
           >
-            <Heading className="text-white">
-              Your checklist for {loan.borrowerName}
-            </Heading>
+            <Flex justify={"between"} align={"center"}>
+              <Heading className="text-white">
+                Your checklist for {loan.borrowerName}
+              </Heading>
+              <HoverCard.Root>
+                <HoverCard.Trigger>
+                  <Button color="red" size="1" className="hover:cursor-pointer">
+                    <AiOutlineClear />
+                  </Button>
+                </HoverCard.Trigger>
+                <HoverCard.Content className=" max-w-64" size={"1"}>
+                  <Flex gap="4">
+                    <Avatar
+                      size="1"
+                      fallback="R"
+                      radius="full"
+                      src="/images/pipeHubb_logo_transparent.png"
+                    />
+                    <Box>
+                      <Heading size={"2"}>Clear Checklist</Heading>
+                      <Text size="1">
+                        Click this button to delete <strong>the entire</strong>{" "}
+                        checklist.
+                      </Text>
+                      <Flex gap="2" className="mt-2" align={"center"}>
+                        <FaCircleExclamation color="red" size="15px" />
+                        <Text size="1" color="red">
+                          {" "}
+                          This is a permanent action.
+                        </Text>
+                      </Flex>
+                    </Box>
+                  </Flex>
+                </HoverCard.Content>
+              </HoverCard.Root>
+            </Flex>
           </Inset>
           <Table.Root>
             <Table.Header>
               <Table.Row>
                 <Table.ColumnHeaderCell></Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell>Created By</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>
-                  Requested Document
-                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Document</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell>Due Date</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
               </Table.Row>
             </Table.Header>
             <Table.Body>
               {documentChecklist &&
-                documentChecklist.map((item, index) => {
+                documentChecklist.map((item) => {
                   return (
                     <Table.Row>
                       <Table.Cell>
@@ -87,13 +132,101 @@ const DocumentChecklist = ({ loan }: { loan: Loan }) => {
                       <Table.Cell>
                         <Text>{item.documentName}</Text>
                       </Table.Cell>
-                      <Table.Cell>
-                        <Badge color={determineBadgeColor(item.status)}>
-                          {item.status}
-                        </Badge>
-                      </Table.Cell>
+                      <Select.Root defaultValue={item.status}>
+                        <Table.Cell>
+                          <Select.Trigger
+                            variant="ghost"
+                            className="hover:cursor-pointer"
+                          />
+                          <Select.Content variant="soft" color="gray">
+                            <Select.Item value={item.status}>
+                              <Badge color={determineBadgeColor(item.status)}>
+                                {item.status}
+                              </Badge>
+                            </Select.Item>
+                          </Select.Content>
+                        </Table.Cell>
+                      </Select.Root>
                       <Table.Cell>
                         {item.dueDate ? formatDate(item.dueDate) : "None"}
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Flex gap={"2"}>
+                          <HoverCard.Root>
+                            <HoverCard.Trigger>
+                              <Button
+                                color="indigo"
+                                className="hover:cursor-pointer"
+                                size={"1"}
+                              >
+                                <FaEdit />
+                              </Button>
+                            </HoverCard.Trigger>
+                            <HoverCard.Content className=" max-w-64" size={"1"}>
+                              <Flex gap="4">
+                                <Avatar
+                                  size="1"
+                                  fallback="R"
+                                  radius="full"
+                                  src="/images/pipeHubb_logo_transparent.png"
+                                />
+                                <Box>
+                                  <Heading size={"2"}>
+                                    Edit Checklist Item
+                                  </Heading>
+                                  <Text size="1">
+                                    Click this button to edit the content of
+                                    this checklist item.
+                                  </Text>
+                                </Box>
+                              </Flex>
+                            </HoverCard.Content>
+                          </HoverCard.Root>
+                          <HoverCard.Root>
+                            <HoverCard.Trigger>
+                              <Button
+                                color="red"
+                                className="hover:cursor-pointer"
+                                size={"1"}
+                              >
+                                <FaTrashCan />
+                              </Button>
+                            </HoverCard.Trigger>
+                            <HoverCard.Content className=" max-w-64" size={"1"}>
+                              <Flex gap="4">
+                                <Avatar
+                                  size="1"
+                                  fallback="R"
+                                  radius="full"
+                                  src="/images/pipeHubb_logo_transparent.png"
+                                />
+                                <Box>
+                                  <Heading size={"2"}>
+                                    Delete Checklist Item
+                                  </Heading>
+                                  <Text size="1">
+                                    Click this button to delete this checklist
+                                    item.
+                                  </Text>
+                                  <Flex
+                                    gap="2"
+                                    className="mt-2"
+                                    align={"center"}
+                                  >
+                                    <FaCircleExclamation
+                                      color="red"
+                                      size="15px"
+                                    />
+                                    <Text size="1" color="red">
+                                      {" "}
+                                      This is a permanent action.
+                                    </Text>
+                                  </Flex>
+                                </Box>
+                              </Flex>
+                            </HoverCard.Content>
+                          </HoverCard.Root>
+                        </Flex>
                       </Table.Cell>
                     </Table.Row>
                   );
@@ -101,7 +234,7 @@ const DocumentChecklist = ({ loan }: { loan: Loan }) => {
             </Table.Body>
           </Table.Root>
         </Card>
-      </Card>
+      </Box>
     </div>
   );
 };

@@ -32,6 +32,7 @@ import Image from "next/image";
 import logo from "@/public/images/pipeHubb_logo_transparent.png";
 import FileNotes from "@/app/components/FileNotes";
 import DocumentChecklist from "@/app/components/DocumentChecklist";
+import CustomAlertDialog from "@/app/components/AlertDialog";
 
 //interface to get params from the URL
 interface Props {
@@ -300,55 +301,7 @@ const LoanDetailPage = ({ params }: Props) => {
                             </Button>
                           </NextLink>
                           {/* to be put in it's own component */}
-                          <AlertDialog.Root>
-                            <AlertDialog.Trigger>
-                              <Button
-                                color="red"
-                                className="hover:cursor-pointer"
-                              >
-                                <Text>Delete loan</Text>
-                                <FaTrashCan />
-                              </Button>
-                            </AlertDialog.Trigger>
-                            <AlertDialog.Content>
-                              <AlertDialog.Title>
-                                <Flex justify={"between"} align={"center"}>
-                                  <Text>Are you sure?</Text>
-                                  <Image
-                                    src={logo}
-                                    alt="Pipehubb Logo"
-                                    width="35"
-                                  ></Image>
-                                </Flex>
-                              </AlertDialog.Title>
-                              <Separator my="3" size="4" />
-                              <AlertDialog.Description size="2">
-                                This action cannot be undone.
-                              </AlertDialog.Description>
-
-                              <Flex gap="3" mt="4" justify="end">
-                                <AlertDialog.Cancel>
-                                  <Button
-                                    variant="soft"
-                                    color="gray"
-                                    className="hover:cursor-pointer"
-                                  >
-                                    Cancel
-                                  </Button>
-                                </AlertDialog.Cancel>
-                                <AlertDialog.Action>
-                                  <Button
-                                    onClick={handleDelete}
-                                    variant="solid"
-                                    color="red"
-                                    className="hover:cursor-pointer"
-                                  >
-                                    Delete Loan
-                                  </Button>
-                                </AlertDialog.Action>
-                              </Flex>
-                            </AlertDialog.Content>
-                          </AlertDialog.Root>
+                          <CustomAlertDialog loan={loan!} />
                         </Flex>
 
                         <Separator my="3" size="4" />

@@ -9,7 +9,7 @@ const HeaderOne = () => {
       <Flex justify={"between"} align="center">
         <Heading size={"5"}>Welcome to your pipeline, $USER</Heading>
         <NextLink href="/loans/new">
-          <Button className="hover:cursor-pointer">Create Loan<MdOutlineCreate /></Button>
+          <Button className="hover:cursor-pointer myCustomButton">Create Loan<MdOutlineCreate /></Button>
         </NextLink>
       </Flex>
     </Card>

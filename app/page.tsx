@@ -24,10 +24,10 @@ export default function Home() {
             direction="column"
             align={"center"}
           >
-            <Button className="hover:cursor-pointer" size={"3"}>
+            <Button className="hover:cursor-pointer myCustomButton" size={"3"}>
               Log In
             </Button>
-            <Button className="hover:cursor-pointer" size={"3"}>
+            <Button className="hover:cursor-pointer myCustomButton" size={"3"}>
               Sign Up
             </Button>
           </Flex>

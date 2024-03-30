@@ -390,7 +390,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
             </Grid>
           </Box>
           <Flex justify={"end"} className="mt-4">
-            <Button disabled={isSubmitting} className="hover:cursor-pointer">
+            <Button disabled={isSubmitting} className="hover:cursor-pointer myCustomButton">
               <input type="submit" className="hover:cursor-pointer" />
               {isSubmitting ? <Spinner /> : ""}
             </Button>

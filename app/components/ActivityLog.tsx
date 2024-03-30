@@ -1,4 +1,4 @@
-import { Avatar, Card, Flex, Inset, Text } from "@radix-ui/themes";
+import { Avatar, Badge, Card, Flex, Inset, Text } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { set } from "zod";
@@ -47,10 +47,15 @@ const ActivityLog = ({ loan }: { loan: Loan }) => {
                   className="!bg-darkGrey"
                 >
                   <Flex justify={"between"} align={"center"}>
-                    <Image src={logo} alt="PipeHubb logo" width={25} height={25} />
-                    <Text className="italic text-white">
+                    <Image
+                      src={logo}
+                      alt="PipeHubb logo"
+                      width={25}
+                      height={25}
+                    />
+                    <Badge color="ruby" variant="solid">
                       {formatDate(activity.createdAt)}
-                    </Text>
+                    </Badge>
                   </Flex>
                 </Inset>
                 <Text>

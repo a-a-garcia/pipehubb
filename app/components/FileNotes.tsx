@@ -1,4 +1,12 @@
-import { Avatar, Button, Card, Flex, Inset, Text } from "@radix-ui/themes";
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  Flex,
+  Inset,
+  Text,
+} from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { set } from "zod";
@@ -27,7 +35,7 @@ const FileNotes = ({ loan }: { loan: Loan }) => {
     const fetchFileNotes = async () => {
       const response = await fetch(`/api/filenotes/${loan.id}`);
       const fileNotes = await response.json();
-      console.log(fileNotes)
+      console.log(fileNotes);
       setFetchedFileNotes(fileNotes);
     };
     fetchFileNotes();
@@ -37,7 +45,7 @@ const FileNotes = ({ loan }: { loan: Loan }) => {
     <Flex direction={"column"} gap={"4"}>
       <Flex className="mt-4" justify={"end"}>
         <NextLink href={`/loans/create-note/${loan.id}`}>
-          <Button>
+          <Button className="myCustomButton">
             Create Note
             <MdOutlineCreate />
           </Button>
@@ -62,9 +70,9 @@ const FileNotes = ({ loan }: { loan: Loan }) => {
                       className="mr-2"
                       radius="full"
                     ></Avatar>
-                    <Text className="italic text-white">
+                    <Badge color="ruby" variant="solid">
                       {formatDate(note.createdAt)}
-                    </Text>
+                    </Badge>
                   </Flex>
                 </Inset>
                 <Text>
