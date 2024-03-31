@@ -8,7 +8,7 @@ export const loansDisplayData: loansDisplayDataInterface[] = [
     {
       name: "Prospect",
       value: "PROSPECT",
-      color: "rgb(124 58 237)",
+      color: "rgb(137 207 240",
     },
     {
       name: "Application",

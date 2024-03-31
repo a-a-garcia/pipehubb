@@ -1,11 +1,15 @@
 import {
   Avatar,
   Badge,
+  Box,
   Button,
   Card,
+  Checkbox,
   Flex,
   Inset,
+  Popover,
   Text,
+  TextArea,
 } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
@@ -16,19 +20,15 @@ import { format } from "date-fns";
 import { Loan } from "@prisma/client";
 import { MdOutlineCreate } from "react-icons/md";
 import NextLink from "next/link";
-
-interface FileNotes {
-  id: number;
-  loanId: number;
-  note: string;
-  createdAt: Date;
-}
+import DeleteAndEditButtons from "./DeleteAndEditButtons";
+import { FileNotes } from "@prisma/client";
+import { FaCircleExclamation } from "react-icons/fa6";
 
 const formatDate = (date: Date) => {
   return format(new Date(date), "MM/dd/yyyy, HH:mm aa");
 };
 
-const FileNotes = ({ loan }: { loan: Loan }) => {
+const FileNotesComponent = ({ loan }: { loan: Loan }) => {
   const [fetchedFileNotes, setFetchedFileNotes] = useState<FileNotes[]>([]);
 
   useEffect(() => {
@@ -44,12 +44,50 @@ const FileNotes = ({ loan }: { loan: Loan }) => {
   return (
     <Flex direction={"column"} gap={"4"}>
       <Flex className="mt-4" justify={"end"}>
-        <NextLink href={`/loans/create-note/${loan.id}`}>
-          <Button className="myCustomButton">
-            Create Note
-            <MdOutlineCreate />
-          </Button>
-        </NextLink>
+        <Popover.Root>
+          <Popover.Trigger>
+            <Button className="myCustomButton hover:cursor-pointer">
+              Create Note
+              <MdOutlineCreate />
+            </Button>
+          </Popover.Trigger>
+          <Popover.Content>
+            <Flex gap="3">
+              <Avatar
+                size="2"
+                src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
+                fallback="A"
+                radius="full"
+              />
+              <Box>
+                <TextArea placeholder="Write a note…" style={{ height: 120 }} />
+                <Flex gap="3" mt="3" justify="between">
+                  <Flex align="center" gap="2" asChild>
+                    <Text as="label" size="2">
+                      <Checkbox />
+                      <Text>
+                        Mark as{" "}
+                        <Badge color="red">
+                          <FaCircleExclamation color="red" size="10px" />
+                          Important
+                        </Badge>
+                      </Text>
+                    </Text>
+                  </Flex>
+
+                  <Popover.Close>
+                    <Button
+                      className="myCustomButton hover:cursor-pointer"
+                      size="1"
+                    >
+                      Create
+                    </Button>
+                  </Popover.Close>
+                </Flex>
+              </Box>
+            </Flex>
+          </Popover.Content>
+        </Popover.Root>
       </Flex>
       {fetchedFileNotes &&
         fetchedFileNotes.map((note) => {
@@ -62,17 +100,20 @@ const FileNotes = ({ loan }: { loan: Loan }) => {
                   p="current"
                   className="!bg-darkGrey"
                 >
-                  <Flex justify={"between"} align={"center"}>
-                    <Avatar
-                      size="1"
-                      src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
-                      fallback="A"
-                      className="mr-2"
-                      radius="full"
-                    ></Avatar>
-                    <Badge color="ruby" variant="solid">
-                      {formatDate(note.createdAt)}
-                    </Badge>
+                  <Flex gap="2" justify={"between"}>
+                    <Flex gap={"1"} align={"center"}>
+                      <Avatar
+                        size="1"
+                        src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
+                        fallback="A"
+                        className="mr-2"
+                        radius="full"
+                      ></Avatar>
+                      <Badge color="ruby" variant="solid">
+                        {formatDate(note.createdAt)}
+                      </Badge>
+                    </Flex>
+                    <DeleteAndEditButtons item={note} type="note" />
                   </Flex>
                 </Inset>
                 <Text>
@@ -88,4 +129,4 @@ const FileNotes = ({ loan }: { loan: Loan }) => {
   );
 };
 
-export default FileNotes;
+export default FileNotesComponent;

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .myCustomButton {
-  @apply !bg-deepPink !text-white
+  @apply !bg-purple-600 !text-white
 }
 
 :root {

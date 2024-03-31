@@ -46,7 +46,7 @@ const ActivityLog = ({ loan }: { loan: Loan }) => {
                   p="current"
                   className="!bg-darkGrey"
                 >
-                  <Flex justify={"between"} align={"center"}>
+                  <Flex gap="3" align={"center"}>
                     <Image
                       src={logo}
                       alt="PipeHubb logo"

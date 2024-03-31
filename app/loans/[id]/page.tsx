@@ -300,7 +300,6 @@ const LoanDetailPage = ({ params }: Props) => {
                               <FaEdit />
                             </Button>
                           </NextLink>
-                          {/* to be put in it's own component */}
                           <CustomAlertDialog loan={loan!} />
                         </Flex>
 

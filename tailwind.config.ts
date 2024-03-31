@@ -18,7 +18,7 @@ const config: Config = {
         deepPink: "#FF5D73",
         darkGrey: "#515751",
         cactus: "#CDC6A5",
-        cream: "#F0DCCA"
+        cream: "#F0DCCA",
       }
     },
   },
