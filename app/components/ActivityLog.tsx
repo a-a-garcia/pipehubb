@@ -53,7 +53,7 @@ const ActivityLog = ({ loan }: { loan: Loan }) => {
                       width={25}
                       height={25}
                     />
-                    <Badge color="ruby" variant="solid">
+                    <Badge color="gray" variant="solid">
                       {formatDate(activity.createdAt)}
                     </Badge>
                   </Flex>

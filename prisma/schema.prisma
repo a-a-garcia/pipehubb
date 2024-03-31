@@ -64,6 +64,7 @@ model FileNotes {
   note      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  important Boolean? @default(false)
 }
 
 model DocumentChecklist {
@@ -72,6 +73,8 @@ model DocumentChecklist {
   loan         Loan           @relation(fields: [loanId], references: [id])
   documentName String
   dueDate      DateTime?
+  important    Boolean?       @default(false)
+  completed    Boolean        @default(false)
   status       DocumentStatus @default(PENDING)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt

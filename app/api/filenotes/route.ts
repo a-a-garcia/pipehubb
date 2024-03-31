@@ -22,7 +22,8 @@ export async function POST(request: NextRequest) {
     const newFileNote = await prisma.fileNotes.create({
         data: {
             loanId: body.loanId,
-            note: body.note
+            note: body.note,
+            important: body.important
         }
     })
 

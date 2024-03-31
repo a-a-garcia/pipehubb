@@ -27,6 +27,7 @@ import { MdOutlineCreate } from "react-icons/md";
 import { AiOutlineClear } from "react-icons/ai";
 import StatusDropdown from "./StatusDropdown";
 import DeleteAndEditButtons from "./DeleteAndEditButtons";
+import ImportantBadge from "./ImportantBadge";
 
 const formatDate = (date: Date) => {
   return format(new Date(date), "MM/dd/yyyy, HH:mm aa");
@@ -116,18 +117,24 @@ const DocumentChecklist = ({ loan }: { loan: Loan }) => {
               {documentChecklist &&
                 documentChecklist.map((item) => {
                   return (
+                    // completed item styling
+                    // className="line-through opacity-50 !bg-green-100 !text-gray-400"
                     <Table.Row>
                       <Table.Cell>
                         <Checkbox />
                       </Table.Cell>
                       <Table.Cell>
-                        <Avatar
-                          size="1"
-                          src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
-                          fallback="A"
-                          className="mr-2"
-                          radius="full"
-                        />
+                        <Flex>
+                          <Avatar
+                            size="1"
+                            src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
+                            fallback="A"
+                            className="mr-2"
+                            radius="full"
+                          />
+                          <Text size="1">On {formatDate(item.createdAt)}</Text>
+                          <Flex align={"center"}>{item.important && <ImportantBadge />}</Flex>
+                        </Flex>
                       </Table.Cell>
                       <Table.Cell>
                         <Text>{item.documentName}</Text>
@@ -137,7 +144,10 @@ const DocumentChecklist = ({ loan }: { loan: Loan }) => {
                         {item.dueDate ? formatDate(item.dueDate) : "None"}
                       </Table.Cell>
                       <Table.Cell>
-                        <DeleteAndEditButtons item={item} type="checklistItem" />
+                        <DeleteAndEditButtons
+                          item={item}
+                          type="checklistItem"
+                        />
                       </Table.Cell>
                     </Table.Row>
                   );

@@ -31,7 +31,7 @@ const DeleteAndEditButtons = ({ item, type }: Props) => {
     <Flex gap={"2"}>
       <HoverCard.Root>
         <HoverCard.Trigger>
-          <Button color="indigo" className="hover:cursor-pointer" size={"1"}>
+          <Button color="ruby" className="hover:cursor-pointer" size={"1"}>
             <FaEdit />
           </Button>
         </HoverCard.Trigger>
@@ -64,7 +64,7 @@ const DeleteAndEditButtons = ({ item, type }: Props) => {
       </HoverCard.Root>
       <HoverCard.Root>
         <HoverCard.Trigger>
-          <Button color="red" className="hover:cursor-pointer" size={"1"}>
+          <Button color="ruby" className="hover:cursor-pointer" size={"1"}>
             <FaTrashCan />
           </Button>
         </HoverCard.Trigger>
