@@ -90,6 +90,8 @@ export async function DELETE(response:NextResponse, {params} : {params : {id: st
                 // error handling just in case
                 return NextResponse.json({message: "Could not find activity logs to delete"}, {status: 404})
             }
+
+            //add deletemany for filenotes, and documentchecklist as well later
             
             // delete loan after deleting associated logs
             await prisma.loan.delete({

@@ -1,20 +1,30 @@
-import { DocumentChecklist } from "@prisma/client";
+import { DocumentChecklist, Loan } from "@prisma/client";
 import { Select, Table, Badge } from "@radix-ui/themes";
 import axios from "axios";
+import fetchDocumentChecklist from "./DocumentChecklist";
+import { useEffect, useState } from "react";
 
-const StatusDropdown = ({ item }: { item: DocumentChecklist }) => {
-  const handleChange = async (value: string) => {
+//destructure both item and fetchDocumentChecklist from props, the same object.
+//fetchDocumentChecklist is of type `(loanId: String) => void` because it doesn't return anything.
+const StatusDropdown = ({ item, fetchDocumentChecklist }: { item: DocumentChecklist, fetchDocumentChecklist: (loanId: string) => void; },) => {
+  const [status, setStatus] = useState(item.status);
+
+  useEffect(() => {
+    fetchDocumentChecklist(String(item.loanId));
+  }, [status])
+
+  const handleChange = async (value: 'PENDING' | 'RECEIVED' | 'REQUESTED') => {
     await axios.patch(`/api/documentchecklist/${item.id}`, {
         id: item.id,
         status: value
     })
+    setStatus(value);
   }
 
   return (
-    <Table.Cell>
       <Select.Root
         defaultValue={item.status}
-        onValueChange={(value) => handleChange(value)}
+        onValueChange={(value: 'PENDING' | 'RECEIVED' | 'REQUESTED') => handleChange(value)}
       >
         <Select.Trigger variant="ghost" className="hover:cursor-pointer" />
         <Select.Content variant="soft" color="gray">
@@ -35,7 +45,6 @@ const StatusDropdown = ({ item }: { item: DocumentChecklist }) => {
           </Select.Item>
         </Select.Content>
       </Select.Root>
-    </Table.Cell>
   );
 };
 

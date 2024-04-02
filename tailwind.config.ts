@@ -19,6 +19,7 @@ const config: Config = {
         darkGrey: "#515751",
         cactus: "#CDC6A5",
         cream: "#F0DCCA",
+        altDeepPink: "#e54666"
       }
     },
   },

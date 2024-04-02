@@ -267,3 +267,21 @@ In the code you've shared, the value variable is correctly converted to a string
 Solution: The loanCreationActivity function is called immediately after the axios.post request to create a new loan, but this doesn't necessarily mean that the newLoan data has been set in the state. The setNewlyCreatedLoan function updates the state asynchronously, which means there might be a delay before the new state is available.
 
 One way to ensure that loanCreationActivity has the data it needs is to pass the newLoan data directly to it, rather than relying on the state.
+
+12. Breakdown of how DocumentChecklist (parent) and StatusDropdown (child) work to dynamically update `status` and display to the user
+
+DocumentChecklist.tsx:
+
+This component receives a loan object as a prop.
+It maintains a state documentChecklist which is initially set to null.
+It defines a function fetchDocumentChecklist that takes a loanId as a parameter, fetches data from an API endpoint using the loanId, and sets the documentChecklist state with the returned data.
+In the useEffect hook, it checks if documentChecklist is null and if so, it calls fetchDocumentChecklist with the loan.id as a parameter. This useEffect hook runs once when the component mounts because its dependency array is empty.
+It passes the fetchDocumentChecklist function as a prop to the StatusDropdown component.
+
+StatusDropdown.tsx:
+
+This component receives an item object and the fetchDocumentChecklist function as props.
+It maintains a state status which is initially set to item.status.
+In the useEffect hook, it calls fetchDocumentChecklist with item.loanId as a parameter whenever status changes.
+It defines a function handleChange that takes a value as a parameter, makes a PATCH request to an API endpoint with item.id and value, and sets the status state with the value.
+In summary, DocumentChecklist.tsx fetches a list of documents when it mounts and passes a function to fetch the document checklist to StatusDropdown.tsx. StatusDropdown.tsx uses this function to fetch the document checklist whenever the status changes. It also updates the status of a specific document in the checklist when the dropdown value changes.

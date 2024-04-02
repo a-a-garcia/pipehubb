@@ -1,5 +1,5 @@
 import prisma from "@/prisma/client"
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(response:NextResponse, {params} : {params : {id: string}}) {
     const loanFileNotes = await prisma.fileNotes.findMany({
@@ -12,4 +12,17 @@ export async function GET(response:NextResponse, {params} : {params : {id: strin
     }
 
     return NextResponse.json(loanFileNotes, {status: 200})
+}
+
+export async function DELETE(request:NextRequest, response:NextResponse) {
+    const body = await request.json();
+
+    if (body.deleteAll) {
+        await prisma.fileNotes.deleteMany({
+            where: {loanId: body.loanId}
+        })
+        return NextResponse.json({}, {status:200})
+    }
+    
+    return NextResponse.json({error: `An error occurred while attempting to delete loanId ${body.loanId}'s file notes.`})
 }

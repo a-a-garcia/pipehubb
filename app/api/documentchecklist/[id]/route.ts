@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(response:NextResponse, {params} : {params: {id: string}}) {
     const documentChecklist = await prisma.documentChecklist.findMany({
         where: {loanId: parseInt(params.id)},
-        orderBy : [{important: "desc"}, {createdAt: "desc"}]
+        orderBy : [{status: "desc"}, {important: "desc"}, {createdAt: "desc"}]
     })
 
     if (!documentChecklist) {
@@ -32,21 +32,25 @@ export async function PATCH(response:NextResponse, request:NextRequest) {
         return NextResponse.json({error: "Could not find requested checklist item."}, {status: 404})
     }
 
-    let updatedChecklistItem = undefined;
-
-    if (body.status) {
-        updatedChecklistItem = await prisma.documentChecklist.update({
+    const updatedChecklistItem = await prisma.documentChecklist.update({
             where: { id: parseInt(body.id) },
             data: { status: body.status }
         });
-    } else {
-        updatedChecklistItem = await prisma.documentChecklist.update({
-            where: { id: parseInt(body.id)},
-            data: { completed: body.completed }
-        });
-    }
 
     return NextResponse.json(updatedChecklistItem, {status: 200})
+}
+
+export async function DELETE(request:NextRequest, response:NextResponse) {
+    const body = await request.json();
+
+    if (body.deleteAll) {
+        await prisma.documentChecklist.deleteMany({
+            where: {loanId: body.loanId}
+        })
+        return NextResponse.json({}, {status:200})
+    }
+    
+    return NextResponse.json({error: `An error occurred while attempting to delete loanId ${body.loanId}'s document checklist.`})
 }
 
 // export async function PUT(response:NextResponse, request:NextRequest) {

@@ -77,7 +77,6 @@ const CreateNoteForm = ({ loan }: { loan: Loan }) => {
   };
 
   return (
-    <Flex className="mt-4" justify={"end"}>
       <Popover.Root>
         <Popover.Trigger>
           <Button className="myCustomButton hover:cursor-pointer">
@@ -106,14 +105,10 @@ const CreateNoteForm = ({ loan }: { loan: Loan }) => {
                   <Flex align="center" gap="2" asChild>
                     <Text
                       as="label"
-                      onChange={(e) =>
-                        setImportantInput(
-                          (e.target as HTMLInputElement).checked
-                        )
-                      }
                       size="2"
                     >
-                      <Checkbox />
+                      {/* Radix UI checkbox has additional possible value for checked - `indeterminate` so must handle that */}
+                      <Checkbox onCheckedChange={(value) => value !== 'indeterminate' && setImportantInput(value)}/>
                       <Text>
                         Mark as <ImportantBadge />
                       </Text>
@@ -135,7 +130,6 @@ const CreateNoteForm = ({ loan }: { loan: Loan }) => {
           </Flex>
         </Popover.Content>
       </Popover.Root>
-    </Flex>
   );
 };
 

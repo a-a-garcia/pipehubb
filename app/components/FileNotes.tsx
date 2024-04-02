@@ -1,11 +1,4 @@
-import {
-  Avatar,
-  Badge,
-  Card,
-  Flex,
-  Inset,
-  Text,
-} from "@radix-ui/themes";
+import { Avatar, Badge, Card, Flex, Inset, Text } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { Loan } from "@prisma/client";
@@ -13,6 +6,7 @@ import DeleteAndEditButtons from "./DeleteAndEditButtons";
 import { FileNotes } from "@prisma/client";
 import CreateNoteForm from "./CreateNoteForm";
 import ImportantBadge from "./ImportantBadge";
+import NotesAndChecklistHeader from "./NotesAndChecklistHeader";
 
 const formatDate = (date: Date) => {
   return format(new Date(date), "MM/dd/yyyy, HH:mm aa");
@@ -33,7 +27,7 @@ const FileNotesComponent = ({ loan }: { loan: Loan }) => {
 
   return (
     <Flex direction={"column"} gap={"4"}>
-      <CreateNoteForm loan={loan}/>
+      <NotesAndChecklistHeader loan={loan} isFileNotes={true} />
       {fetchedFileNotes &&
         fetchedFileNotes.map((note) => {
           return (
@@ -57,9 +51,7 @@ const FileNotesComponent = ({ loan }: { loan: Loan }) => {
                       <Badge color="gray" variant="solid">
                         {formatDate(note.createdAt)}
                       </Badge>
-                      { note.important && (
-                        <ImportantBadge />
-                      )}
+                      {note.important && <ImportantBadge />}
                     </Flex>
                     <DeleteAndEditButtons item={note} type="note" />
                   </Flex>

@@ -23,11 +23,12 @@ import Image from "next/image";
 import logo from "@/public/images/pipeHubb_logo_transparent.png";
 import { FaEdit } from "react-icons/fa";
 import { FaCircleExclamation, FaTrashCan } from "react-icons/fa6";
-import { MdOutlineCreate } from "react-icons/md";
+import { MdCancel, MdOutlineCreate } from "react-icons/md";
 import { AiOutlineClear } from "react-icons/ai";
 import StatusDropdown from "./StatusDropdown";
 import DeleteAndEditButtons from "./DeleteAndEditButtons";
 import ImportantBadge from "./ImportantBadge";
+import NotesAndChecklistHeader from "./NotesAndChecklistHeader";
 
 const formatDate = (date: Date) => {
   return format(new Date(date), "MM/dd/yyyy, HH:mm aa");
@@ -38,26 +39,23 @@ const DocumentChecklist = ({ loan }: { loan: Loan }) => {
     DocumentChecklistType[] | null
   >(null);
 
+  const fetchDocumentChecklist = async (loanId: string) => {
+    const parsedLoanId = parseInt(loanId);
+    const response = await fetch(`/api/documentchecklist/${parsedLoanId}`);
+    const data = await response.json();
+    console.log(data);
+    setDocumentChecklist(data);
+  };
+
   useEffect(() => {
-    const fetchDocumentChecklist = async () => {
-      const response = await fetch(`/api/documentchecklist/${loan.id}`);
-      const data = await response.json();
-      console.log(data);
-      setDocumentChecklist(data);
-    };
     if (!documentChecklist) {
-      fetchDocumentChecklist();
+      fetchDocumentChecklist(String(loan.id));
     }
-  }, [loan.id]);
+  }, []);
 
   return (
     <div>
-      <Box className="mt-4">
-        <Flex justify={"end"}>
-          <Button className="myCustomButton hover:cursor-pointer">
-            Create Checklist Item(s) <MdOutlineCreate />
-          </Button>
-        </Flex>
+        <NotesAndChecklistHeader isDocumentChecklist={true} loan={loan}/>
         <Card className="mt-4">
           <Inset
             clip="border-box"
@@ -69,46 +67,15 @@ const DocumentChecklist = ({ loan }: { loan: Loan }) => {
               <Heading className="text-white">
                 Your checklist for {loan.borrowerName}
               </Heading>
-              <HoverCard.Root>
-                <HoverCard.Trigger>
-                  <Button color="red" size="1" className="hover:cursor-pointer">
-                    <AiOutlineClear />
-                  </Button>
-                </HoverCard.Trigger>
-                <HoverCard.Content className=" max-w-64" size={"1"}>
-                  <Flex gap="4">
-                    <Avatar
-                      size="1"
-                      fallback="R"
-                      radius="full"
-                      src="/images/pipeHubb_logo_transparent.png"
-                    />
-                    <Box>
-                      <Heading size={"2"}>Clear Checklist</Heading>
-                      <Text size="1">
-                        Click this button to delete <strong>the entire</strong>{" "}
-                        checklist.
-                      </Text>
-                      <Flex gap="2" className="mt-2" align={"center"}>
-                        <FaCircleExclamation color="red" size="15px" />
-                        <Text size="1" color="red">
-                          {" "}
-                          This is a permanent action.
-                        </Text>
-                      </Flex>
-                    </Box>
-                  </Flex>
-                </HoverCard.Content>
-              </HoverCard.Root>
             </Flex>
           </Inset>
           <Table.Root>
             <Table.Header>
               <Table.Row>
-                <Table.ColumnHeaderCell></Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Created By</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Document</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Created By</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Important?</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Document</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell>Due Date</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
               </Table.Row>
@@ -118,10 +85,24 @@ const DocumentChecklist = ({ loan }: { loan: Loan }) => {
                 documentChecklist.map((item) => {
                   return (
                     // completed item styling
-                    // className="line-through opacity-50 !bg-green-100 !text-gray-400"
-                    <Table.Row>
+                    <Table.Row
+                      key={item.id}
+                      style={
+                        item.status === "RECEIVED"
+                          ? {
+                              textDecorationLine: "line-through",
+                              opacity: "0.5",
+                              backgroundColor: "rgb(220 252 231)",
+                              color: "rgb(156 163 175)",
+                            }
+                          : {}
+                      }
+                    >
                       <Table.Cell>
-                        <Checkbox />
+                        <StatusDropdown
+                          item={item}
+                          fetchDocumentChecklist={fetchDocumentChecklist}
+                        />
                       </Table.Cell>
                       <Table.Cell>
                         <Flex>
@@ -133,13 +114,23 @@ const DocumentChecklist = ({ loan }: { loan: Loan }) => {
                             radius="full"
                           />
                           <Text size="1">On {formatDate(item.createdAt)}</Text>
-                          <Flex align={"center"}>{item.important && <ImportantBadge />}</Flex>
+                        </Flex>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <Flex justify={"center"}>
+                          {item.important ? (
+                            <ImportantBadge />
+                          ) : (
+                            <Badge variant="surface">
+                              <MdCancel />
+                              N/A
+                            </Badge>
+                          )}
                         </Flex>
                       </Table.Cell>
                       <Table.Cell>
                         <Text>{item.documentName}</Text>
                       </Table.Cell>
-                      <StatusDropdown item={item} />
                       <Table.Cell>
                         {item.dueDate ? formatDate(item.dueDate) : "None"}
                       </Table.Cell>
@@ -155,7 +146,6 @@ const DocumentChecklist = ({ loan }: { loan: Loan }) => {
             </Table.Body>
           </Table.Root>
         </Card>
-      </Box>
     </div>
   );
 };

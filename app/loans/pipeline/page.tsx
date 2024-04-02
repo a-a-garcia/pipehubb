@@ -11,8 +11,9 @@ import {
 import NextLink from "next/link";
 import { useEffect, useState } from "react";
 import LoanCard from "./LoanCard";
-import HeaderOne from "@/app/components/HeaderOne";
+import HeaderOne from "@/app/components/PipelineHeader";
 import { loansDisplayData, loansDisplayDataInterface } from "@/app/loans/loansDisplayData"
+import PipelineHeader from "@/app/components/PipelineHeader";
 
 const PipelinePage = () => {
   const [loans, setLoans] = useState<Record<string, Loan[]>>({});
@@ -32,7 +33,7 @@ const PipelinePage = () => {
   return (
     <div>
       <Flex direction={"column"} gap={"5"}>
-        <HeaderOne />
+        <PipelineHeader />
         <Card className="!bg-maroon">
           <Grid columns={{ initial: "1", md: "6" }} gap={"4"}>
             {loansDisplayData.map((data: loansDisplayDataInterface) => (

@@ -74,7 +74,6 @@ model DocumentChecklist {
   documentName String
   dueDate      DateTime?
   important    Boolean?       @default(false)
-  completed    Boolean        @default(false)
   status       DocumentStatus @default(PENDING)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt

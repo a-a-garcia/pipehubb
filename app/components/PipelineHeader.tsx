@@ -3,7 +3,7 @@ import React from "react";
 import NextLink from "next/link";
 import { MdOutlineCreate } from "react-icons/md";
 
-const HeaderOne = () => {
+const PipelineHeader = () => {
   return (
     <Card className="!bg-cactus">
       <Flex justify={"between"} align="center">
@@ -16,4 +16,4 @@ const HeaderOne = () => {
   );
 };
 
-export default HeaderOne;
+export default PipelineHeader;
