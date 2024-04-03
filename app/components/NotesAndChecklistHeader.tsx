@@ -12,9 +12,9 @@ import React from "react";
 import { AiOutlineClear } from "react-icons/ai";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { MdOutlineCreate } from "react-icons/md";
-import CreateNoteForm from "./CreateNoteForm";
 import { Loan } from "@prisma/client";
 import NextLink from "next/link";
+import NoteForm from "./NoteForm";
 
 const NotesAndChecklistHeader = ({
   isDocumentChecklist = false,
@@ -60,7 +60,7 @@ const NotesAndChecklistHeader = ({
             Create Checklist Item(s) <MdOutlineCreate />
           </Button>
         )}
-        {isFileNotes && <CreateNoteForm loan={loan!} />}
+        {isFileNotes && <NoteForm loan={loan!} isEditMode={false}/>}
         <HoverCard.Root>
           <HoverCard.Trigger>
             <Button

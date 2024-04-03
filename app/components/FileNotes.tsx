@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { Loan } from "@prisma/client";
 import DeleteAndEditButtons from "./DeleteAndEditButtons";
 import { FileNotes } from "@prisma/client";
-import CreateNoteForm from "./CreateNoteForm";
+import CreateNoteForm from "./NoteForm";
 import ImportantBadge from "./ImportantBadge";
 import NotesAndChecklistHeader from "./NotesAndChecklistHeader";
 
@@ -53,7 +53,7 @@ const FileNotesComponent = ({ loan }: { loan: Loan }) => {
                       </Badge>
                       {note.important && <ImportantBadge />}
                     </Flex>
-                    <DeleteAndEditButtons item={note} type="note" />
+                    <DeleteAndEditButtons item={note} type="note" loan={loan}/>
                   </Flex>
                 </Inset>
                 <Text>

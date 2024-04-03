@@ -32,7 +32,7 @@ import Image from "next/image";
 import logo from "@/public/images/pipeHubb_logo_transparent.png";
 import FileNotes from "@/app/components/FileNotes";
 import DocumentChecklist from "@/app/components/DocumentChecklist";
-import CustomAlertDialog from "@/app/components/AlertDialog";
+import CustomAlertDialog from "@/app/components/CustomAlertDialog";
 
 //interface to get params from the URL
 interface Props {
@@ -117,11 +117,11 @@ const LoanDetailPage = ({ params }: Props) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         loanId: parseInt(params.id),
-        message: `USER moved loan to ${stageInfo.value} stage.`
-      })
-    })
+        message: `USER moved loan to ${stageInfo.value} stage.`,
+      }),
+    });
     //refresh the page to reflect the change
     window.location.reload();
   };
@@ -282,13 +282,13 @@ const LoanDetailPage = ({ params }: Props) => {
 
                 <Box>
                   <Tabs.Content value="documentChecklist">
-                    <DocumentChecklist loan={loan!}/>
+                    <DocumentChecklist loan={loan!} />
                   </Tabs.Content>
                 </Box>
 
                 <Box>
                   <Tabs.Content value="loanActions">
-                    <Card className="mt-5 !bg-cactus">
+                    <Card className="mt-5 !bg-darkGrey">
                       <Flex gap={"3"} direction={"column"}>
                         <Flex direction={"column"} gap="4" align={"center"}>
                           <NextLink href={`/loans/edit/${loan?.id}`}>

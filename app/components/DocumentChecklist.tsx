@@ -138,6 +138,7 @@ const DocumentChecklist = ({ loan }: { loan: Loan }) => {
                         <DeleteAndEditButtons
                           item={item}
                           type="checklistItem"
+                          loan={loan}
                         />
                       </Table.Cell>
                     </Table.Row>
