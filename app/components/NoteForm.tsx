@@ -15,6 +15,7 @@ import { MdOutlineCreate } from "react-icons/md";
 import { createFileNoteSchema } from "../validationSchemas";
 import ImportantBadge from "./ImportantBadge";
 import { FaEdit } from "react-icons/fa";
+import MarkAsImportant from "./MarkAsImportant";
 
 const NoteForm = ({
   loan,
@@ -120,21 +121,7 @@ const NoteForm = ({
                 }}
               ></TextArea>
               <Flex gap="3" mt="3" justify="between">
-                <Flex align="center" gap="2" asChild>
-                  <Text as="label" size="2">
-                    {/* Radix UI checkbox has additional possible value for checked - `indeterminate` so must handle that */}
-                    <Checkbox
-                      defaultChecked={importantInput}
-                      onCheckedChange={(value) =>
-                        value !== "indeterminate" && setImportantInput(value)
-                      }
-                    />
-                    <Text>
-                      Mark as <ImportantBadge />
-                    </Text>
-                  </Text>
-                </Flex>
-
+                <MarkAsImportant importantInput={importantInput} setImportantInput={setImportantInput}/>
                 <Popover.Close>
                   <Button
                     className="myCustomButton hover:cursor-pointer"

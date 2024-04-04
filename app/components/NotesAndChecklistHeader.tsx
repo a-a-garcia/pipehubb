@@ -15,6 +15,7 @@ import { MdOutlineCreate } from "react-icons/md";
 import { Loan } from "@prisma/client";
 import NextLink from "next/link";
 import NoteForm from "./NoteForm";
+import ChecklistForm from "./ChecklistForm";
 
 const NotesAndChecklistHeader = ({
   isDocumentChecklist = false,
@@ -55,12 +56,8 @@ const NotesAndChecklistHeader = ({
   return (
     <Card className="!bg-darkGrey mt-4">
       <Flex justify={"between"} align={"center"}>
-        {isDocumentChecklist && (
-          <Button className="myCustomButton hover:cursor-pointer" size="2">
-            Create Checklist Item(s) <MdOutlineCreate />
-          </Button>
-        )}
-        {isFileNotes && <NoteForm loan={loan!} isEditMode={false}/>}
+        {isDocumentChecklist && <ChecklistForm />}
+        {isFileNotes && <NoteForm loan={loan!} isEditMode={false} />}
         <HoverCard.Root>
           <HoverCard.Trigger>
             <Button

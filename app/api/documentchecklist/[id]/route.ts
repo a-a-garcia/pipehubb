@@ -46,8 +46,11 @@ export async function DELETE(request:NextRequest, response:NextResponse) {
     if (body.deleteAll) {
         await prisma.documentChecklist.deleteMany({
             where: {loanId: body.loanId}
-        })
-        return NextResponse.json({}, {status:200})
+        });
+    } else {
+        await prisma.documentChecklist.delete({
+            where: { id: body.checklistId }
+        });
     }
     
     return NextResponse.json({error: `An error occurred while attempting to delete loanId ${body.loanId}'s document checklist.`})

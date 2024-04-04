@@ -33,6 +33,7 @@ import logo from "@/public/images/pipeHubb_logo_transparent.png";
 import FileNotes from "@/app/components/FileNotes";
 import DocumentChecklist from "@/app/components/DocumentChecklist";
 import CustomAlertDialog from "@/app/components/CustomAlertDialog";
+import { useRouter } from "next/navigation";
 
 //interface to get params from the URL
 interface Props {
@@ -62,6 +63,8 @@ const LoanDetailPage = ({ params }: Props) => {
     useState<loansDisplayDataInterface>();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchLoan = async () => {

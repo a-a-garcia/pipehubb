@@ -43,13 +43,31 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
         },
       });
       console.log(response);
-      window.location.reload();
+    } else if (type === "checklistItem") {
+      const response = await fetch(`/api/documentchecklist/${loan.id}`, {
+        body: JSON.stringify({
+          checklistId: item.id,
+        }),
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      console.log(response)
     }
+    window.location.reload();
   };
 
   return (
     <Flex gap={"2"}>
-      <NoteForm loan={loan} isEditMode={true} item={item} />
+      {type === "note" && (
+        <NoteForm loan={loan} isEditMode={true} item={item} />
+        )}
+      {type === "checklistItem" && (
+        <Button className="myCustomButton hover:cursor-pointer" size="1">
+        <FaEdit /> 
+      </Button>
+        )}
       <HoverCard.Root>
         <HoverCard.Trigger>
           <Button
