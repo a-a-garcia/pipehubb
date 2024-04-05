@@ -11,6 +11,7 @@ import {
   Separator,
   AlertDialog,
   AlertDialogAction,
+  ScrollArea,
 } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import NextLink from "next/link";
@@ -231,114 +232,125 @@ const LoanDetailPage = ({ params }: Props) => {
           <Skeleton height={"40rem"} />
         ) : (
           <Card className="!bg-maroon">
-            <Card>
-              <Tabs.Root defaultValue="activityLog">
-                <Tabs.List>
-                  <Tabs.Trigger
-                    value="activityLog"
-                    className="hover:cursor-pointer"
-                  >
-                    Activity Log
-                  </Tabs.Trigger>
-                  <Tabs.Trigger value="tasks" className="hover:cursor-pointer">
-                    Tasks
-                  </Tabs.Trigger>
-                  <Tabs.Trigger
-                    value="fileNotes"
-                    className="hover:cursor-pointer"
-                  >
-                    File Notes
-                  </Tabs.Trigger>
+            <ScrollArea
+              type="auto"
+              scrollbars="vertical"
+              style={{ height: 900 }}
+            >
+              <Card>
+                <Tabs.Root defaultValue="activityLog">
+                  <Tabs.List>
+                    <Tabs.Trigger
+                      value="activityLog"
+                      className="hover:cursor-pointer"
+                    >
+                      Activity Log
+                    </Tabs.Trigger>
+                    <Tabs.Trigger
+                      value="tasks"
+                      className="hover:cursor-pointer"
+                    >
+                      Tasks
+                    </Tabs.Trigger>
+                    <Tabs.Trigger
+                      value="fileNotes"
+                      className="hover:cursor-pointer"
+                    >
+                      File Notes
+                    </Tabs.Trigger>
 
-                  <Tabs.Trigger
-                    value="documentChecklist"
-                    className="hover:cursor-pointer"
-                  >
-                    Document Checklist
-                  </Tabs.Trigger>
+                    <Tabs.Trigger
+                      value="documentChecklist"
+                      className="hover:cursor-pointer"
+                    >
+                      Document Checklist
+                    </Tabs.Trigger>
 
-                  <Tabs.Trigger
-                    value="loanActions"
-                    className="hover:cursor-pointer"
-                  >
-                    Loan Actions
-                  </Tabs.Trigger>
-                </Tabs.List>
+                    <Tabs.Trigger
+                      value="loanActions"
+                      className="hover:cursor-pointer"
+                    >
+                      Loan Actions
+                    </Tabs.Trigger>
+                  </Tabs.List>
 
-                <Box>
-                  <Tabs.Content value="activityLog">
-                    <ActivityLog loan={loan!} />
-                  </Tabs.Content>
-                </Box>
+                  <Box>
+                    <Tabs.Content value="activityLog">
+                      <ActivityLog loan={loan!} />
+                    </Tabs.Content>
+                  </Box>
 
-                <Box>
-                  <Tabs.Content value="tasks">
-                    <Text>Tasks</Text>
-                  </Tabs.Content>
-                </Box>
+                  <Box>
+                    <Tabs.Content value="tasks">
+                      <Text>Tasks</Text>
+                    </Tabs.Content>
+                  </Box>
 
-                <Box>
-                  <Tabs.Content value="fileNotes">
-                    <FileNotes loan={loan!} />
-                  </Tabs.Content>
-                </Box>
+                  <Box>
+                    <Tabs.Content value="fileNotes">
+                      <FileNotes loan={loan!} />
+                    </Tabs.Content>
+                  </Box>
 
-                <Box>
-                  <Tabs.Content value="documentChecklist">
-                    <DocumentChecklist loan={loan!} />
-                  </Tabs.Content>
-                </Box>
+                  <Box>
+                    <Tabs.Content value="documentChecklist">
+                      <DocumentChecklist loan={loan!} />
+                    </Tabs.Content>
+                  </Box>
 
-                <Box>
-                  <Tabs.Content value="loanActions">
-                    <Card className="mt-5 !bg-darkGrey">
-                      <Flex gap={"3"} direction={"column"}>
-                        <Flex direction={"column"} gap="4" align={"center"}>
-                          <NextLink href={`/loans/edit/${loan?.id}`}>
-                            <Button
-                              color="indigo"
-                              className="hover:cursor-pointer"
-                            >
-                              <Text>Edit loan</Text>
-                              <FaEdit />
-                            </Button>
-                          </NextLink>
-                          <CustomAlertDialog loan={loan!} />
+                  <Box>
+                    <Tabs.Content value="loanActions">
+                      <Card className="mt-5 !bg-darkGrey">
+                        <Flex gap={"3"} direction={"column"}>
+                          <Flex direction={"column"} gap="4" align={"center"}>
+                            <NextLink href={`/loans/edit/${loan?.id}`}>
+                              <Button
+                                color="indigo"
+                                className="hover:cursor-pointer"
+                              >
+                                <Text>Edit loan</Text>
+                                <FaEdit />
+                              </Button>
+                            </NextLink>
+                            <CustomAlertDialog loan={loan!} />
+                          </Flex>
+
+                          <Separator my="3" size="4" />
+                          <Flex justify={"between"}>
+                            {previousStageInfo && (
+                              <Button
+                                onClick={() =>
+                                  handleStageChange(previousStageInfo)
+                                }
+                                className="hover:cursor-pointer"
+                                style={{
+                                  backgroundColor: previousStageInfo?.color,
+                                }}
+                              >
+                                <IoArrowBackCircleOutline />
+                                Return loan to {previousStageInfo?.value} stage
+                              </Button>
+                            )}
+                            {nextStageInfo && (
+                              <Button
+                                onClick={() => handleStageChange(nextStageInfo)}
+                                className="hover:cursor-pointer"
+                                style={{
+                                  backgroundColor: nextStageInfo?.color,
+                                }}
+                              >
+                                Advance loan to {nextStageInfo?.value} stage
+                                <IoArrowForwardCircleOutline />
+                              </Button>
+                            )}
+                          </Flex>
                         </Flex>
-
-                        <Separator my="3" size="4" />
-                        <Flex justify={"between"}>
-                          {previousStageInfo && (
-                            <Button
-                              onClick={() =>
-                                handleStageChange(previousStageInfo)
-                              }
-                              className="hover:cursor-pointer"
-                              style={{
-                                backgroundColor: previousStageInfo?.color,
-                              }}
-                            >
-                              <IoArrowBackCircleOutline />
-                              Return loan to {previousStageInfo?.value} stage
-                            </Button>
-                          )}
-                          {nextStageInfo && (
-                            <Button
-                              onClick={() => handleStageChange(nextStageInfo)}
-                              className="hover:cursor-pointer"
-                              style={{ backgroundColor: nextStageInfo?.color }}
-                            >
-                              Advance loan to {nextStageInfo?.value} stage
-                              <IoArrowForwardCircleOutline />
-                            </Button>
-                          )}
-                        </Flex>
-                      </Flex>
-                    </Card>
-                  </Tabs.Content>
-                </Box>
-              </Tabs.Root>
-            </Card>
+                      </Card>
+                    </Tabs.Content>
+                  </Box>
+                </Tabs.Root>
+              </Card>
+            </ScrollArea>
           </Card>
         )}
       </Grid>

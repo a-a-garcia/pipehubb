@@ -164,10 +164,10 @@ const ChecklistForm = ({
                   <Table.Header>
                     <Table.Row>
                       <Table.ColumnHeaderCell>Document</Table.ColumnHeaderCell>
-                      <Table.ColumnHeaderCell>Due Date</Table.ColumnHeaderCell>
                       <Table.ColumnHeaderCell>
                         Important?
                       </Table.ColumnHeaderCell>
+                      <Table.ColumnHeaderCell>Due Date</Table.ColumnHeaderCell>
                       <Table.ColumnHeaderCell></Table.ColumnHeaderCell>
                     </Table.Row>
                   </Table.Header>
@@ -180,16 +180,6 @@ const ChecklistForm = ({
                         >
                           <Table.Cell>{item.documentName}</Table.Cell>
                           <Table.Cell>
-                            {item.dueDate === null ? (
-                              <Badge variant="surface">
-                                <MdCancel />
-                                N/A
-                              </Badge>
-                            ) : (
-                              item.dueDate
-                            )}
-                          </Table.Cell>
-                          <Table.Cell>
                             {item.important ? (
                               <ImportantBadge />
                             ) : (
@@ -197,6 +187,16 @@ const ChecklistForm = ({
                                 <MdCancel />
                                 N/A
                               </Badge>
+                            )}
+                          </Table.Cell>
+                          <Table.Cell>
+                            {item.dueDate === null ? (
+                              <Badge variant="surface">
+                                <MdCancel />
+                                N/A
+                              </Badge>
+                            ) : (
+                              item.dueDate
                             )}
                           </Table.Cell>
                           <Table.Cell>
