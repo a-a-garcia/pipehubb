@@ -20,3 +20,23 @@ export async function POST(request: NextRequest, response: NextResponse) {
 
     return NextResponse.json(newDocumentChecklist, {status: 201})
 }
+
+export async function PATCH(request: NextRequest, response: NextResponse){
+    const body = await request.json();
+
+    try {
+        const updatedChecklistItem = await prisma.documentChecklist.update({
+            where: {id: body.id},
+            data: {
+                documentName: body.documentName,
+                dueDate: body.dueDate,
+                important: body.important
+            }
+        })
+        return NextResponse.json(updatedChecklistItem, {status: 200})
+
+    } catch {
+        return NextResponse.json({error: `An error occurred while attempting to update document checklist item ${body.id}.`})
+    }
+
+}

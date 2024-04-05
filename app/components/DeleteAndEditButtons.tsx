@@ -12,6 +12,7 @@ import React from "react";
 import { FaEdit } from "react-icons/fa";
 import { FaTrashCan, FaCircleExclamation } from "react-icons/fa6";
 import NoteForm from "./NoteForm";
+import ChecklistForm from "./ChecklistForm";
 
 //making props more distinct because TypeScript is incorrectly inferring the type of the props
 // two different interfaces NoteProps and ChecklistItemProps that are being used in a union type Props
@@ -64,9 +65,7 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
         <NoteForm loan={loan} isEditMode={true} item={item} />
         )}
       {type === "checklistItem" && (
-        <Button className="myCustomButton hover:cursor-pointer" size="1">
-        <FaEdit /> 
-      </Button>
+        <ChecklistForm isEditMode={true} loan={loan} item={item}/>
         )}
       <HoverCard.Root>
         <HoverCard.Trigger>

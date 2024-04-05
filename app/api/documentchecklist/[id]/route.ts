@@ -15,6 +15,7 @@ export async function GET(response:NextResponse, {params} : {params: {id: string
     return NextResponse.json(documentChecklist, {status: 200})
 }
 
+
 export async function PATCH(response:NextResponse, request:NextRequest) {
     const body = await response.json();
 
@@ -55,7 +56,3 @@ export async function DELETE(request:NextRequest, response:NextResponse) {
     
     return NextResponse.json({error: `An error occurred while attempting to delete loanId ${body.loanId}'s document checklist.`})
 }
-
-// export async function PUT(response:NextResponse, request:NextRequest) {
-
-// }

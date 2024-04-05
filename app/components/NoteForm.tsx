@@ -8,6 +8,7 @@ import {
   TextArea,
   Checkbox,
   Text,
+  Heading,
 } from "@radix-ui/themes";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -112,7 +113,9 @@ const NoteForm = ({
           />
           <Box>
             <form onSubmit={onSubmit}>
+              {isEditMode && <Heading size={"3"}>Editing note</Heading>}
               <TextArea
+                className="mt-1"
                 defaultValue={isEditMode ? noteInput : ""}
                 placeholder="Write a note..."
                 style={{ height: 120 }}
@@ -121,7 +124,10 @@ const NoteForm = ({
                 }}
               ></TextArea>
               <Flex gap="3" mt="3" justify="between">
-                <MarkAsImportant importantInput={importantInput} setImportantInput={setImportantInput}/>
+                <MarkAsImportant
+                  importantInput={importantInput}
+                  setImportantInput={setImportantInput}
+                />
                 <Popover.Close>
                   <Button
                     className="myCustomButton hover:cursor-pointer"

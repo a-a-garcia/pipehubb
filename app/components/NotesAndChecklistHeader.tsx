@@ -56,7 +56,7 @@ const NotesAndChecklistHeader = ({
   return (
     <Card className="!bg-darkGrey mt-4">
       <Flex justify={"between"} align={"center"}>
-        {isDocumentChecklist && <ChecklistForm />}
+        {isDocumentChecklist && <ChecklistForm loan={loan!} isEditMode={false}/>}
         {isFileNotes && <NoteForm loan={loan!} isEditMode={false} />}
         <HoverCard.Root>
           <HoverCard.Trigger>
