@@ -12,16 +12,19 @@ import React from "react";
 import { AiOutlineClear } from "react-icons/ai";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { MdOutlineCreate } from "react-icons/md";
-import { Loan } from "@prisma/client";
+import { DocumentChecklist, Loan } from "@prisma/client";
 import NextLink from "next/link";
 import NoteForm from "./NoteForm";
 import ChecklistForm from "./ChecklistForm";
+import TasksForm from "./TasksForm";
 
-const NotesAndChecklistHeader = ({
+const TabHeader = ({
+  isTasks = false,
   isDocumentChecklist = false,
   isFileNotes = false,
   loan,
 }: {
+  isTasks?: Boolean;
   isDocumentChecklist?: Boolean;
   isFileNotes?: Boolean;
   loan?: Loan;
@@ -56,6 +59,7 @@ const NotesAndChecklistHeader = ({
   return (
     <Card className="!bg-darkGrey mt-4">
       <Flex justify={"between"} align={"center"}>
+        {isTasks && <TasksForm isEditMode={false}/>}
         {isDocumentChecklist && <ChecklistForm loan={loan!} isEditMode={false}/>}
         {isFileNotes && <NoteForm loan={loan!} isEditMode={false} />}
         <HoverCard.Root>
@@ -79,13 +83,16 @@ const NotesAndChecklistHeader = ({
               />
               <Box>
                 <Heading size={"2"}>
-                  Clear {isDocumentChecklist ? "Checklist" : "All File Notes"}
+                  Clear 
+                  {isDocumentChecklist && " Checklist"}
+                  {isFileNotes && " All File Notes"}
+                  {isTasks && " All Tasks"}
                 </Heading>
                 <Text size="1">
                   Click this button to delete
-                  {isDocumentChecklist
-                    ? " the entire checklist."
-                    : " all file notes."}
+                  {isDocumentChecklist && " the entire checklist"}
+                  {isFileNotes && " all file notes."}
+                  {isTasks && " all tasks."}
                 </Text>
                 <Flex gap="2" className="mt-2" align={"center"}>
                   <FaCircleExclamation color="red" size="15px" />
@@ -103,4 +110,4 @@ const NotesAndChecklistHeader = ({
   );
 };
 
-export default NotesAndChecklistHeader;
+export default TabHeader;

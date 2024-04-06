@@ -30,6 +30,7 @@ model Loan {
   activityLog       ActivityLog[]
   fileNotes         FileNotes[]
   DocumentChecklist DocumentChecklist[]
+  TaskList          TaskList[]
 }
 
 enum TransactionType {
@@ -83,4 +84,35 @@ enum DocumentStatus {
   RECEIVED
   REQUESTED
   PENDING
+}
+
+model TaskList {
+  id          Int           @id @default(autoincrement())
+  loanId      Int
+  loan        Loan          @relation(fields: [loanId], references: [id])
+  title       String
+  description String?
+  dueDate     DateTime?
+  important   Boolean?      @default(false)
+  status      TaskStatus    @default(NOT_STARTED)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  taskUpdates TaskUpdates[]
+}
+
+enum TaskStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  PENDING
+  COMPLETED
+}
+
+model TaskUpdates {
+  id         Int      @id @default(autoincrement())
+  taskListId Int
+  important  Boolean? @default(false)
+  taskList   TaskList @relation(fields: [taskListId], references: [id])
+  message    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

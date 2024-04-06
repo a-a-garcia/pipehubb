@@ -196,7 +196,7 @@ const ChecklistForm = ({
                                 N/A
                               </Badge>
                             ) : (
-                              item.dueDate
+                              new Date(item.dueDate).toLocaleDateString()
                             )}
                           </Table.Cell>
                           <Table.Cell>

@@ -6,7 +6,7 @@ import DeleteAndEditButtons from "./DeleteAndEditButtons";
 import { FileNotes } from "@prisma/client";
 import CreateNoteForm from "./NoteForm";
 import ImportantBadge from "./ImportantBadge";
-import NotesAndChecklistHeader from "./NotesAndChecklistHeader";
+import TabHeader from "./TabHeader";
 
 const formatDate = (date: Date) => {
   return format(new Date(date), "MM/dd/yyyy, HH:mm aa");
@@ -27,7 +27,7 @@ const FileNotesComponent = ({ loan }: { loan: Loan }) => {
 
   return (
     <Flex direction={"column"} gap={"4"}>
-      <NotesAndChecklistHeader loan={loan} isFileNotes={true} />
+      <TabHeader loan={loan} isFileNotes={true} />
       {fetchedFileNotes &&
         fetchedFileNotes.map((note) => {
           return (
@@ -53,7 +53,7 @@ const FileNotesComponent = ({ loan }: { loan: Loan }) => {
                       </Badge>
                       {note.important && <ImportantBadge />}
                     </Flex>
-                    <DeleteAndEditButtons item={note} type="note" loan={loan}/>
+                    <DeleteAndEditButtons item={note} type="note" loan={loan} />
                   </Flex>
                 </Inset>
                 <Text>
