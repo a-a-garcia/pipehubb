@@ -1,5 +1,5 @@
 import { Loan } from "@prisma/client";
-import { Box, Card, Flex, Text } from "@radix-ui/themes";
+import { Box, Card, Flex, Inset, Text } from "@radix-ui/themes";
 import React from "react";
 import NextLink from "next/link";
 
@@ -18,7 +18,7 @@ const LoanCard = ({ loan, bgColor }: Props) => {
         <Text>{loan.borrowerName}</Text>
       </Box>
       <NextLink href={"/loans/" + loan.id}>
-        <Card size="2">
+        <Card size="2" className="!bg-neutral-100">
           <Flex justify={"center"} align={"center"} direction={"column"}>
             <Box>
               <Text>Loan Amount: ${loan.loanAmount}</Text>

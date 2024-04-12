@@ -45,7 +45,7 @@ const PipelinePage = () => {
                 >
                   {data.name}
                 </Heading>
-                <Card>
+                <Card className="!bg-neutral-300">
                   <Flex direction={"column"} gap="5">
                     {isLoading && <Skeleton count={5} height={"5rem"} />}
                     {(loans[data.value] || []).map((loan: Loan) => {

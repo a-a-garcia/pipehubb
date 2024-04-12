@@ -1,3 +1,5 @@
 .radix-themes {
-    --default-font-family: var(--font-roboto-flex) !important
+    --default-font-family: var(--font-roboto-flex) !important;
+    --color-background: none !important;
+    --card-background-color: none !important;
 }

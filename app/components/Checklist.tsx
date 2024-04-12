@@ -38,7 +38,7 @@ const Checklist = ({
 }) => {
   return (
     <div>
-      <Card className="mt-4">
+      <Card className="mt-4 !bg-white !text-black">
         <Inset
           clip="border-box"
           side="top"

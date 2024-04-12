@@ -9,9 +9,8 @@ import {
   Box,
   Tabs,
   Separator,
-  AlertDialog,
-  AlertDialogAction,
   ScrollArea,
+  Inset,
 } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import NextLink from "next/link";
@@ -37,19 +36,14 @@ import CustomAlertDialog from "@/app/components/CustomAlertDialog";
 import { useRouter } from "next/navigation";
 import DocumentChecklist from "@/app/components/DocumentChecklist";
 import Tasks from "@/app/components/Tasks";
+import LoanHeading from "@/app/components/LoanHeading";
+import LoanDetails from "@/app/components/LoanDetails";
 
 //interface to get params from the URL
 interface Props {
   params: {
     id: string;
   };
-}
-
-//formats "updatedAt" to more human readable "Last Updated At"
-function formatKeyDisplay(key: string) {
-  const result = key.replace(/([A-Z])/g, " $1");
-  if (key === "updatedAt") return "Last Updated At";
-  return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
 const LoanDetailPage = ({ params }: Props) => {
@@ -66,8 +60,6 @@ const LoanDetailPage = ({ params }: Props) => {
     useState<loansDisplayDataInterface>();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const router = useRouter();
 
   useEffect(() => {
     const fetchLoan = async () => {
@@ -159,13 +151,7 @@ const LoanDetailPage = ({ params }: Props) => {
           <Skeleton height={"3rem"} />
         </div>
       ) : (
-        <Card className="!bg-cactus">
-          <Flex justify={"between"} align="center">
-            <Heading size={"5"}>
-              You're viewing {loan?.borrowerName}'s loan.
-            </Heading>
-          </Flex>
-        </Card>
+        <LoanHeading loan={loan!} />
       )}
       <Grid
         columns={{ initial: "1", md: "2" }}
@@ -176,58 +162,7 @@ const LoanDetailPage = ({ params }: Props) => {
         {isLoading ? (
           <Skeleton height={"40rem"} />
         ) : (
-          <Card className="!bg-maroon text-white">
-            <Flex direction={"column"} gap="4">
-              <Card style={{ backgroundColor: loanColor }}>
-                <Flex direction={"column"} align={"center"} justify={"center"}>
-                  <Text>{loan?.pipelineStage}</Text>
-                  <Text>{loan?.borrowerName}</Text>
-                </Flex>
-              </Card>
-              <Box>
-                <Card className="!bg-darkGrey text-white">
-                  <Flex direction={"column"} align={"center"}>
-                    <Text>Loan Details</Text>
-                  </Flex>
-                </Card>
-                {Object.keys(loan || {}).map((loanKey) => {
-                  if (loanKey === "id") return null;
-
-                  if (loan && loanKey in loan) {
-                    let rawValue: string | number | Date | null =
-                      loan[loanKey as keyof typeof loan];
-                    let value: string | number | null;
-
-                    if (rawValue === null) return null;
-
-                    if (loanKey === "createdAt" || loanKey === "updatedAt") {
-                      value = new Date(rawValue!).toLocaleString(undefined, {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "numeric",
-                      });
-                    } else if (rawValue instanceof Date) {
-                      throw new Error("Unexpected Date for field " + loanKey);
-                    } else {
-                      value = rawValue;
-                    }
-
-                    return (
-                      <Card className="text-black">
-                        <Flex direction={"column"} align={"center"}>
-                          <Text>{formatKeyDisplay(loanKey)}: </Text>
-                          <Card>{value}</Card>
-                        </Flex>
-                      </Card>
-                    );
-                  }
-                  return null;
-                })}
-              </Box>
-            </Flex>
-          </Card>
+          <LoanDetails loanColor={loanColor} loan={loan!} />
         )}
 
         {isLoading ? (
@@ -239,8 +174,8 @@ const LoanDetailPage = ({ params }: Props) => {
               scrollbars="vertical"
               style={{ height: 900 }}
             >
-              <Card>
-                <Tabs.Root defaultValue="activityLog">
+              <Card className="!bg-neutral-300">
+                <Tabs.Root defaultValue="activityLog" className="!text-white">
                   <Tabs.List>
                     <Tabs.Trigger
                       value="activityLog"

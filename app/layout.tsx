@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={roboto_flex.variable}>
         <ReactQueryClientProvider>
-          <Theme accentColor="gray">
+          <Theme accentColor="gray" grayColor="slate">
             <NavBar />
             <main className="p-5">
               <Container>{children}</Container>

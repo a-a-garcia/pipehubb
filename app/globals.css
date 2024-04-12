@@ -6,6 +6,14 @@
   @apply !bg-altDeepPink !text-white
 }
 
+.rt-BaseCard {
+  contain: style !important;
+}
+
+.rt-TableRootTable {
+  color: black !important;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;

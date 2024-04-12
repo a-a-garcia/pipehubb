@@ -133,7 +133,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                           <ErrorMessage>
                             {errors.borrowerName?.message}
                           </ErrorMessage>
-                          <TextField.Input {...field} type="text" required />
+                          <TextField.Root {...field} type="text" required />
                         </div>
                       );
                     }}
@@ -190,7 +190,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                           <ErrorMessage>
                             {errors.loanAmount?.message}
                           </ErrorMessage>
-                          <TextField.Input
+                          <TextField.Root
                             {...field}
                             type="number"
                             min={0}
@@ -220,7 +220,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                           <ErrorMessage>
                             {errors.propertyAddress?.message}
                           </ErrorMessage>
-                          <TextField.Input
+                          <TextField.Root
                             {...field}
                             type="text"
                             onChange={(e) => {
@@ -247,7 +247,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                           <ErrorMessage>
                             {errors.borrowerEmail?.message}
                           </ErrorMessage>
-                          <TextField.Input
+                          <TextField.Root
                             {...field}
                             type="email"
                             value={field.value?.toString() || ''}
@@ -278,7 +278,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                         <ErrorMessage>
                           {errors.borrowerPhone?.message}
                         </ErrorMessage>
-                        <TextField.Input
+                        <TextField.Root
                           {...field}
                           type="text"
                           pattern="\d{3}-\d{3}-\d{4}"
@@ -314,7 +314,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                         <ErrorMessage>
                           {errors.purchasePrice?.message}
                         </ErrorMessage>
-                        <TextField.Input
+                        <TextField.Root
                           {...field}
                           onChange={(e) => {
                             const value = e.target.value;
@@ -343,7 +343,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                         <ErrorMessage>
                           {errors.creditScore?.message}
                         </ErrorMessage>
-                        <TextField.Input
+                        <TextField.Root
                           {...field}
                           type="number"
                           min={300}
@@ -374,7 +374,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                         <ErrorMessage>
                           {errors.referralSource?.message}
                         </ErrorMessage>
-                        <TextField.Input
+                        <TextField.Root
                           {...field}
                           type="text"
                           onChange={(e) => {

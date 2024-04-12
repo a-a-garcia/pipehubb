@@ -41,10 +41,10 @@ const ActivityLog = ({ loan }: { loan: Loan }) => {
             <Flex key={activity.id} direction={"column"} gap="5">
               <Card className="mt-4">
                 <Inset
-                  clip="border-box"
+                  clip="padding-box"
                   side="top"
                   p="current"
-                  className="!bg-darkGrey"
+                  className="!bg-darkGrey !mb-2"
                 >
                   <Flex gap="3" align={"center"}>
                     <Image
@@ -59,15 +59,17 @@ const ActivityLog = ({ loan }: { loan: Loan }) => {
                   </Flex>
                 </Inset>
                 <Text>
-                  <Flex align={"center"} className="mt-2" gap="2">
-                    <Avatar
-                      size="2"
-                      src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
-                      fallback="A"
-                      radius="full"
-                    ></Avatar>
-                    <Text>{activity.message}</Text>
-                  </Flex>
+                  <Inset p="current" className="bg-neutral-100 text-black !rounded-sm">
+                    <Flex align={"center"} gap="2">
+                      <Avatar
+                        size="2"
+                        src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
+                        fallback="A"
+                        radius="full"
+                      ></Avatar>
+                      <Text>{activity.message}</Text>
+                    </Flex>
+                  </Inset>
                 </Text>
               </Card>
             </Flex>

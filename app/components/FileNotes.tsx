@@ -32,7 +32,7 @@ const FileNotesComponent = ({ loan }: { loan: Loan }) => {
         fetchedFileNotes.map((note) => {
           return (
             <Flex key={note.id} direction={"column"} gap="5">
-              <Card>
+              <Card className="!bg-white !text-black">
                 <Inset
                   clip="border-box"
                   side="top"
