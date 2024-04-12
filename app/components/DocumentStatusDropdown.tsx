@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 //destructure both item and fetchDocumentChecklist from props, the same object.
 //fetchDocumentChecklist is of type `(loanId: String) => void` because it doesn't return anything.
-const StatusDropdown = ({
+const DocumentStatusDropdown = ({
   item,
   fetchDocumentChecklist,
 }: {
@@ -56,4 +56,4 @@ const StatusDropdown = ({
   );
 };
 
-export default StatusDropdown;
+export default DocumentStatusDropdown;

@@ -1,4 +1,4 @@
-import { DocumentChecklist, FileNotes, Loan } from "@prisma/client";
+import { DocumentChecklist, FileNotes, Loan, TaskList } from "@prisma/client";
 import {
   Flex,
   HoverCard,
@@ -13,6 +13,7 @@ import { FaEdit } from "react-icons/fa";
 import { FaTrashCan, FaCircleExclamation } from "react-icons/fa6";
 import NoteForm from "./NoteForm";
 import ChecklistForm from "./ChecklistForm";
+import { BsFillChatTextFill } from "react-icons/bs";
 
 //making props more distinct because TypeScript is incorrectly inferring the type of the props
 // two different interfaces NoteProps and ChecklistItemProps that are being used in a union type Props
@@ -29,7 +30,13 @@ interface ChecklistItemProps {
   loan: Loan;
 }
 
-type Props = NoteProps | ChecklistItemProps;
+interface TaskListProps {
+  item: TaskList;
+  type: "taskList";
+  loan: Loan;
+}
+
+type Props = NoteProps | ChecklistItemProps | TaskListProps;
 
 const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
   const handleDelete = async () => {
@@ -67,6 +74,11 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
       {type === "checklistItem" && (
         <ChecklistForm isEditMode={true} loan={loan} item={item}/>
         )}
+      { type === "taskList" && (
+        <Button size={"1"} color="ruby">
+          <FaEdit />
+        </Button>
+        )}
       <HoverCard.Root>
         <HoverCard.Trigger>
           <Button
@@ -103,6 +115,14 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
                   </Text>
                 </Box>
               )}
+              {type === "taskList" && (
+                <Box>
+                <Heading size={"2"}>Delete Task</Heading>
+                <Text size="1">
+                  Click this button to delete this task.
+                </Text>
+              </Box>
+              )}
               <Flex gap="2" className="mt-2" align={"center"}>
                 <FaCircleExclamation color="red" size="15px" />
                 <Text size="1" color="red">
@@ -114,6 +134,11 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
           </Flex>
         </HoverCard.Content>
       </HoverCard.Root>
+      {type === "taskList" && (
+        <Button size={"1"} color="purple">
+          <BsFillChatTextFill />
+        </Button>
+      )}
     </Flex>
   );
 };

@@ -33,9 +33,7 @@ return (
         loan={loan}
       />
         <Checklist
-            isTasks={false}
             loan={loan}
-            isDocumentChecklist={true}
             documentChecklist={documentChecklist!}
             fetchDocumentChecklist={() => fetchDocumentChecklist(String(loan.id))} 
         />
