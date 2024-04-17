@@ -38,6 +38,8 @@ import DocumentChecklist from "@/app/components/DocumentChecklist";
 import Tasks from "@/app/components/Tasks";
 import LoanHeading from "@/app/components/LoanHeading";
 import LoanDetails from "@/app/components/LoanDetails";
+import { useQuery } from "@tanstack/react-query";
+import ErrorMessage from "@/app/components/ErrorMessage";
 
 //interface to get params from the URL
 interface Props {
@@ -47,8 +49,6 @@ interface Props {
 }
 
 const LoanDetailPage = ({ params }: Props) => {
-  const [loan, setLoan] = useState<Loan | null>(null);
-
   const [loanColor, setLoanColor] = useState<string>("");
 
   const [currentStageIndex, setCurrentStageIndex] = useState<number>(0);
@@ -61,13 +61,18 @@ const LoanDetailPage = ({ params }: Props) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchLoan = async () => {
-      const response = await fetch(`/api/loans/${params.id}`);
-      const loan = await response.json();
-      setLoan(loan);
+  const {
+    isFetched,
+    error,
+    data: loan,
+  } = useQuery({
+    queryKey: ["loan", params.id],
+    queryFn: () => fetch(`/api/loans/${params.id}`).then((res) => res.json()),
+  });
 
-      // mapping over loansDisplayData, and if an item's .value matches loanStage, dynamically set the color
+  useEffect(() => {
+    // mapping over loansDisplayData, and if an item's .value matches loanStage, dynamically set the color
+    if (loan) {
       loansDisplayData.map((displayData) => {
         if (displayData.value === loan.pipelineStage) {
           setLoanColor(displayData.color);
@@ -81,11 +86,8 @@ const LoanDetailPage = ({ params }: Props) => {
           (displayData) => displayData.value === loan?.pipelineStage
         )
       );
-    };
-
-    //function calls
-    fetchLoan();
-  }, []);
+    }
+  }, [isFetched]);
 
   // separate useEffect to handle the forward and back buttons
   useEffect(() => {
@@ -138,21 +140,15 @@ const LoanDetailPage = ({ params }: Props) => {
     }
   };
 
+  if (error) {
+    return <ErrorMessage>An error occurred: {error.message}</ErrorMessage>;
+  }
+
+  
+
   return (
     <div>
-      {isLoading ? (
-        <div>
-          <Flex justify={"center"}>
-            <Text size="4">
-              Loading...
-              <Spinner />
-            </Text>
-          </Flex>
-          <Skeleton height={"3rem"} />
-        </div>
-      ) : (
-        <LoanHeading loan={loan!} />
-      )}
+      
       <Grid
         columns={{ initial: "1", md: "2" }}
         style={{ gridTemplateColumns: "1fr 3fr" }}

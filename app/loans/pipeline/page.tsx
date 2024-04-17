@@ -2,33 +2,48 @@
 import Skeleton from "@/app/components/Skeleton";
 import { Loan } from "@prisma/client";
 import {
-  Button,
+  Badge,
   Card,
   Flex,
   Grid,
-  Heading
+  Heading,
+  Text,
 } from "@radix-ui/themes";
-import NextLink from "next/link";
+import { GrDocumentMissing } from "react-icons/gr";
 import { useEffect, useState } from "react";
 import LoanCard from "./LoanCard";
-import HeaderOne from "@/app/components/PipelineHeader";
-import { loansDisplayData, loansDisplayDataInterface } from "@/app/loans/loansDisplayData"
+import {
+  loansDisplayData,
+  loansDisplayDataInterface,
+} from "@/app/loans/loansDisplayData";
 import PipelineHeader from "@/app/components/PipelineHeader";
+import { useQuery } from "@tanstack/react-query";
+import ErrorMessage from "@/app/components/ErrorMessage";
 
 const PipelinePage = () => {
-  const [loans, setLoans] = useState<Record<string, Loan[]>>({});
-  const [isLoading, setIsLoading] = useState(true);
-
+  const [isLoadingPage, setIsLoadingPage] = useState(true);
+  const {
+    isFetched,
+    error,
+    data: loans,
+  } = useQuery({
+    queryKey: ["allLoans"],
+    queryFn: () => fetch("/api/loans").then((res) => res.json()),
+  });
   useEffect(() => {
-    const fetchLoans = async () => {
-      const response = await fetch("/api/loans");
-      const data = await response.json();
-      console.log(data);
-      setLoans(data);
-      setIsLoading(false);
-    };
-    fetchLoans();
-  }, []);
+    if (isFetched) {
+      setIsLoadingPage(false);
+    }
+  }, [isFetched]);
+
+  if (error)
+    return (
+      <ErrorMessage>
+        An error occurred: <strong>{error.message}</strong>
+      </ErrorMessage>
+    );
+
+  console.log(loans);
 
   return (
     <div>
@@ -47,16 +62,27 @@ const PipelinePage = () => {
                 </Heading>
                 <Card className="!bg-neutral-300">
                   <Flex direction={"column"} gap="5">
-                    {isLoading && <Skeleton count={5} height={"5rem"} />}
-                    {(loans[data.value] || []).map((loan: Loan) => {
-                      return (
-                        <LoanCard
-                          key={loan.borrowerName}
-                          loan={loan}
-                          bgColor={data.color}
-                        />
-                      );
-                    })}
+                    {isLoadingPage && <Skeleton count={5} height={"5rem"} />}
+                    {loans?.[data.value]?.length === 0 ? (
+                      <Flex justify={"center"}>
+                        <Badge color="gray"><GrDocumentMissing />No loans found</Badge>
+                      </Flex>
+                    ) : (
+                      (loans?.[data.value] || []).map((loan: Loan) => {
+                        return (
+                          <div>
+                            {loans[data.value].length === 0 && (
+                              <Text>No loans in this stage</Text>
+                            )}
+                            <LoanCard
+                              key={loan.borrowerName}
+                              loan={loan}
+                              bgColor={data.color}
+                            />
+                          </div>
+                        );
+                      })
+                    )}
                   </Flex>
                 </Card>
               </div>
