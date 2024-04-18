@@ -1,7 +1,10 @@
-import React from "react";
+import { Spinner } from '@radix-ui/themes'
+import React from 'react'
 
-const SingleLoanLoadingPage = () => {
-  return <div>Loading...</div>;
-};
+const LoanScreenLoadingPage = () => {
+  return (
+    <div><Spinner size="3" /></div>
+  )
+}
 
-export default SingleLoanLoadingPage;
+export default LoanScreenLoadingPage

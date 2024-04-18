@@ -18,6 +18,7 @@ import { FaTrashCan } from "react-icons/fa6";
 import { DocumentChecklist, Loan } from "@prisma/client";
 import axios from "axios";
 import { FaEdit } from "react-icons/fa";
+import { GrDocumentMissing } from "react-icons/gr";
 
 interface ChecklistItem {
   loanId: number;
@@ -116,25 +117,21 @@ const ChecklistForm = ({
                 <Text as="div" size="2" mb="1" weight="bold">
                   Document Name
                 </Text>
-                <TextField.Root>
-                  <TextField.Input
-                    placeholder="Enter document name"
-                    onChange={(e) => setDocumentName(e.target.value)}
-                    value={documentName}
-                  />
-                </TextField.Root>
+                <TextField.Root
+                  placeholder="Enter document name"
+                  onChange={(e) => setDocumentName(e.target.value)}
+                  value={documentName}
+                />
               </label>
               <label>
                 <Text as="div" size="2" mb="1" weight="bold">
                   Due Date (Optional)
                 </Text>
-                <TextField.Root>
-                  <TextField.Input
-                    type="date"
-                    onChange={(e) => setDueDate(e.target.value)}
-                    value={dueDate}
-                  />
-                </TextField.Root>
+                <TextField.Root
+                  type="date"
+                  onChange={(e) => setDueDate(e.target.value)}
+                  value={dueDate}
+                />
               </label>
               <label>
                 <MarkAsImportant
@@ -172,6 +169,19 @@ const ChecklistForm = ({
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
+                    {checklistToSubmit.length === 0 && (
+                      <Table.Row>
+                        <Table.Cell>
+                          <Text>No checklist items added yet.</Text>
+                        </Table.Cell>
+                        <Table.Cell>
+                          <GrDocumentMissing />
+                        </Table.Cell>
+                        <Table.Cell>
+                          <GrDocumentMissing />
+                        </Table.Cell>
+                      </Table.Row>
+                    )}
                     {checklistToSubmit.map((item) => {
                       return (
                         <Table.Row

@@ -17,7 +17,7 @@ const LoanCard = ({ loan, bgColor }: Props) => {
       >
         <Text>{loan.borrowerName}</Text>
       </Box>
-      <NextLink href={"/loans/" + loan.id}>
+      <NextLink href={"/loans/" + loan.id + "/activity-log"}>
         <Card size="2" className="!bg-neutral-100">
           <Flex justify={"center"} align={"center"} direction={"column"}>
             <Box>
