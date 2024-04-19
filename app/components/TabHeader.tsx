@@ -7,6 +7,7 @@ import {
   Box,
   Heading,
   Text,
+  AlertDialog,
 } from "@radix-ui/themes";
 import React from "react";
 import { AiOutlineClear } from "react-icons/ai";
@@ -17,6 +18,7 @@ import NextLink from "next/link";
 import NoteForm from "./NoteForm";
 import ChecklistForm from "./ChecklistForm";
 import TasksForm from "./TasksForm";
+import CustomAlertDialog from "./CustomAlertDialog";
 
 const TabHeader = ({
   isTasks = false,
@@ -41,8 +43,19 @@ const TabHeader = ({
           deleteAll: true,
         }),
       });
-    } else {
+    } else if (isFileNotes) {
       await fetch(`/api/filenotes/${loan!.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          loanId: loan!.id,
+          deleteAll: true,
+        }),
+      });
+    } else {
+      await fetch(`/api/tasklist/${loan!.id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -59,9 +72,43 @@ const TabHeader = ({
   return (
     <Card className="!bg-darkGrey mt-4">
       <Flex justify={"between"} align={"center"}>
-        {isTasks && <TasksForm isEditMode={false}/>}
-        {isDocumentChecklist && <ChecklistForm loan={loan!} isEditMode={false}/>}
+        {isTasks && <TasksForm isEditMode={false} />}
+        {isDocumentChecklist && (
+          <ChecklistForm loan={loan!} isEditMode={false} />
+        )}
         {isFileNotes && <NoteForm loan={loan!} isEditMode={false} />}
+        <AlertDialog.Root>
+          <AlertDialog.Trigger>
+            <Button color="red" size="1" className="hover:cursor-pointer">
+              <AiOutlineClear />
+            </Button>
+          </AlertDialog.Trigger>
+          <AlertDialog.Content maxWidth="450px">
+            <AlertDialog.Title>
+              Clear
+              {isDocumentChecklist && " Checklist"}
+              {isFileNotes && " All File Notes"}
+              {isTasks && " All Tasks"}
+            </AlertDialog.Title>
+            <AlertDialog.Description size="2">
+              <FaCircleExclamation color="red" size="20px" />
+            </AlertDialog.Description>
+
+            <Flex gap="3" mt="4" justify="end">
+              <AlertDialog.Cancel>
+                <Button variant="soft" color="gray">
+                  Cancel
+                </Button>
+              </AlertDialog.Cancel>
+              <AlertDialog.Action>
+                <Button variant="solid" color="red">
+                  Revoke access
+                </Button>
+              </AlertDialog.Action>
+            </Flex>
+          </AlertDialog.Content>
+        </AlertDialog.Root>
+
         <HoverCard.Root>
           <HoverCard.Trigger>
             <Button
@@ -83,7 +130,7 @@ const TabHeader = ({
               />
               <Box>
                 <Heading size={"2"}>
-                  Clear 
+                  Clear
                   {isDocumentChecklist && " Checklist"}
                   {isFileNotes && " All File Notes"}
                   {isTasks && " All Tasks"}

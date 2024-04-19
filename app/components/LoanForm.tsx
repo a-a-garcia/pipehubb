@@ -22,6 +22,7 @@ import Spinner from "./Spinner";
 import { z } from "zod";
 import { IoMdAlert } from "react-icons/io";
 import ErrorMessage from "./ErrorMessage";
+import NextLink from "next/link";
 
 type LoanFormData = z.infer<typeof createLoanSchema>;
 
@@ -32,7 +33,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
     formState: { errors },
   } = useForm<LoanFormData>({
     resolver: zodResolver(createLoanSchema),
-    mode: "onSubmit"
+    mode: "onSubmit",
   });
 
   const [validationErrors, setValidationErrors] = useState("");
@@ -250,7 +251,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                           <TextField.Root
                             {...field}
                             type="email"
-                            value={field.value?.toString() || ''}
+                            value={field.value?.toString() || ""}
                             onChange={(e) => {
                               const value = e.target.value.trim();
                               field.onChange(value === "" ? undefined : value);
@@ -318,7 +319,9 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                           {...field}
                           onChange={(e) => {
                             const value = e.target.value;
-                            field.onChange(value === "" ? undefined : parseInt(value));
+                            field.onChange(
+                              value === "" ? undefined : parseInt(value)
+                            );
                           }}
                           type="number"
                         />
@@ -350,7 +353,9 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                           max={850}
                           onChange={(e) => {
                             const value = e.target.value;
-                            field.onChange(value === "" ? undefined : parseInt(value));
+                            field.onChange(
+                              value === "" ? undefined : parseInt(value)
+                            );
                           }}
                         />
                       </Flex>
@@ -389,8 +394,17 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
               </Card>
             </Grid>
           </Box>
-          <Flex justify={"end"} className="mt-4">
-            <Button disabled={isSubmitting} className="hover:cursor-pointer myCustomButton">
+          <Flex justify={"end"} className="mt-4" gap={"3"}>
+            <Button
+              onClick={() => router.back()}
+              className="hover:cursor-pointer myCustomButton"
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={isSubmitting}
+              className="hover:cursor-pointer myCustomButton"
+            >
               <input type="submit" className="hover:cursor-pointer" />
               {isSubmitting ? <Spinner /> : ""}
             </Button>

@@ -1,10 +1,10 @@
 'use client'
-import FileNotesComponent from '@/app/components/FileNotes';
+import DocumentChecklist from '@/app/components/DocumentChecklist';
 import LoanTabs from '@/app/components/LoanTabs';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react'
 
-const FileNotesPage = ({params} : {params: {id: string}}) => {
+const DocumentChecklistPage = ({params} : {params: {id: string}}) => {
     const {
         isFetching,
         isStale,
@@ -18,10 +18,10 @@ const FileNotesPage = ({params} : {params: {id: string}}) => {
       });
   return (
     <div>
-        <LoanTabs params={params} isFileNotes={true}/>
-        <FileNotesComponent loan={loan}/>
+        <LoanTabs params={params} isDocumentChecklist={true}/>
+        <DocumentChecklist loan={loan}/>
     </div>
   )
 }
 
-export default FileNotesPage
+export default DocumentChecklistPage

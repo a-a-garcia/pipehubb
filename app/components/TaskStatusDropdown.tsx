@@ -3,36 +3,34 @@ import { Select, Table, Badge } from "@radix-ui/themes";
 import axios from "axios";
 import fetchDocumentChecklist from "./Checklist";
 import { useEffect, useState } from "react";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
 //destructure both item and fetchDocumentChecklist from props, the same object.
 //fetchDocumentChecklist is of type `(loanId: String) => void` because it doesn't return anything.
 const TaskStatusDropdown = ({
   item,
-//   fetchTaskList,
 }: {
   item: TaskList;
-//   fetchTaskList: (loanId: string) => void;
+  queryClient: QueryClient;
 }) => {
-  const [status, setStatus] = useState(item.status);
+  const queryClient = useQueryClient();
 
-//   useEffect(() => {
-//     fetchTaskList(String(item.loanId));
-//   }, [status]);
-
-  const handleChange = async (value: "NOT_STARTED" | "PENDING" | "IN_PROGRESS" | "COMPLETED") => {
+  const handleChange = async (
+    value: "NOT_STARTED" | "PENDING" | "IN_PROGRESS" | "COMPLETED"
+  ) => {
     await axios.patch(`/api/tasklist/${item.id}`, {
       id: item.id,
       status: value,
     });
-    setStatus(value);
+    queryClient.invalidateQueries({queryKey: ["taskList"]});
   };
 
   return (
     <Select.Root
       defaultValue={item.status}
-      onValueChange={(value: "NOT_STARTED" | "PENDING" | "IN_PROGRESS" | "COMPLETED") =>
-        handleChange(value)
-      }
+      onValueChange={(
+        value: "NOT_STARTED" | "PENDING" | "IN_PROGRESS" | "COMPLETED"
+      ) => handleChange(value)}
     >
       <Select.Trigger variant="ghost" className="hover:cursor-pointer" />
       <Select.Content variant="soft" color="gray">
@@ -46,7 +44,7 @@ const TaskStatusDropdown = ({
             IN PROGRESS
           </Badge>
         </Select.Item>
-        <Select.Item value={"COMPLETEED"}>
+        <Select.Item value={"COMPLETED"}>
           <Badge color="green" className="hover:cursor-pointer">
             COMPLETED
           </Badge>

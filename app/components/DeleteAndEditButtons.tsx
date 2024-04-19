@@ -14,6 +14,7 @@ import { FaTrashCan, FaCircleExclamation } from "react-icons/fa6";
 import NoteForm from "./NoteForm";
 import ChecklistForm from "./ChecklistForm";
 import { BsFillChatTextFill } from "react-icons/bs";
+import NextLink from "next/link";
 
 //making props more distinct because TypeScript is incorrectly inferring the type of the props
 // two different interfaces NoteProps and ChecklistItemProps that are being used in a union type Props
@@ -58,10 +59,10 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
         }),
         method: "DELETE",
         headers: {
-          "Content-Type": "application/json"
-        }
-      })
-      console.log(response)
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response);
     }
     window.location.reload();
   };
@@ -70,15 +71,15 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
     <Flex gap={"2"}>
       {type === "note" && (
         <NoteForm loan={loan} isEditMode={true} item={item} />
-        )}
+      )}
       {type === "checklistItem" && (
-        <ChecklistForm isEditMode={true} loan={loan} item={item}/>
-        )}
-      { type === "taskList" && (
-        <Button size={"1"} color="ruby">
+        <ChecklistForm isEditMode={true} loan={loan} item={item} />
+      )}
+      {type === "taskList" && (
+        <Button size={"1"} color="ruby" className="hover:cursor-pointer">
           <FaEdit />
         </Button>
-        )}
+      )}
       <HoverCard.Root>
         <HoverCard.Trigger>
           <Button
@@ -117,11 +118,9 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
               )}
               {type === "taskList" && (
                 <Box>
-                <Heading size={"2"}>Delete Task</Heading>
-                <Text size="1">
-                  Click this button to delete this task.
-                </Text>
-              </Box>
+                  <Heading size={"2"}>Delete Task</Heading>
+                  <Text size="1">Click this button to delete this task.</Text>
+                </Box>
               )}
               <Flex gap="2" className="mt-2" align={"center"}>
                 <FaCircleExclamation color="red" size="15px" />
@@ -135,9 +134,35 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
         </HoverCard.Content>
       </HoverCard.Root>
       {type === "taskList" && (
-        <Button size={"1"} color="purple">
-          <BsFillChatTextFill />
-        </Button>
+        <HoverCard.Root>
+          <HoverCard.Trigger>
+            <NextLink href={`/loans/${loan.id}/tasks/${item.id}/task-updates`}>
+              <Button
+                size={"1"}
+                color="purple"
+                className="hover:cursor-pointer"
+              >
+                <BsFillChatTextFill />
+              </Button>
+            </NextLink>
+          </HoverCard.Trigger>
+          <HoverCard.Content>
+            <Flex gap="4">
+              <Avatar
+                size="1"
+                fallback="R"
+                radius="full"
+                src="/images/pipeHubb_logo_transparent.png"
+              />
+              <Box>
+                <Heading size={"2"}>Task Updates</Heading>
+                <Text size="1">
+                  Click this button to view the task update log for this task.
+                </Text>
+              </Box>
+            </Flex>
+          </HoverCard.Content>
+        </HoverCard.Root>
       )}
     </Flex>
   );

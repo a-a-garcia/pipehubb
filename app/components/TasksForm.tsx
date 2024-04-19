@@ -40,25 +40,23 @@ const TasksForm = ({isEditMode} : {isEditMode: Boolean}) => {
                 <Text as="div" size="2" mb="1" weight="bold">
                   Document Name
                 </Text>
-                <TextField.Root>
-                  <TextField.Input
+                  <TextField.Root
                     placeholder="Enter task name"
                     onChange={(e) => setTaskName(e.target.value)}
                     value={taskName}
                   />
-                </TextField.Root>
+
               </label>
               <label>
                 <Text as="div" size="2" mb="1" weight="bold">
                   Due Date (Optional)
                 </Text>
-                <TextField.Root>
-                  <TextField.Input
+                  <TextField.Root
                     type="date"
                     onChange={(e) => setDueDate(e.target.value)}
                     value={dueDate}
                   />
-                </TextField.Root>
+
               </label>
               <label>
                 <MarkAsImportant

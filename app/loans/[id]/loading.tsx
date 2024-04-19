@@ -1,7 +1,11 @@
-import React from "react";
+import LoadingBadge from '@/app/components/LoadingBadge'
+import { Spinner } from '@radix-ui/themes'
+import React from 'react'
 
-const SingleLoanLoadingPage = () => {
-  return <div>Loading...</div>;
-};
+const LoanScreenLoadingPage = () => {
+  return (
+    <div><LoadingBadge /></div>
+  )
+}
 
-export default SingleLoanLoadingPage;
+export default LoanScreenLoadingPage

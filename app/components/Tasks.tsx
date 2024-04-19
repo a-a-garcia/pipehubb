@@ -1,31 +1,61 @@
-import React, { useEffect, useState } from 'react'
-import TabHeader from './TabHeader'
-import { Loan, TaskList } from '@prisma/client'
-import Checklist from './Checklist'
+import React, { useEffect, useState } from "react";
+import TabHeader from "./TabHeader";
+import { Loan, TaskList } from "@prisma/client";
+import Checklist from "./Checklist";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import LoadingBadge from "./LoadingBadge";
+import ErrorMessage from "./ErrorMessage";
 
-const Tasks = ({loan} : {loan: Loan}) => {
-  const [taskList, setTaskList] = useState<TaskList[] | null>(null)
+const Tasks = ({ loan }: { loan: Loan }) => {
+  //query client is initialized here because it's the parent component that's responsible for fetching the data
+  const queryClient = useQueryClient();
 
-  const fetchTaskList = async (loanId: string) => {
-    const parsedLoanId = parseInt(loanId);
-    const response = await fetch(`/api/tasklist/${parsedLoanId}`)
-    const data = await response.json();
-    console.log(data)
-    setTaskList(data)
+  const fetchTaskList = async () => {
+    return fetch(`/api/tasklist/${loan.id}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`API request failed with status ${res.status}`);
+        }
+        return res.json();
+      })
+      .catch((error) => {
+        console.error("Error fetching task list:", error);
+      });
+  };
+
+  const {
+    data: taskList,
+    error,
+    isPending,
+  } = useQuery({ queryKey: ["taskList"], queryFn: fetchTaskList });
+  
+
+  if (isPending) {
+    return (
+      <div className="mt-4">
+        <LoadingBadge />
+      </div>
+    );
   }
 
-  useEffect(() => {
-    if (!taskList) {
-      fetchTaskList(String(loan.id))
-    }
-  }, [])
+  if (error) {
+    return (
+      <div>
+        <ErrorMessage>{error.message}</ErrorMessage>
+      </div>
+    );
+  }
 
   return (
     <div>
-        <TabHeader isTasks={true} />
-        <Checklist loan={loan} taskList={taskList}/>
+      <TabHeader isTasks={true} />
+      <Checklist
+        loan={loan}
+        taskList={taskList}
+        queryClient={queryClient}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default Tasks
+export default Tasks;
