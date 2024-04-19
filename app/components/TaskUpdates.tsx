@@ -9,6 +9,7 @@ import {
   IconButton,
   Inset,
   Link,
+  Separator,
   Spinner,
   Strong,
   Text,
@@ -20,6 +21,8 @@ import { MdCancel } from "react-icons/md";
 import ImportantBadge from "./ImportantBadge";
 import { format } from "date-fns";
 import { GrDocumentMissing } from "react-icons/gr";
+import LoadingBadge from "./LoadingBadge";
+import TaskUpdateCard from "./TaskUpdateCard";
 
 const formatDate = (date: Date) => {
   return format(new Date(date), "MM/dd/yyyy, HH:mm aa");
@@ -58,7 +61,7 @@ const TaskUpdates = ({
   if (isPending) {
     return (
       <div className="mt-4">
-        <Spinner size="3" />
+        <LoadingBadge />
       </div>
     );
   }
@@ -68,7 +71,8 @@ const TaskUpdates = ({
   }
   return (
     <Box className="mt-4">
-      <Card>
+      <Separator my="3" size="4" />
+      <Card className="!bg-neutral-200">
         <Inset clip="padding-box" side="top" pb="current">
           <Card className="!bg-neutral-100">
             <Flex gap="3" align="center">
@@ -79,6 +83,14 @@ const TaskUpdates = ({
                 fallback="T"
               />
               <DataList.Root>
+                <DataList.Item>
+                  <DataList.Label minWidth="88px">Task Title</DataList.Label>
+                  <DataList.Value>{task.title}</DataList.Value>
+                </DataList.Item>
+                <DataList.Item>
+                  <DataList.Label minWidth="88px">Task Details</DataList.Label>
+                  <DataList.Value>{task.description}</DataList.Value>
+                </DataList.Item>
                 <DataList.Item align="center">
                   <DataList.Label minWidth="88px">Status</DataList.Label>
                   <DataList.Value>
@@ -92,38 +104,30 @@ const TaskUpdates = ({
                   </DataList.Value>
                 </DataList.Item>
                 <DataList.Item>
-                  <DataList.Label minWidth="88px">Important?</DataList.Label>
-                  <DataList.Value>
-                    <Flex align="center" gap="2">
-                      <Code variant="ghost">
-                        {" "}
-                        {task.important ? (
-                          <ImportantBadge />
-                        ) : (
-                          <Badge variant="surface">
-                            <MdCancel />
-                            N/A
-                          </Badge>
-                        )}
-                      </Code>
-                      <IconButton
-                        size="1"
-                        aria-label="Copy value"
-                        color="gray"
-                        variant="ghost"
-                      ></IconButton>
-                    </Flex>
-                  </DataList.Value>
-                </DataList.Item>
-                <DataList.Item>
-                  <DataList.Label minWidth="88px">Title</DataList.Label>
-                  <DataList.Value>{task.title}</DataList.Value>
-                </DataList.Item>
-                <DataList.Item>
-                  <DataList.Label minWidth="88px">Details</DataList.Label>
-                  <DataList.Value>{task.description}</DataList.Value>
-                </DataList.Item>
-                <DataList.Item>
+                  <DataList.Item>
+                    <DataList.Label minWidth="88px">Important?</DataList.Label>
+                    <DataList.Value>
+                      <Flex align="center" gap="2">
+                        <Code variant="ghost">
+                          {" "}
+                          {task.important ? (
+                            <ImportantBadge />
+                          ) : (
+                            <Badge variant="surface">
+                              <MdCancel />
+                              N/A
+                            </Badge>
+                          )}
+                        </Code>
+                        <IconButton
+                          size="1"
+                          aria-label="Copy value"
+                          color="gray"
+                          variant="ghost"
+                        ></IconButton>
+                      </Flex>
+                    </DataList.Value>
+                  </DataList.Item>
                   <DataList.Label minWidth="88px">Due Date</DataList.Label>
                   <DataList.Value>
                     {task.dueDate ? (
@@ -150,10 +154,13 @@ const TaskUpdates = ({
             </Flex>
           </Card>
         </Inset>
-        <Badge color="gray" size="2" className="m-2">
-          <Strong>Task Log</Strong>
-        </Badge>
-        <Card className="!bg-darkGrey"></Card>
+        <Flex justify={"center"} align={"end"}>
+          <Badge color="purple" size="2" className="m-2">
+            <Strong>Task Update Log</Strong>
+          </Badge>
+        <Separator my="3" size="4" />
+        </Flex>
+        <TaskUpdateCard />
       </Card>
     </Box>
   );

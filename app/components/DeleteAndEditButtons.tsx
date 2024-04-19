@@ -134,11 +134,35 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
         </HoverCard.Content>
       </HoverCard.Root>
       {type === "taskList" && (
-        <NextLink href={`/loans/${loan.id}/tasks/${item.id}/task-updates`}>
-          <Button size={"1"} color="purple" className="hover:cursor-pointer">
-            <BsFillChatTextFill />
-          </Button>
-        </NextLink>
+        <HoverCard.Root>
+          <HoverCard.Trigger>
+            <NextLink href={`/loans/${loan.id}/tasks/${item.id}/task-updates`}>
+              <Button
+                size={"1"}
+                color="purple"
+                className="hover:cursor-pointer"
+              >
+                <BsFillChatTextFill />
+              </Button>
+            </NextLink>
+          </HoverCard.Trigger>
+          <HoverCard.Content>
+            <Flex gap="4">
+              <Avatar
+                size="1"
+                fallback="R"
+                radius="full"
+                src="/images/pipeHubb_logo_transparent.png"
+              />
+              <Box>
+                <Heading size={"2"}>Task Updates</Heading>
+                <Text size="1">
+                  Click this button to view the task update log for this task.
+                </Text>
+              </Box>
+            </Flex>
+          </HoverCard.Content>
+        </HoverCard.Root>
       )}
     </Flex>
   );

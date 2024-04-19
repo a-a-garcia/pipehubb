@@ -3,31 +3,26 @@ import { Select, Table, Badge } from "@radix-ui/themes";
 import axios from "axios";
 import fetchDocumentChecklist from "./Checklist";
 import { useEffect, useState } from "react";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
 //destructure both item and fetchDocumentChecklist from props, the same object.
 //fetchDocumentChecklist is of type `(loanId: String) => void` because it doesn't return anything.
 const TaskStatusDropdown = ({
   item,
-  fetchTaskList,
 }: {
   item: TaskList;
-  fetchTaskList: (loanId: string) => void;
+  queryClient: QueryClient;
 }) => {
-  const [status, setStatus] = useState(item.status);
-
-  useEffect(() => {
-    fetchTaskList(String(item.loanId));
-  }, [status]);
+  const queryClient = useQueryClient();
 
   const handleChange = async (
     value: "NOT_STARTED" | "PENDING" | "IN_PROGRESS" | "COMPLETED"
   ) => {
-    console.log(item.id, value);
     await axios.patch(`/api/tasklist/${item.id}`, {
       id: item.id,
       status: value,
     });
-    setStatus(value);
+    queryClient.invalidateQueries({queryKey: ["taskList"]});
   };
 
   return (

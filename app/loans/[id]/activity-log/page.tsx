@@ -1,22 +1,19 @@
 "use client";
 import ActivityLog from "@/app/components/ActivityLog";
+import LoadingBadge from "@/app/components/LoadingBadge";
 import LoanHeading from "@/app/components/LoanHeading";
 import LoanTabs from "@/app/components/LoanTabs";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { Loan } from "@prisma/client";
+import { Spinner } from "@radix-ui/themes";
+import { QueryClient, useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 
 const ActivityLogPage = async ({ params }: { params: { id: string } }) => {
-  const {
-    isFetching,
-    error,
-    data: loan,
-  } = useQuery({
-    queryKey: ["loan", params.id],
-    queryFn: () => fetch(`/api/loans/${params.id}`).then((res) => res.json()),
-  });
+  const queryClient = useQueryClient();
+  const loan = queryClient.getQueryData<Loan>(["loan", params.id]);
 
-  if (isFetching) {
-    console.log("fetching from activity log page")
+  if (!loan) {
+    return <div><LoadingBadge /></div>
   }
   
   return (

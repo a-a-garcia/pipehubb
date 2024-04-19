@@ -23,6 +23,7 @@ import ErrorMessage from "@/app/components/ErrorMessage";
 import logo from "@/public/images/pipeHubb_logo_transparent.png";
 import Image from "next/image";
 import { queryClient } from "@/app/api/ReactQueryProviderClient";
+import LoadingBadge from "@/app/components/LoadingBadge";
 
 const ActivityLogPage = ({
   children,
@@ -33,15 +34,15 @@ const ActivityLogPage = ({
   const [isLoading, setIsLoading] = useState(true);
   const {
     isFetched,
+    isPending,
     error,
     data: loan,
   } = useQuery({
     queryKey: ["loan", params.id],
     queryFn: () => fetch(`/api/loans/${params.id}`).then((res) => res.json()),
     staleTime: 300000,
-    gcTime: 300000
+    gcTime: 300000,
   });
-  
 
   useEffect(() => {
     if (isFetched) {
@@ -67,7 +68,14 @@ const ActivityLogPage = ({
       );
     }
   }, [isFetched]);
-  console.log(loan);
+
+  if (isPending) {
+    return (
+      <Flex justify="center" align="center" style={{height: '80vh'}}>
+        <LoadingBadge />
+      </Flex>
+    );
+  }
 
   if (error) {
     return (
@@ -79,19 +87,7 @@ const ActivityLogPage = ({
 
   return (
     <div>
-      {isLoading ? (
-        <div>
-          <Flex justify={"center"}>
-            <Badge size={"3"} color="ruby">
-              <Image src={logo} alt="Pipehubb logo" width={30} height={30}></Image>
-              <Spinner size={"3"}/>
-            </Badge>
-          </Flex>
-          <Skeleton height={"3rem"} />
-        </div>
-      ) : (
-        <LoanHeading loan={loan!} />
-      )}
+      <LoanHeading loan={loan!} />
       <Grid
         columns={{ initial: "1", md: "2" }}
         style={{ gridTemplateColumns: "1fr 3fr" }}

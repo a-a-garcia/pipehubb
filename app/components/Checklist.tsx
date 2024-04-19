@@ -17,6 +17,7 @@ import DeleteAndEditButtons from "./DeleteAndEditButtons";
 import ImportantBadge from "./ImportantBadge";
 import TabHeader from "./TabHeader";
 import TaskStatusDropdown from "./TaskStatusDropdown";
+import { QueryClient } from "@tanstack/react-query";
 
 const formatDate = (date: Date) => {
   return format(new Date(date), "MM/dd/yyyy, HH:mm aa");
@@ -31,12 +32,14 @@ const Checklist = ({
   documentChecklist,
   fetchDocumentChecklist,
   fetchTaskList,
+  queryClient
 }: {
   loan: Loan;
   taskList? : TaskList[] | null;
   documentChecklist?: DocumentChecklist[];
   fetchDocumentChecklist?(): void;
   fetchTaskList?(): void;
+  queryClient: QueryClient
 }) => {
   return (
     <div>
@@ -152,7 +155,7 @@ const Checklist = ({
                     <Table.Cell>
                       <TaskStatusDropdown
                         item={item} 
-                        fetchTaskList={fetchTaskList || (() => {})}
+                        queryClient={queryClient}
                       />
                     </Table.Cell>
                     <Table.Cell>
