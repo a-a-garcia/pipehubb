@@ -8,18 +8,21 @@ import { useEffect, useState } from "react";
 //fetchDocumentChecklist is of type `(loanId: String) => void` because it doesn't return anything.
 const TaskStatusDropdown = ({
   item,
-//   fetchTaskList,
+  fetchTaskList,
 }: {
   item: TaskList;
-//   fetchTaskList: (loanId: string) => void;
+  fetchTaskList: (loanId: string) => void;
 }) => {
   const [status, setStatus] = useState(item.status);
 
-//   useEffect(() => {
-//     fetchTaskList(String(item.loanId));
-//   }, [status]);
+  useEffect(() => {
+    fetchTaskList(String(item.loanId));
+  }, [status]);
 
-  const handleChange = async (value: "NOT_STARTED" | "PENDING" | "IN_PROGRESS" | "COMPLETED") => {
+  const handleChange = async (
+    value: "NOT_STARTED" | "PENDING" | "IN_PROGRESS" | "COMPLETED"
+  ) => {
+    console.log(item.id, value);
     await axios.patch(`/api/tasklist/${item.id}`, {
       id: item.id,
       status: value,
@@ -30,9 +33,9 @@ const TaskStatusDropdown = ({
   return (
     <Select.Root
       defaultValue={item.status}
-      onValueChange={(value: "NOT_STARTED" | "PENDING" | "IN_PROGRESS" | "COMPLETED") =>
-        handleChange(value)
-      }
+      onValueChange={(
+        value: "NOT_STARTED" | "PENDING" | "IN_PROGRESS" | "COMPLETED"
+      ) => handleChange(value)}
     >
       <Select.Trigger variant="ghost" className="hover:cursor-pointer" />
       <Select.Content variant="soft" color="gray">
@@ -46,7 +49,7 @@ const TaskStatusDropdown = ({
             IN PROGRESS
           </Badge>
         </Select.Item>
-        <Select.Item value={"COMPLETEED"}>
+        <Select.Item value={"COMPLETED"}>
           <Badge color="green" className="hover:cursor-pointer">
             COMPLETED
           </Badge>

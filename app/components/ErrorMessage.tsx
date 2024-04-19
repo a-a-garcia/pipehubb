@@ -6,11 +6,11 @@ const ErrorMessage = ( {children} : PropsWithChildren) => {
     if (!children) {
         return null
     } return (
-        <Callout.Root color="red">
+        <Callout.Root color="red" className='mt-4'>
         <Callout.Text>
           <Flex align={"center"} gap="2">
-            <FaCircleExclamation color="red" size="10px" />
-            <Text>{children}</Text>
+            <FaCircleExclamation color="red" size="15px" />
+            <Text>Error: {children}</Text>
           </Flex>
         </Callout.Text>
       </Callout.Root>

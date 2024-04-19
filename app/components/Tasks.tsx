@@ -23,7 +23,7 @@ const Tasks = ({loan} : {loan: Loan}) => {
   return (
     <div>
         <TabHeader isTasks={true} />
-        <Checklist loan={loan} taskList={taskList}/>
+        <Checklist loan={loan} taskList={taskList} fetchTaskList={() => fetchTaskList(String(loan.id))}/>
     </div>
   )
 }

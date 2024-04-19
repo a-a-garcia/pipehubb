@@ -7,7 +7,6 @@ import {
   Flex,
   Container,
   DropdownMenu,
-  DropdownMenuItem,
   Box,
   Button,
 } from "@radix-ui/themes";
@@ -55,12 +54,12 @@ const NavBar = () => {
                 <DropdownMenu.Label>Hi, USER.</DropdownMenu.Label>
                 {navLinks.map((navLink) => {
                   return (
-                    <DropdownMenuItem
+                    <DropdownMenu.Item
                       key={navLink.name}
                       className="hover:cursor-pointer"
                     >
                       <NextLink href={navLink.href}>{navLink.name}</NextLink>
-                    </DropdownMenuItem>
+                    </DropdownMenu.Item>
                   );
                 })}
               </DropdownMenu.Content>

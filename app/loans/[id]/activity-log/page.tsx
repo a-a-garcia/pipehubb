@@ -8,21 +8,17 @@ import React from "react";
 const ActivityLogPage = async ({ params }: { params: { id: string } }) => {
   const {
     isFetching,
-    isStale,
-    isFetched,
     error,
-    isPending,
     data: loan,
   } = useQuery({
     queryKey: ["loan", params.id],
     queryFn: () => fetch(`/api/loans/${params.id}`).then((res) => res.json()),
   });
 
-  if (isFetching && !isStale) {
-    console.log('Data is being fetched from cache');
-  } else if (isFetching && isStale) {
-    console.log('Data is being fetched from server');
+  if (isFetching) {
+    console.log("fetching from activity log page")
   }
+  
   return (
     <div>
       <LoanTabs params={params} isActivityLog={true}/>

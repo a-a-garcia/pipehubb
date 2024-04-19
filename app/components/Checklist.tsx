@@ -30,11 +30,13 @@ const Checklist = ({
   taskList,
   documentChecklist,
   fetchDocumentChecklist,
+  fetchTaskList,
 }: {
   loan: Loan;
   taskList? : TaskList[] | null;
   documentChecklist?: DocumentChecklist[];
   fetchDocumentChecklist?(): void;
+  fetchTaskList?(): void;
 }) => {
   return (
     <div>
@@ -150,6 +152,7 @@ const Checklist = ({
                     <Table.Cell>
                       <TaskStatusDropdown
                         item={item} 
+                        fetchTaskList={fetchTaskList || (() => {})}
                       />
                     </Table.Cell>
                     <Table.Cell>

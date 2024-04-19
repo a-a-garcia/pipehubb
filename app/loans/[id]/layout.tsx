@@ -22,6 +22,7 @@ import {
 import ErrorMessage from "@/app/components/ErrorMessage";
 import logo from "@/public/images/pipeHubb_logo_transparent.png";
 import Image from "next/image";
+import { queryClient } from "@/app/api/ReactQueryProviderClient";
 
 const ActivityLogPage = ({
   children,
@@ -29,12 +30,6 @@ const ActivityLogPage = ({
 }: Readonly<{ children: React.ReactNode; params: { id: string } }>) => {
   const [loanColor, setLoanColor] = useState<string>("");
   const [currentStageIndex, setCurrentStageIndex] = useState<number>(0);
-
-  const [nextStageInfo, setNextStageInfo] =
-    useState<loansDisplayDataInterface>();
-
-  const [previousStageInfo, setPreviousStageInfo] =
-    useState<loansDisplayDataInterface>();
   const [isLoading, setIsLoading] = useState(true);
   const {
     isFetched,
@@ -46,6 +41,7 @@ const ActivityLogPage = ({
     staleTime: 300000,
     gcTime: 300000
   });
+  
 
   useEffect(() => {
     if (isFetched) {

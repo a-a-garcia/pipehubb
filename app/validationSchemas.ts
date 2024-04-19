@@ -59,3 +59,7 @@ export const createFileNoteSchema = z.object({
 export const editDocumentChecklistStatusSchema = z.object({
     status: z.enum(["PENDING", "REQUESTED", "RECEIVED"])
 })
+
+export const editTaskStatusSchema = z.object({
+    status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED", "NOT_STARTED"])
+})
