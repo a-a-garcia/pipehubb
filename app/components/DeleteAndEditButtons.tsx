@@ -15,6 +15,7 @@ import NoteForm from "./NoteForm";
 import ChecklistForm from "./ChecklistForm";
 import { BsFillChatTextFill } from "react-icons/bs";
 import NextLink from "next/link";
+import TasksForm from "./TasksForm";
 
 //making props more distinct because TypeScript is incorrectly inferring the type of the props
 // two different interfaces NoteProps and ChecklistItemProps that are being used in a union type Props
@@ -76,9 +77,7 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
         <ChecklistForm isEditMode={true} loan={loan} item={item} />
       )}
       {type === "taskList" && (
-        <Button size={"1"} color="ruby" className="hover:cursor-pointer">
-          <FaEdit />
-        </Button>
+        <TasksForm isEditMode={true} loan={loan} item={item} />
       )}
       <HoverCard.Root>
         <HoverCard.Trigger>

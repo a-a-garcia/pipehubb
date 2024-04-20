@@ -71,7 +71,7 @@ const ActivityLogPage = ({
 
   if (isPending) {
     return (
-      <Flex justify="center" align="center" style={{height: '80vh'}}>
+      <Flex justify="center" align="center" style={{ height: "80vh" }}>
         <LoadingBadge />
       </Flex>
     );
@@ -106,8 +106,8 @@ const ActivityLogPage = ({
           <Card className="!bg-maroon">
             <ScrollArea
               type="auto"
-              scrollbars="vertical"
-              style={{ height: 900 }}
+              scrollbars="both"
+              style={{ height: 900, width: 810 }}
             >
               <Card className="!bg-neutral-300">
                 <div>{children}</div>

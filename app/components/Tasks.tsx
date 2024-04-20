@@ -48,7 +48,7 @@ const Tasks = ({ loan }: { loan: Loan }) => {
 
   return (
     <div>
-      <TabHeader isTasks={true} />
+      <TabHeader isTasks={true} loan={loan}/>
       <Checklist
         loan={loan}
         taskList={taskList}

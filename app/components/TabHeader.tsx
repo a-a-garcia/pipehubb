@@ -72,7 +72,7 @@ const TabHeader = ({
   return (
     <Card className="!bg-darkGrey mt-4">
       <Flex justify={"between"} align={"center"}>
-        {isTasks && <TasksForm isEditMode={false} />}
+        {isTasks && <TasksForm loan={loan!} isEditMode={false} />}
         {isDocumentChecklist && (
           <ChecklistForm loan={loan!} isEditMode={false} />
         )}
@@ -85,15 +85,15 @@ const TabHeader = ({
           </AlertDialog.Trigger>
           <AlertDialog.Content maxWidth="450px">
             <AlertDialog.Title>
-              Clear
-              {isDocumentChecklist && " Checklist"}
-              {isFileNotes && " All File Notes"}
-              {isTasks && " All Tasks"}
+              <Flex gap="2" align="center">
+                <FaCircleExclamation color="red" size="20px" /> <Text color="red">WARNING! Continuing will delete
+                {isDocumentChecklist && " your entire checklist."}
+                {isFileNotes && " all File Notes."}
+                {isTasks && " all Tasks."}
+                </Text>
+              </Flex>
             </AlertDialog.Title>
-            <AlertDialog.Description size="2">
-              <FaCircleExclamation color="red" size="20px" />
-            </AlertDialog.Description>
-
+            <AlertDialog.Description size="2">This button is to clear all items. This action is <strong>permanent</strong>, so make sure this is what you want before continuing.</AlertDialog.Description>
             <Flex gap="3" mt="4" justify="end">
               <AlertDialog.Cancel>
                 <Button variant="soft" color="gray">
@@ -101,57 +101,13 @@ const TabHeader = ({
                 </Button>
               </AlertDialog.Cancel>
               <AlertDialog.Action>
-                <Button variant="solid" color="red">
-                  Revoke access
+                <Button variant="solid" color="red" onClick={() => deleteAll()}>
+                  Delete all
                 </Button>
               </AlertDialog.Action>
             </Flex>
           </AlertDialog.Content>
         </AlertDialog.Root>
-
-        <HoverCard.Root>
-          <HoverCard.Trigger>
-            <Button
-              color="red"
-              size="1"
-              className="hover:cursor-pointer"
-              onClick={() => deleteAll()}
-            >
-              <AiOutlineClear />
-            </Button>
-          </HoverCard.Trigger>
-          <HoverCard.Content className=" max-w-64" size={"1"}>
-            <Flex gap="4">
-              <Avatar
-                size="1"
-                fallback="R"
-                radius="full"
-                src="/images/pipeHubb_logo_transparent.png"
-              />
-              <Box>
-                <Heading size={"2"}>
-                  Clear
-                  {isDocumentChecklist && " Checklist"}
-                  {isFileNotes && " All File Notes"}
-                  {isTasks && " All Tasks"}
-                </Heading>
-                <Text size="1">
-                  Click this button to delete
-                  {isDocumentChecklist && " the entire checklist"}
-                  {isFileNotes && " all file notes."}
-                  {isTasks && " all tasks."}
-                </Text>
-                <Flex gap="2" className="mt-2" align={"center"}>
-                  <FaCircleExclamation color="red" size="15px" />
-                  <Text size="1" color="red">
-                    {" "}
-                    This is a permanent action.
-                  </Text>
-                </Flex>
-              </Box>
-            </Flex>
-          </HoverCard.Content>
-        </HoverCard.Root>
       </Flex>
     </Card>
   );

@@ -32,14 +32,14 @@ const Checklist = ({
   documentChecklist,
   fetchDocumentChecklist,
   fetchTaskList,
-  queryClient
+  queryClient,
 }: {
   loan: Loan;
-  taskList? : TaskList[] | null;
+  taskList?: TaskList[] | null;
   documentChecklist?: DocumentChecklist[];
   fetchDocumentChecklist?(): void;
   fetchTaskList?(): void;
-  queryClient: QueryClient
+  queryClient: QueryClient;
 }) => {
   return (
     <div>
@@ -52,19 +52,26 @@ const Checklist = ({
         >
           <Flex justify={"between"} align={"center"}>
             <Heading className="text-white">
-              Your {documentChecklist ? "document checklist" : "task list"} for {loan.borrowerName}
+              Your {documentChecklist ? "document checklist" : "task list"} for{" "}
+              {loan.borrowerName}
             </Heading>
           </Flex>
         </Inset>
-        <Table.Root>
+        <Table.Root layout={"auto"}>
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Created By</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Important?</Table.ColumnHeaderCell>
-              {documentChecklist &&<Table.ColumnHeaderCell>Document</Table.ColumnHeaderCell>}
-              {taskList && <Table.ColumnHeaderCell>Task</Table.ColumnHeaderCell>}
-              {taskList && <Table.ColumnHeaderCell>Details</Table.ColumnHeaderCell>}
+              {documentChecklist && (
+                <Table.ColumnHeaderCell>Document</Table.ColumnHeaderCell>
+              )}
+              {taskList && (
+                <Table.ColumnHeaderCell>Task</Table.ColumnHeaderCell>
+              )}
+              {taskList && (
+                <Table.ColumnHeaderCell>Details</Table.ColumnHeaderCell>
+              )}
               <Table.ColumnHeaderCell>Due Date</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
             </Table.Row>
@@ -90,8 +97,10 @@ const Checklist = ({
                     <Table.Cell>
                       <DocumentStatusDropdown
                         item={item}
-                        //making this prop optional (because we are not utilizing it in isTasks mode) causes a typescript error. TS does not like the possibility of this being called outside of documentChecklist. Giving this prop a default value of an empty function is a fix. 
-                        fetchDocumentChecklist={fetchDocumentChecklist || (() => {})}
+                        //making this prop optional (because we are not utilizing it in isTasks mode) causes a typescript error. TS does not like the possibility of this being called outside of documentChecklist. Giving this prop a default value of an empty function is a fix.
+                        fetchDocumentChecklist={
+                          fetchDocumentChecklist || (() => {})
+                        }
                       />
                     </Table.Cell>
                     <Table.Cell>
@@ -134,8 +143,8 @@ const Checklist = ({
                   </Table.Row>
                 );
               })}
-              
-              {taskList &&
+
+            {taskList &&
               taskList.map((item) => {
                 return (
                   // completed item styling
@@ -154,7 +163,7 @@ const Checklist = ({
                   >
                     <Table.Cell>
                       <TaskStatusDropdown
-                        item={item} 
+                        item={item}
                         queryClient={queryClient}
                       />
                     </Table.Cell>

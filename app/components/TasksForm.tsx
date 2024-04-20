@@ -1,15 +1,83 @@
-import { Dialog, Button, Card, Flex, TextField, Table, Badge, Text } from '@radix-ui/themes';
-import React, { useState } from 'react'
-import { FaEdit } from 'react-icons/fa';
-import { FaTrashCan } from 'react-icons/fa6';
-import { MdOutlineCreate, MdCancel } from 'react-icons/md';
-import ImportantBadge from './ImportantBadge';
-import MarkAsImportant from './MarkAsImportant';
+import {
+  Dialog,
+  Button,
+  Card,
+  Flex,
+  TextField,
+  Text,
+  TextArea,
+  Spinner,
+} from "@radix-ui/themes";
+import React, { useEffect, useState } from "react";
+import { FaEdit } from "react-icons/fa";
+import { MdOutlineCreate } from "react-icons/md";
+import MarkAsImportant from "./MarkAsImportant";
+import { Loan } from "@prisma/client";
+import axios from "axios";
 
-const TasksForm = ({isEditMode} : {isEditMode: Boolean}) => {
-    const [taskName, setTaskName] = useState("")
-    const [dueDate, setDueDate] = useState("")
-    const [importantInput, setImportantInput] = useState(false)
+interface TaskList {
+  id: number;
+  loanId: number;
+  title: string;
+  description: string | null;
+  dueDate: Date | null;
+  important: boolean | null;
+}
+
+const TasksForm = ({
+  isEditMode,
+  loan,
+  item,
+}: {
+  isEditMode: Boolean;
+  loan: Loan;
+  item?: TaskList;
+}) => {
+  const [title, setTitle] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [description, setDescription] = useState<string | undefined>(undefined);
+  const [submitting, setSubmitting] = useState(false);
+  const [importantInput, setImportantInput] = useState(false);
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    const data = {
+      id: item?.id,
+      loanId: loan.id,
+      title: title,
+      description: description,
+      dueDate: dueDate === "" ? null : new Date(dueDate).toISOString(),
+      important: importantInput,
+    };
+    if (isEditMode) {
+      try {
+        // send the data via axios with NO curly braces, or else it will be sent as a nested object. Meaning the data will not be accessible in the backend via `body.id` but rather `body.data.id`
+        const response = await axios.patch(`/api/tasklist`, data);
+        console.log(response);
+        if (response.status === 200) {
+          console.log("Update successful");
+        } else {
+          console.log("Update failed with status: ", response.status);
+        }
+      } catch (error) {
+        console.log("Update failed with error: ", error);
+      }
+    } else {
+      await axios.post(`/api/tasklist/${item!.id}`, data);
+    }
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    if (isEditMode) {
+      setTitle(item?.title ? item.title : "");
+      setDescription(item?.description ? item.description : "");
+      setDueDate(
+        item?.dueDate ? new Date(item.dueDate).toISOString().slice(0, 10) : ""
+      );
+      setImportantInput(item?.important ? item.important : false);
+    }
+  }, []);
 
   return (
     <Dialog.Root>
@@ -28,35 +96,42 @@ const TasksForm = ({isEditMode} : {isEditMode: Boolean}) => {
       <form>
         <Dialog.Content>
           <Dialog.Title>
-            {isEditMode ? "Editing Checklist Item..." : "Create Task"}
+            {isEditMode ? "Editing Task..." : "Create Task"}
           </Dialog.Title>
           <Dialog.Description size="2" mb="4">
-            {!isEditMode &&
-              "Add a new task to the task list."}
+            {!isEditMode && "Add a new task to the task list."}
           </Dialog.Description>
           <Card>
             <Flex direction="column" gap="3">
               <label>
                 <Text as="div" size="2" mb="1" weight="bold">
-                  Document Name
+                  Task Title
                 </Text>
-                  <TextField.Root
-                    placeholder="Enter task name"
-                    onChange={(e) => setTaskName(e.target.value)}
-                    value={taskName}
-                  />
-
+                <TextField.Root
+                  placeholder="Enter Task Title"
+                  onChange={(e) => setTitle(e.target.value)}
+                  value={title}
+                />
+              </label>
+              <label>
+                <Text as="div" size="2" mb="1" weight="bold">
+                  Task Description (Optional)
+                </Text>
+                <TextArea
+                  placeholder="Enter Task Description"
+                  onChange={(e) => setDescription(e.target.value)}
+                  value={description}
+                />
               </label>
               <label>
                 <Text as="div" size="2" mb="1" weight="bold">
                   Due Date (Optional)
                 </Text>
-                  <TextField.Root
-                    type="date"
-                    onChange={(e) => setDueDate(e.target.value)}
-                    value={dueDate}
-                  />
-
+                <TextField.Root
+                  type="date"
+                  onChange={(e) => setDueDate(e.target.value)}
+                  value={dueDate}
+                />
               </label>
               <label>
                 <MarkAsImportant
@@ -69,23 +144,23 @@ const TasksForm = ({isEditMode} : {isEditMode: Boolean}) => {
 
           <Flex gap="3" mt="4" justify="end">
             <Dialog.Close>
-              <Button
-                variant="soft"
-                color="gray"
-              >
+              <Button variant="soft" color="gray">
                 Cancel
               </Button>
             </Dialog.Close>
             <Dialog.Close>
-              <Button className='myCustomButton'>
-                Submit
+              <Button
+                className="myCustomButton"
+                onClick={() => handleSubmit()}
+              >
+                Submit {submitting && <Spinner />}
               </Button>
             </Dialog.Close>
           </Flex>
         </Dialog.Content>
       </form>
     </Dialog.Root>
-  )
-}
+  );
+};
 
-export default TasksForm
+export default TasksForm;

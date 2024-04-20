@@ -1,4 +1,5 @@
 import prisma from "@/prisma/client";
+import { stat } from "fs";
 import { NextRequest, NextResponse } from "next/server";
 
 //When testing in Postman, make sure you send an array of objects (even if it's just one object) because we are using createMany
@@ -36,7 +37,7 @@ export async function PATCH(request: NextRequest, response: NextResponse){
         return NextResponse.json(updatedChecklistItem, {status: 200})
 
     } catch {
-        return NextResponse.json({error: `An error occurred while attempting to update document checklist item ${body.id}.`})
+        return NextResponse.json({error: `An error occurred while attempting to update document checklist item ${body.id}.`}, {status: 500})
     }
 
 }
