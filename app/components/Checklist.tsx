@@ -18,6 +18,7 @@ import ImportantBadge from "./ImportantBadge";
 import TabHeader from "./TabHeader";
 import TaskStatusDropdown from "./TaskStatusDropdown";
 import { QueryClient } from "@tanstack/react-query";
+import { GrDocumentMissing } from "react-icons/gr";
 
 const formatDate = (date: Date) => {
   return format(new Date(date), "MM/dd/yyyy, HH:mm aa");
@@ -77,6 +78,19 @@ const Checklist = ({
             </Table.Row>
           </Table.Header>
           <Table.Body>
+            {(documentChecklist && documentChecklist.length === 0) ||
+            (taskList && taskList.length === 0) ? (
+              <Table.Row>
+                <Table.Cell colSpan={7}>
+                  <Flex justify={"center"}>
+                    <Badge color="gray">
+                      <GrDocumentMissing />
+                      No Items Found.
+                    </Badge>
+                  </Flex>
+                </Table.Cell>
+              </Table.Row>
+            ) : null}
             {documentChecklist &&
               documentChecklist.map((item) => {
                 return (
@@ -103,7 +117,7 @@ const Checklist = ({
                         }
                       />
                     </Table.Cell>
-                    <Table.Cell>
+                    <Table.Cell style={{ maxWidth: "20px" }}>
                       <Flex>
                         <Avatar
                           size="1"
@@ -116,7 +130,7 @@ const Checklist = ({
                       </Flex>
                     </Table.Cell>
                     <Table.Cell>
-                      <Flex justify={"center"}>
+                      <Flex>
                         {item.important ? (
                           <ImportantBadge />
                         ) : (
@@ -161,13 +175,13 @@ const Checklist = ({
                         : {}
                     }
                   >
-                    <Table.Cell>
+                    <Table.Cell style={{ maxWidth: "120px" }}>
                       <TaskStatusDropdown
                         item={item}
                         queryClient={queryClient}
                       />
                     </Table.Cell>
-                    <Table.Cell>
+                    <Table.Cell style={{ maxWidth: "120px" }}>
                       <Flex>
                         <Avatar
                           size="1"
@@ -179,8 +193,8 @@ const Checklist = ({
                         <Text size="1">On {formatDate(item.createdAt)}</Text>
                       </Flex>
                     </Table.Cell>
-                    <Table.Cell>
-                      <Flex justify={"center"}>
+                    <Table.Cell style={{ maxWidth: "110px" }}>
+                      <Flex>
                         {item.important ? (
                           <ImportantBadge />
                         ) : (
@@ -197,7 +211,7 @@ const Checklist = ({
                     <Table.Cell>
                       <Text>{item.description}</Text>
                     </Table.Cell>
-                    <Table.Cell>
+                    <Table.Cell style={{ maxWidth: "100px" }}>
                       {item.dueDate ? formatDate(item.dueDate) : "None"}
                     </Table.Cell>
                     <Table.Cell>

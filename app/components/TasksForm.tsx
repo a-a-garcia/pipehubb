@@ -63,7 +63,8 @@ const TasksForm = ({
         console.log("Update failed with error: ", error);
       }
     } else {
-      await axios.post(`/api/tasklist/${item!.id}`, data);
+      console.log(data)
+      await axios.post(`/api/tasklist`, data);
     }
     window.location.reload();
   };

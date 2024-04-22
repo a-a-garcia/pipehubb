@@ -2,6 +2,7 @@ import {
   Avatar,
   Badge,
   Box,
+  Button,
   Card,
   Code,
   DataList,
@@ -17,12 +18,13 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import ErrorMessage from "./ErrorMessage";
-import { MdCancel } from "react-icons/md";
+import { MdCancel, MdOutlineCreate } from "react-icons/md";
 import ImportantBadge from "./ImportantBadge";
 import { format } from "date-fns";
 import { GrDocumentMissing } from "react-icons/gr";
 import LoadingBadge from "./LoadingBadge";
 import TaskUpdateCard from "./TaskUpdateCard";
+import { AiOutlineClear } from "react-icons/ai";
 
 const formatDate = (date: Date) => {
   return format(new Date(date), "MM/dd/yyyy, HH:mm aa");
@@ -154,11 +156,16 @@ const TaskUpdates = ({
             </Flex>
           </Card>
         </Inset>
-        <Flex justify={"center"} align={"end"}>
+        <Flex justify={"center"} align={"center"}>
           <Badge color="purple" size="2" className="m-2">
             <Strong>Task Update Log</Strong>
           </Badge>
-        <Separator my="3" size="4" />
+          <Separator my="4" size="4" />
+        </Flex>
+        <Flex justify={"end"} className="mb-2">
+          <Button size="1" className="myCustomButton hover:cursor-pointer">
+            Create Update <MdOutlineCreate />
+          </Button>
         </Flex>
         <TaskUpdateCard />
       </Card>

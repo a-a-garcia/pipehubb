@@ -91,7 +91,7 @@ model TaskList {
   loanId      Int
   loan        Loan          @relation(fields: [loanId], references: [id])
   title       String
-  description String?
+  description String?       @db.VarChar(500)
   dueDate     DateTime?
   important   Boolean?      @default(false)
   status      TaskStatus    @default(NOT_STARTED)

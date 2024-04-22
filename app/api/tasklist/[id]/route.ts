@@ -39,3 +39,19 @@ export async function PATCH(response:NextResponse, request:NextRequest) {
 
     return NextResponse.json(updatedTaskItem, {status: 200})
 }
+
+export async function DELETE(request:NextRequest, response:NextResponse) {
+    const body = await request.json();
+
+    if (body.deleteAll) {
+        await prisma.taskList.deleteMany({
+            where: {loanId: body.loanId}
+        });
+    } else {
+        await prisma.taskList.delete({
+            where: { id: body.taskId }
+        });
+    }
+    
+    return NextResponse.json({error: `An error occurred while attempting to delete loanId ${body.loanId}'s document checklist.`})
+}

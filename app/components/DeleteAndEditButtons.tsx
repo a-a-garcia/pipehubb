@@ -64,12 +64,23 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
         },
       });
       console.log(response);
+    } else if (type === "taskList") {
+      const response = await fetch(`/api/tasklist/${loan.id}`, {
+        body: JSON.stringify({
+          taskId: item.id,
+        }),
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response)
     }
     window.location.reload();
   };
 
   return (
-    <Flex gap={"2"}>
+    <Flex gap="2" direction={"column"}>
       {type === "note" && (
         <NoteForm loan={loan} isEditMode={true} item={item} />
       )}
@@ -134,15 +145,17 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
       </HoverCard.Root>
       {type === "taskList" && (
         <HoverCard.Root>
-          <HoverCard.Trigger>
+          <HoverCard.Trigger className="mt-2">
             <NextLink href={`/loans/${loan.id}/tasks/${item.id}/task-updates`}>
-              <Button
-                size={"1"}
-                color="purple"
-                className="hover:cursor-pointer"
-              >
-                <BsFillChatTextFill />
-              </Button>
+              <Flex direction={"column"}>
+                <Button
+                  size={"1"}
+                  color="purple"
+                  className="hover:cursor-pointer"
+                >
+                  <BsFillChatTextFill />
+                </Button>
+              </Flex>
             </NextLink>
           </HoverCard.Trigger>
           <HoverCard.Content>

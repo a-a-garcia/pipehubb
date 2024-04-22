@@ -7,6 +7,7 @@ import { FileNotes } from "@prisma/client";
 import CreateNoteForm from "./NoteForm";
 import ImportantBadge from "./ImportantBadge";
 import TabHeader from "./TabHeader";
+import { GrDocumentMissing } from "react-icons/gr";
 
 const formatDate = (date: Date) => {
   return format(new Date(date), "MM/dd/yyyy, HH:mm aa");
@@ -28,6 +29,14 @@ const FileNotesComponent = ({ loan }: { loan: Loan }) => {
   return (
     <Flex direction={"column"} gap={"4"}>
       <TabHeader loan={loan} isFileNotes={true} />
+      {fetchedFileNotes.length === 0 && (
+        <Flex justify={"center"}>
+          <Badge color="gray">
+            <GrDocumentMissing />
+            No Items Found
+          </Badge>
+        </Flex>
+      )}
       {fetchedFileNotes &&
         fetchedFileNotes.map((note) => {
           return (

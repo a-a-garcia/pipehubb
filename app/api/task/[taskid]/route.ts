@@ -12,3 +12,5 @@ export async function GET(request: NextRequest, {params} : {params: {taskid : st
 
     return NextResponse.json(taskItem, {status: 200})
 }
+
+
