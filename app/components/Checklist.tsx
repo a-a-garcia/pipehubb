@@ -2,7 +2,9 @@ import { DocumentChecklist, Loan, TaskList } from "@prisma/client";
 import {
   Avatar,
   Badge,
+  Button,
   Card,
+  DropdownMenu,
   Flex,
   Heading,
   Inset,
@@ -19,10 +21,8 @@ import TabHeader from "./TabHeader";
 import TaskStatusDropdown from "./TaskStatusDropdown";
 import { QueryClient } from "@tanstack/react-query";
 import { GrDocumentMissing } from "react-icons/gr";
-
-const formatDate = (date: Date) => {
-  return format(new Date(date), "MM/dd/yyyy, HH:mm aa");
-};
+import { formatDateDisplay } from "./formatDateDisplay";
+import { FaExclamation, FaExclamationCircle } from "react-icons/fa";
 
 //cannot conditionally declare (if (isDocumentChecklist) {} ) state, useEffects because it violates rules of hooks - hooks must be called at top level of component.
 // fetchDocumentChecklist doesn't return anything so it's type void
@@ -32,14 +32,12 @@ const Checklist = ({
   taskList,
   documentChecklist,
   fetchDocumentChecklist,
-  fetchTaskList,
   queryClient,
 }: {
   loan: Loan;
   taskList?: TaskList[] | null;
   documentChecklist?: DocumentChecklist[];
   fetchDocumentChecklist?(): void;
-  fetchTaskList?(): void;
   queryClient: QueryClient;
 }) => {
   return (
@@ -63,7 +61,6 @@ const Checklist = ({
             <Table.Row>
               <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Created By</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Important?</Table.ColumnHeaderCell>
               {documentChecklist && (
                 <Table.ColumnHeaderCell>Document</Table.ColumnHeaderCell>
               )}
@@ -118,7 +115,7 @@ const Checklist = ({
                       />
                     </Table.Cell>
                     <Table.Cell style={{ maxWidth: "20px" }}>
-                      <Flex>
+                      <Flex direction={"column"} gap="1">
                         <Avatar
                           size="1"
                           src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
@@ -126,33 +123,34 @@ const Checklist = ({
                           className="mr-2"
                           radius="full"
                         />
-                        <Text size="1">On {formatDate(item.createdAt)}</Text>
+                        <Text size="1">
+                          On {formatDateDisplay(item.createdAt)}
+                        </Text>
                       </Flex>
                     </Table.Cell>
                     <Table.Cell>
-                      <Flex>
-                        {item.important ? (
-                          <ImportantBadge />
-                        ) : (
-                          <Badge variant="surface">
-                            <MdCancel />
-                            N/A
-                          </Badge>
-                        )}
-                      </Flex>
-                    </Table.Cell>
-                    <Table.Cell>
+                      {item.important ? (<div className="mb-1"><ImportantBadge /><br /></div>) : ""}
                       <Text>{item.documentName}</Text>
                     </Table.Cell>
                     <Table.Cell>
-                      {item.dueDate ? formatDate(item.dueDate) : "None"}
+                      {/* pass true here to adjustTimeZone prop to only display date, not time */}
+                      {item.dueDate ? formatDateDisplay(item.dueDate, true) : "None"}
                     </Table.Cell>
                     <Table.Cell>
-                      <DeleteAndEditButtons
-                        item={item}
-                        type="checklistItem"
-                        loan={loan}
-                      />
+                    <DropdownMenu.Root>
+                        <DropdownMenu.Trigger>
+                          <Button variant="surface">
+                            <DropdownMenu.TriggerIcon />
+                          </Button>
+                        </DropdownMenu.Trigger>
+                        <DropdownMenu.Content>
+                          <DeleteAndEditButtons
+                            item={item}
+                            type="checklistItem"
+                            loan={loan}
+                          />
+                        </DropdownMenu.Content>
+                      </DropdownMenu.Root>
                     </Table.Cell>
                   </Table.Row>
                 );
@@ -175,14 +173,14 @@ const Checklist = ({
                         : {}
                     }
                   >
-                    <Table.Cell style={{ maxWidth: "120px" }}>
+                    <Table.Cell>
                       <TaskStatusDropdown
                         item={item}
                         queryClient={queryClient}
                       />
                     </Table.Cell>
-                    <Table.Cell style={{ maxWidth: "120px" }}>
-                      <Flex>
+                    <Table.Cell>
+                      <Flex direction={"column"} gap="1">
                         <Avatar
                           size="1"
                           src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
@@ -190,36 +188,39 @@ const Checklist = ({
                           className="mr-2"
                           radius="full"
                         />
-                        <Text size="1">On {formatDate(item.createdAt)}</Text>
+                        <Text size="1">
+                          On{" "}
+                          {item.createdAt && formatDateDisplay(item.createdAt)}
+                        </Text>
                       </Flex>
                     </Table.Cell>
-                    <Table.Cell style={{ maxWidth: "110px" }}>
-                      <Flex>
-                        {item.important ? (
-                          <ImportantBadge />
-                        ) : (
-                          <Badge variant="surface">
-                            <MdCancel />
-                            N/A
-                          </Badge>
-                        )}
-                      </Flex>
-                    </Table.Cell>
-                    <Table.Cell>
+                    <Table.Cell maxWidth={"150px"}>
+                      {item.important ? (<div className="mb-1"><ImportantBadge /><br/></div>) : ""}
                       <Text>{item.title}</Text>
                     </Table.Cell>
                     <Table.Cell>
                       <Text>{item.description}</Text>
                     </Table.Cell>
-                    <Table.Cell style={{ maxWidth: "100px" }}>
-                      {item.dueDate ? formatDate(item.dueDate) : "None"}
+                    <Table.Cell>
+                      {item.dueDate
+                        ? formatDateDisplay(item.dueDate, true)
+                        : "None"}
                     </Table.Cell>
                     <Table.Cell>
-                      <DeleteAndEditButtons
-                        item={item}
-                        type="taskList"
-                        loan={loan}
-                      />
+                      <DropdownMenu.Root>
+                        <DropdownMenu.Trigger>
+                          <Button variant="surface">
+                            <DropdownMenu.TriggerIcon />
+                          </Button>
+                        </DropdownMenu.Trigger>
+                        <DropdownMenu.Content>
+                          <DeleteAndEditButtons
+                            item={item}
+                            type="taskList"
+                            loan={loan}
+                          />
+                        </DropdownMenu.Content>
+                      </DropdownMenu.Root>
                     </Table.Cell>
                   </Table.Row>
                 );

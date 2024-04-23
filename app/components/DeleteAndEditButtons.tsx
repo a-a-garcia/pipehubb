@@ -1,4 +1,4 @@
-import { DocumentChecklist, FileNotes, Loan, TaskList } from "@prisma/client";
+import { DocumentChecklist, FileNotes, Loan, TaskList, TaskUpdates } from "@prisma/client";
 import {
   Flex,
   HoverCard,
@@ -38,7 +38,13 @@ interface TaskListProps {
   loan: Loan;
 }
 
-type Props = NoteProps | ChecklistItemProps | TaskListProps;
+interface TaskUpdatesProps {
+  item: TaskUpdates;
+  type: "taskUpdates";
+  loan: Loan;
+}
+
+type Props = NoteProps | ChecklistItemProps | TaskListProps | TaskUpdatesProps;
 
 const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
   const handleDelete = async () => {
@@ -75,12 +81,23 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
         },
       });
       console.log(response)
+    } else if (type === "taskUpdates") {
+      const response = await fetch(`/api/taskupdates/${loan.id}`, {
+        body: JSON.stringify({
+          taskUpdateId: item.id
+        }),
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      console.log(response)
     }
     window.location.reload();
   };
 
   return (
-    <Flex gap="2" direction={"column"}>
+    <Flex gap="2" direction={type === "note" ? "row" : "column"}>
       {type === "note" && (
         <NoteForm loan={loan} isEditMode={true} item={item} />
       )}

@@ -25,12 +25,12 @@ import { GrDocumentMissing } from "react-icons/gr";
 import LoadingBadge from "./LoadingBadge";
 import TaskUpdateCard from "./TaskUpdateCard";
 import { AiOutlineClear } from "react-icons/ai";
+import InfoCard from "./InfoCard";
+import TaskUpdateLog from "./TaskUpdateLog";
+import { formatDateDisplay } from "./formatDateDisplay";
+import { TaskList } from "@prisma/client";
 
-const formatDate = (date: Date) => {
-  return format(new Date(date), "MM/dd/yyyy, HH:mm aa");
-};
-
-const TaskUpdates = ({
+const TaskUpdatesPage = ({
   params,
 }: {
   params: { id: string; taskid: string };
@@ -39,7 +39,7 @@ const TaskUpdates = ({
     data: task,
     error,
     isPending,
-  } = useQuery({
+  } = useQuery<TaskList>({
     queryKey: ["task", params.taskid],
     queryFn: () =>
       fetch(`/api/task/${params.taskid}`).then((res) => res.json()),
@@ -133,7 +133,7 @@ const TaskUpdates = ({
                   <DataList.Label minWidth="88px">Due Date</DataList.Label>
                   <DataList.Value>
                     {task.dueDate ? (
-                      formatDate(task.dueDate)
+                      formatDateDisplay(task.dueDate, true)
                     ) : (
                       <Badge>
                         <GrDocumentMissing />
@@ -144,33 +144,22 @@ const TaskUpdates = ({
                 </DataList.Item>
                 <DataList.Item>
                   <DataList.Label minWidth="88px">Creation Date</DataList.Label>
-                  <DataList.Value>{formatDate(task.createdAt)}</DataList.Value>
+                  <DataList.Value>{formatDateDisplay(task.createdAt)}</DataList.Value>
                 </DataList.Item>
                 <DataList.Item>
                   <DataList.Label minWidth="88px">
                     Last Updated Date
                   </DataList.Label>
-                  <DataList.Value>{formatDate(task.updatedAt)}</DataList.Value>
+                  <DataList.Value>{formatDateDisplay(task.updatedAt)}</DataList.Value>
                 </DataList.Item>
               </DataList.Root>
             </Flex>
           </Card>
         </Inset>
-        <Flex justify={"center"} align={"center"}>
-          <Badge color="purple" size="2" className="m-2">
-            <Strong>Task Update Log</Strong>
-          </Badge>
-          <Separator my="4" size="4" />
-        </Flex>
-        <Flex justify={"end"} className="mb-2">
-          <Button size="1" className="myCustomButton hover:cursor-pointer">
-            Create Update <MdOutlineCreate />
-          </Button>
-        </Flex>
-        <TaskUpdateCard />
+        <TaskUpdateLog />
       </Card>
     </Box>
   );
 };
 
-export default TaskUpdates;
+export default TaskUpdatesPage;

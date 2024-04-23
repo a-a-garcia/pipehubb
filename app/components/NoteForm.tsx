@@ -1,4 +1,9 @@
-import { DocumentChecklist, FileNotes, Loan } from "@prisma/client";
+import {
+  DocumentChecklist,
+  FileNotes,
+  Loan,
+  TaskUpdates,
+} from "@prisma/client";
 import {
   Flex,
   Popover,
@@ -21,11 +26,15 @@ import MarkAsImportant from "./MarkAsImportant";
 const NoteForm = ({
   loan,
   isEditMode,
+  isFileNotes,
+  isTaskUpdates,
   item,
 }: {
   loan: Loan;
   isEditMode: Boolean;
-  item?: DocumentChecklist | FileNotes;
+  isFileNotes?: Boolean;
+  isTaskUpdates?: Boolean;
+  item?: FileNotes | TaskUpdates;
 }) => {
   const [error, setError] = useState("");
   const [noteInput, setNoteInput] = useState("");
@@ -99,8 +108,15 @@ const NoteForm = ({
     <Popover.Root>
       <Popover.Trigger>
         <Button className="myCustomButton hover:cursor-pointer" size="1">
-          {!isEditMode && "Create Note"}
-          {isEditMode ? <FaEdit /> : <MdOutlineCreate />}
+          {!isEditMode && isFileNotes && "Create Note"}
+          {isEditMode ? (
+            <FaEdit />
+          ) : (
+            <Flex align={"center"} gap="1">
+              <Text>Create Note</Text>
+              <MdOutlineCreate />
+            </Flex>
+          )}
         </Button>
       </Popover.Trigger>
       <Popover.Content>

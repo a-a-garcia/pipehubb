@@ -12,13 +12,15 @@ import {
 import React, { useEffect, useState } from "react";
 import { MdCancel, MdOutlineCreate } from "react-icons/md";
 import MarkAsImportant from "./MarkAsImportant";
-import { set } from "date-fns";
+import { format, formatISO } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import ImportantBadge from "./ImportantBadge";
 import { FaTrashCan } from "react-icons/fa6";
 import { DocumentChecklist, Loan } from "@prisma/client";
 import axios from "axios";
 import { FaEdit } from "react-icons/fa";
 import { GrDocumentMissing } from "react-icons/gr";
+import { formatDateDisplay } from "./formatDateDisplay";
 
 interface ChecklistItem {
   loanId: number;
@@ -26,6 +28,7 @@ interface ChecklistItem {
   dueDate: string | null;
   important: boolean;
 }
+
 
 const ChecklistForm = ({
   loan,
@@ -50,6 +53,7 @@ const ChecklistForm = ({
       dueDate: dueDate === "" ? null : new Date(dueDate).toISOString(),
       important: importantInput,
     };
+    console.log(newChecklistItem);
     setChecklistToSubmit([...checklistToSubmit, newChecklistItem]);
     setDocumentName("");
     setDueDate("");
@@ -82,7 +86,7 @@ const ChecklistForm = ({
     if (isEditMode) {
       setDocumentName(item?.documentName ? item.documentName : "");
       setDueDate(
-        item?.dueDate ? new Date(item.dueDate).toISOString().slice(0, 10) : ""
+        item?.dueDate ? format(new Date(item.dueDate), "dd-MM-yyyy") : ""
       );
       setImportantInput(item?.important ? item.important : false);
     }
@@ -172,7 +176,7 @@ const ChecklistForm = ({
                     {checklistToSubmit.length === 0 && (
                       <Table.Row>
                         <Table.Cell>
-                          <Text>No checklist items added yet.</Text>
+                          <Text>No checklist items have been added.</Text>
                         </Table.Cell>
                         <Table.Cell>
                           <GrDocumentMissing />
@@ -206,7 +210,8 @@ const ChecklistForm = ({
                                 N/A
                               </Badge>
                             ) : (
-                              new Date(item.dueDate).toLocaleDateString()
+                              // pass true here for adjustForTimezone prop so the time doesn't display
+                              formatDateDisplay(item.dueDate, true)
                             )}
                           </Table.Cell>
                           <Table.Cell>
