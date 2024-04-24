@@ -76,7 +76,7 @@ const TabHeader = ({
         {isDocumentChecklist && (
           <ChecklistForm loan={loan!} isEditMode={false} />
         )}
-        {isFileNotes && <NoteForm loan={loan!} isEditMode={false} />}
+        {isFileNotes && <NoteForm loan={loan!} isEditMode={false} isFileNotes={true}/>}
         <AlertDialog.Root>
           <AlertDialog.Trigger>
             <Button color="red" size="1" className="hover:cursor-pointer">

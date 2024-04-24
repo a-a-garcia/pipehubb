@@ -23,6 +23,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { GrDocumentMissing } from "react-icons/gr";
 import { formatDateDisplay } from "./formatDateDisplay";
 import { FaExclamation, FaExclamationCircle } from "react-icons/fa";
+import NoItemsFound from "./NoItemsFound";
 
 //cannot conditionally declare (if (isDocumentChecklist) {} ) state, useEffects because it violates rules of hooks - hooks must be called at top level of component.
 // fetchDocumentChecklist doesn't return anything so it's type void
@@ -51,14 +52,15 @@ const Checklist = ({
         >
           <Flex justify={"between"} align={"center"}>
             <Heading className="text-white">
-              Your {documentChecklist ? "document checklist" : "task list"} for{" "}
+              {/* Need to change documentChecklist data fetching into React Query for smoother loading of this title */}
+              Your {documentChecklist && "document checklist"} {taskList && "task list"} for{" "}
               {loan.borrowerName}
             </Heading>
           </Flex>
         </Inset>
         <Table.Root layout={"auto"}>
           <Table.Header>
-            <Table.Row>
+            <Table.Row className="animate-dropIn">
               <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Created By</Table.ColumnHeaderCell>
               {documentChecklist && (
@@ -77,14 +79,9 @@ const Checklist = ({
           <Table.Body>
             {(documentChecklist && documentChecklist.length === 0) ||
             (taskList && taskList.length === 0) ? (
-              <Table.Row>
+              <Table.Row className="animate-dropInLite">
                 <Table.Cell colSpan={7}>
-                  <Flex justify={"center"}>
-                    <Badge color="gray">
-                      <GrDocumentMissing />
-                      No Items Found.
-                    </Badge>
-                  </Flex>
+                  <NoItemsFound />
                 </Table.Cell>
               </Table.Row>
             ) : null}
@@ -94,6 +91,7 @@ const Checklist = ({
                   // completed item styling
                   <Table.Row
                     key={item.id}
+                    className="animate-dropInLite"
                     style={
                       item.status === "RECEIVED"
                         ? {
@@ -129,15 +127,24 @@ const Checklist = ({
                       </Flex>
                     </Table.Cell>
                     <Table.Cell>
-                      {item.important ? (<div className="mb-1"><ImportantBadge /><br /></div>) : ""}
+                      {item.important ? (
+                        <div className="mb-1">
+                          <ImportantBadge />
+                          <br />
+                        </div>
+                      ) : (
+                        ""
+                      )}
                       <Text>{item.documentName}</Text>
                     </Table.Cell>
                     <Table.Cell>
                       {/* pass true here to adjustTimeZone prop to only display date, not time */}
-                      {item.dueDate ? formatDateDisplay(item.dueDate, true) : "None"}
+                      {item.dueDate
+                        ? formatDateDisplay(item.dueDate, true)
+                        : "None"}
                     </Table.Cell>
                     <Table.Cell>
-                    <DropdownMenu.Root>
+                      <DropdownMenu.Root>
                         <DropdownMenu.Trigger>
                           <Button variant="surface">
                             <DropdownMenu.TriggerIcon />
@@ -162,6 +169,7 @@ const Checklist = ({
                   // completed item styling
                   <Table.Row
                     key={item.id}
+                    className="animate-dropInLite"
                     style={
                       item.status === "COMPLETED"
                         ? {
@@ -195,7 +203,14 @@ const Checklist = ({
                       </Flex>
                     </Table.Cell>
                     <Table.Cell maxWidth={"150px"}>
-                      {item.important ? (<div className="mb-1"><ImportantBadge /><br/></div>) : ""}
+                      {item.important ? (
+                        <div className="mb-1">
+                          <ImportantBadge />
+                          <br />
+                        </div>
+                      ) : (
+                        ""
+                      )}
                       <Text>{item.title}</Text>
                     </Table.Cell>
                     <Table.Cell>

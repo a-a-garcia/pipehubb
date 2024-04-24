@@ -14,34 +14,38 @@ import {
   Checkbox,
   Text,
   Heading,
+  Spinner,
 } from "@radix-ui/themes";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { MdOutlineCreate } from "react-icons/md";
-import { createFileNoteSchema } from "../validationSchemas";
 import ImportantBadge from "./ImportantBadge";
 import { FaEdit } from "react-icons/fa";
 import MarkAsImportant from "./MarkAsImportant";
+import { createFileNoteSchema } from "../validationSchemas";
 
 const NoteForm = ({
   loan,
   isEditMode,
   isFileNotes,
   isTaskUpdates,
+  taskId,
   item,
 }: {
-  loan: Loan;
+  loan?: Loan;
   isEditMode: Boolean;
   isFileNotes?: Boolean;
   isTaskUpdates?: Boolean;
+  taskId?: number;
   item?: FileNotes | TaskUpdates;
 }) => {
+  const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState("");
   const [noteInput, setNoteInput] = useState("");
   const [importantInput, setImportantInput] = useState(false);
 
   useEffect(() => {
-    if (isEditMode) {
+    if (isEditMode && isFileNotes) {
       setNoteInput((item as FileNotes)?.note);
       // if the important field is null or undefined, set it to false. This is probably from the radix-UI Checkbox component having the indeterminate value possibility
       setImportantInput((item as FileNotes)?.important ?? false);
@@ -50,37 +54,27 @@ const NoteForm = ({
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({
-      loanId: loan.id,
-      note: noteInput,
-      important: importantInput,
-    });
     try {
-      const validate = createFileNoteSchema.safeParse({
-        loanId: loan.id,
-        note: noteInput,
-        important: importantInput,
-      });
-
-      if (!validate.success) {
-        setError(validate.error.errors[0].message);
-        return;
-      }
-
-      if (isEditMode) {
-        await axios.patch(`/api/filenotes/${loan.id}`, {
+      if (isEditMode && isFileNotes) {
+        await axios.patch(`/api/filenotes/${loan!.id}`, {
           noteId: (item as FileNotes).id,
           note: noteInput,
           important: importantInput,
         });
-      } else {
-        const response = await axios.post(`/api/filenotes`, {
-          loanId: loan.id,
+      } else if (isFileNotes) {
+        const validate = createFileNoteSchema.safeParse({
           note: noteInput,
           important: importantInput,
         });
-        console.log("Response from server:", response.data); // log the server response
-
+        if (!validate.success) {
+          setError(validate.error.errors[0].message);
+          return;
+        }
+        const response = await axios.post(`/api/filenotes`, {
+          loanId: loan!.id,
+          note: noteInput,
+          important: importantInput,
+        });
         const correctedMessage = importantInput
           ? "USER created a new important note."
           : "USER created a new note.";
@@ -91,12 +85,18 @@ const NoteForm = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            loanId: loan.id,
+            loanId: loan!.id,
             message: correctedMessage,
           }),
         });
+        console.log("Response from server:", response.data);
+      } else if (isTaskUpdates) {
+        await axios.post(`/api/taskupdates`, {
+          taskId: taskId,
+          message: noteInput,
+          important: importantInput,
+        });
       }
-
       window.location.reload();
     } catch (error) {
       console.error("Error occurred while submitting form:", error); // log any errors
@@ -108,15 +108,13 @@ const NoteForm = ({
     <Popover.Root>
       <Popover.Trigger>
         <Button className="myCustomButton hover:cursor-pointer" size="1">
-          {!isEditMode && isFileNotes && "Create Note"}
-          {isEditMode ? (
-            <FaEdit />
-          ) : (
-            <Flex align={"center"} gap="1">
-              <Text>Create Note</Text>
-              <MdOutlineCreate />
-            </Flex>
-          )}
+          <Flex align={"center"} gap="1">
+            <Text>
+              {!isEditMode ? "Create" : "Edit"}{" "}
+              {isFileNotes ? "Note" : isTaskUpdates && "Task Update"}
+            </Text>
+            {!isEditMode ? <MdOutlineCreate /> : <FaEdit />}
+          </Flex>
         </Button>
       </Popover.Trigger>
       <Popover.Content>
@@ -129,11 +127,20 @@ const NoteForm = ({
           />
           <Box>
             <form onSubmit={onSubmit}>
-              {isEditMode && <Heading size={"3"}>Editing note</Heading>}
+              {isEditMode && (
+                <Heading size={"3"}>
+                  Editing{" "}
+                  {isFileNotes ? "Note" : isTaskUpdates && "Task Update"}...
+                </Heading>
+              )}
               <TextArea
                 className="mt-1"
                 defaultValue={isEditMode ? noteInput : ""}
-                placeholder="Write a note..."
+                placeholder={
+                  isFileNotes
+                    ? "Write a note.."
+                    : isTaskUpdates && "Write a new task update.."
+                }
                 style={{ height: 120 }}
                 onChange={(e) => {
                   setNoteInput(e.target.value);
@@ -149,8 +156,10 @@ const NoteForm = ({
                     className="myCustomButton hover:cursor-pointer"
                     size="1"
                     type="submit"
+                    onClick={() => setSubmitting(true)}
                   >
                     Submit
+                    {submitting && <Spinner className="ml-2" />}
                   </Button>
                 </Popover.Close>
               </Flex>

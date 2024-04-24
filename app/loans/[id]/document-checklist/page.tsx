@@ -1,10 +1,12 @@
 'use client'
 import DocumentChecklist from '@/app/components/DocumentChecklist';
 import LoanTabs from '@/app/components/LoanTabs';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React from 'react'
 
 const DocumentChecklistPage = ({params} : {params: {id: string}}) => {
+    const queryClient = useQueryClient();
+
     const {
         isFetching,
         isStale,
@@ -19,7 +21,7 @@ const DocumentChecklistPage = ({params} : {params: {id: string}}) => {
   return (
     <div>
         <LoanTabs params={params} isDocumentChecklist={true}/>
-        <DocumentChecklist loan={loan}/>
+        <DocumentChecklist loan={loan} queryClient={queryClient}/>
     </div>
   )
 }

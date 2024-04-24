@@ -5,9 +5,10 @@ import {
 import React, { useEffect, useState } from "react";
 import Checklist from "./Checklist";
 import TabHeader from "./TabHeader";
+import { QueryClient } from "@tanstack/react-query";
 //cannot conditionally declare (if (isDocumentChecklist) {} ) state, useEffects because it violates rules of hooks - hooks must be called at top level of component.
 
-const DocumentChecklist = ({ loan }: { loan: Loan }) => {
+const DocumentChecklist = ({ loan, queryClient }: { loan: Loan, queryClient: QueryClient }) => {
   const [documentChecklist, setDocumentChecklist] = useState<
     DocumentChecklistType[] | null
   >(null);
@@ -34,6 +35,7 @@ return (
       />
         <Checklist
             loan={loan}
+            queryClient={queryClient}
             documentChecklist={documentChecklist!}
             fetchDocumentChecklist={() => fetchDocumentChecklist(String(loan.id))} 
         />

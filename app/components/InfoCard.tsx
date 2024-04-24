@@ -1,9 +1,16 @@
-import { ActivityLog, FileNotes, TaskUpdates } from "@prisma/client";
+import {
+  ActivityLog,
+  DocumentChecklist,
+  FileNotes,
+  TaskUpdates,
+} from "@prisma/client";
 import {
   Avatar,
   Badge,
   Box,
+  Button,
   Card,
+  DropdownMenu,
   Flex,
   Inset,
   Strong,
@@ -12,16 +19,21 @@ import {
 import React from "react";
 import { formatDateDisplay } from "./formatDateDisplay";
 import ImportantBadge from "./ImportantBadge";
+import DeleteAndEditButtons from "./DeleteAndEditButtons";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const InfoCard = ({
   activity,
+  checklistItem,
   taskUpdate,
   fileNote,
 }: {
+  checklistItem?: DocumentChecklist;
   activity?: ActivityLog;
   taskUpdate?: TaskUpdates;
   fileNote?: FileNotes;
 }) => {
+
   return (
     <Box
       key={
@@ -30,30 +42,51 @@ const InfoCard = ({
         (fileNote && fileNote.id)
       }
     >
-      <Card size="2" className="!bg-neutral-100">
+      <Card size="2" className="!bg-neutral-100 animate-dropInLite">
         <Inset clip="padding-box" side="top" pb="current">
           <Card className="!bg-darkGrey">
-            <Flex gap="3" align="center">
-              <Avatar
-                size="3"
-                src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
-                fallback="A"
-                radius="full"
-              />
-              <Box>
-                <Text as="div" size="2" className="!text-white">
-                  Anthony Garcia
-                </Text>
-                <Flex gap="2">
-                  <Badge variant="solid">
-                    {activity && formatDateDisplay(activity.createdAt)}
-                    {fileNote && formatDateDisplay(fileNote.createdAt)}
-                    {taskUpdate && formatDateDisplay(taskUpdate.createdAt)}
-                  </Badge>
-                  {fileNote && fileNote.important && <ImportantBadge />}
-                  {taskUpdate && taskUpdate.important && <ImportantBadge />}
-                </Flex>
-              </Box>
+            <Flex justify={"between"}>
+              <Flex gap="3" align="center">
+                <Avatar
+                  size="3"
+                  src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
+                  fallback="A"
+                  radius="full"
+                />
+                <Box>
+                  <Text as="div" size="2" className="!text-white">
+                    Anthony Garcia
+                  </Text>
+                  <Flex gap="2">
+                    <Badge variant="solid">
+                      {activity && formatDateDisplay(activity.createdAt)}
+                      {fileNote && formatDateDisplay(fileNote.createdAt)}
+                      {taskUpdate && formatDateDisplay(taskUpdate.createdAt)}
+                    </Badge>
+                  </Flex>
+                </Box>
+              </Flex>
+              <Flex>
+                {fileNote && fileNote.important && <ImportantBadge />}
+                {taskUpdate && taskUpdate.important && <ImportantBadge />}
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger>
+                    <Button variant="surface">
+                      <DropdownMenu.TriggerIcon />
+                    </Button>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content>
+                    <DeleteAndEditButtons
+                      item={fileNote || taskUpdate || checklistItem}
+                      isFileNotes={fileNote ? true : false}
+                      isTaskList={taskUpdate ? true : false}
+                      isDocumentChecklist={checklistItem ? true : false}
+                      isTaskUpdates={taskUpdate ? true : false}
+                      loan={loan}
+                    />
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+              </Flex>
             </Flex>
           </Card>
         </Inset>

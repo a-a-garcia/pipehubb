@@ -56,6 +56,12 @@ export const createFileNoteSchema = z.object({
     note: z.string().min(1, "Note cannot be blank.").max(1000, "Message must be less than 1000 characters.")
 })
 
+export const createTaskUpdateSchema = z.object({
+    taskId: z.number().min(1, "Task ID must be at least 1."),
+
+    note: z.string().min(1, "Note cannot be blank.").max(1000, "Message must be less than 1000 characters.")
+})
+
 export const editDocumentChecklistStatusSchema = z.object({
     status: z.enum(["PENDING", "REQUESTED", "RECEIVED"])
 })

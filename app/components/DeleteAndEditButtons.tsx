@@ -1,4 +1,10 @@
-import { DocumentChecklist, FileNotes, Loan, TaskList, TaskUpdates } from "@prisma/client";
+import {
+  DocumentChecklist,
+  FileNotes,
+  Loan,
+  TaskList,
+  TaskUpdates,
+} from "@prisma/client";
 import {
   Flex,
   HoverCard,
@@ -7,8 +13,9 @@ import {
   Box,
   Heading,
   Text,
+  Spinner,
 } from "@radix-ui/themes";
-import React from "react";
+import React, { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { FaTrashCan, FaCircleExclamation } from "react-icons/fa6";
 import NoteForm from "./NoteForm";
@@ -20,35 +27,31 @@ import TasksForm from "./TasksForm";
 //making props more distinct because TypeScript is incorrectly inferring the type of the props
 // two different interfaces NoteProps and ChecklistItemProps that are being used in a union type Props
 
-interface NoteProps {
-  item: FileNotes;
-  type: "note";
+type Props = {
+  item: DocumentChecklist | TaskUpdates | TaskList | FileNotes | undefined;
   loan: Loan;
-}
+  isDocumentChecklist?: boolean;
+  isTaskUpdates?: boolean;
+  isTaskList?: boolean;
+  isFileNotes?: boolean;
+};
 
-interface ChecklistItemProps {
-  item: DocumentChecklist;
-  type: "checklistItem";
-  loan: Loan;
-}
+const DeleteAndEditButtons = ({
+  item,
+  loan,
+  isFileNotes,
+  isTaskUpdates,
+  isTaskList,
+  isDocumentChecklist,
+}: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
 
-interface TaskListProps {
-  item: TaskList;
-  type: "taskList";
-  loan: Loan;
-}
-
-interface TaskUpdatesProps {
-  item: TaskUpdates;
-  type: "taskUpdates";
-  loan: Loan;
-}
-
-type Props = NoteProps | ChecklistItemProps | TaskListProps | TaskUpdatesProps;
-
-const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
   const handleDelete = async () => {
-    if (type === "note") {
+    if (!item) {
+      console.log("No item to delete");
+      return;
+    }
+    if (isFileNotes) {
       const response = await fetch(`/api/filenotes/${loan.id}`, {
         body: JSON.stringify({
           noteId: item.id,
@@ -59,7 +62,7 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
         },
       });
       console.log(response);
-    } else if (type === "checklistItem") {
+    } else if (isDocumentChecklist) {
       const response = await fetch(`/api/documentchecklist/${loan.id}`, {
         body: JSON.stringify({
           checklistId: item.id,
@@ -70,7 +73,7 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
         },
       });
       console.log(response);
-    } else if (type === "taskList") {
+    } else if (isTaskList) {
       const response = await fetch(`/api/tasklist/${loan.id}`, {
         body: JSON.stringify({
           taskId: item.id,
@@ -80,32 +83,39 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
           "Content-Type": "application/json",
         },
       });
-      console.log(response)
-    } else if (type === "taskUpdates") {
+      console.log(response);
+    } else if (isTaskUpdates) {
       const response = await fetch(`/api/taskupdates/${loan.id}`, {
         body: JSON.stringify({
-          taskUpdateId: item.id
+          taskUpdateId: item.id,
         }),
         method: "DELETE",
         headers: {
-          "Content-Type": "application/json"
-        }
-      })
-      console.log(response)
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response);
     }
     window.location.reload();
   };
 
   return (
-    <Flex gap="2" direction={type === "note" ? "row" : "column"}>
-      {type === "note" && (
-        <NoteForm loan={loan} isEditMode={true} item={item} />
+    <Flex gap="2" direction={isFileNotes ? "row" : "column"}>
+      {isFileNotes && (
+        <NoteForm loan={loan} isEditMode={true} item={item as FileNotes} />
       )}
-      {type === "checklistItem" && (
-        <ChecklistForm isEditMode={true} loan={loan} item={item} />
+      {isDocumentChecklist && (
+        <ChecklistForm
+          isEditMode={true}
+          loan={loan}
+          item={item as DocumentChecklist}
+        />
       )}
-      {type === "taskList" && (
-        <TasksForm isEditMode={true} loan={loan} item={item} />
+      {isTaskList && (
+        <TasksForm isEditMode={true} loan={loan} item={item as TaskList} />
+      )}
+      {isTaskUpdates && (
+        <NoteForm isEditMode={true} loan={loan} item={item as TaskUpdates} />
       )}
       <HoverCard.Root>
         <HoverCard.Trigger>
@@ -113,6 +123,7 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
             color="ruby"
             className="hover:cursor-pointer"
             size={"1"}
+            disabled={!item}
             onClick={() => handleDelete()}
           >
             <FaTrashCan />
@@ -127,7 +138,7 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
               src="/images/pipeHubb_logo_transparent.png"
             />
             <Box>
-              {type === "checklistItem" && (
+              {isDocumentChecklist && (
                 <Box>
                   <Heading size={"2"}>Delete Checklist Item</Heading>
                   <Text size="1">
@@ -135,7 +146,7 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
                   </Text>
                 </Box>
               )}
-              {type === "note" && (
+              {isFileNotes && (
                 <Box>
                   <Heading size={"2"}>Delete Note</Heading>
                   <Text size="1">
@@ -143,7 +154,7 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
                   </Text>
                 </Box>
               )}
-              {type === "taskList" && (
+              {isTaskList && (
                 <Box>
                   <Heading size={"2"}>Delete Task</Heading>
                   <Text size="1">Click this button to delete this task.</Text>
@@ -160,10 +171,13 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
           </Flex>
         </HoverCard.Content>
       </HoverCard.Root>
-      {type === "taskList" && (
+      {isTaskList && (
         <HoverCard.Root>
           <HoverCard.Trigger className="mt-2">
-            <NextLink href={`/loans/${loan.id}/tasks/${item.id}/task-updates`}>
+            <NextLink
+              href={`/loans/${loan.id}/tasks/${item?.id}/task-updates`}
+              onClick={() => setIsLoading(true)}
+            >
               <Flex direction={"column"}>
                 <Button
                   size={"1"}
@@ -184,7 +198,10 @@ const DeleteAndEditButtons = ({ item, type, loan }: Props) => {
                 src="/images/pipeHubb_logo_transparent.png"
               />
               <Box>
-                <Heading size={"2"}>Task Updates</Heading>
+                <Flex align={"center"} gap="2">
+                  <Heading size={"2"}>Task Updates</Heading>
+                  {isLoading && <Spinner />}
+                </Flex>
                 <Text size="1">
                   Click this button to view the task update log for this task.
                 </Text>

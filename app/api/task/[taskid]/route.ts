@@ -10,7 +10,12 @@ export async function GET(request: NextRequest, {params} : {params: {taskid : st
         return NextResponse.json({error: "Could not find requested task item."}, {status: 404})
     }
 
-    return NextResponse.json(taskItem, {status: 200})
+    const taskUpdates = await prisma.taskUpdates.findMany({
+        where: {taskListId: parseInt(params.taskid)}
+    })
+
+
+    return NextResponse.json({taskItem, taskUpdates}, { status: 200 });
 }
 
 

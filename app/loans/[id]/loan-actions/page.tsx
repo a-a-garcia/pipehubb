@@ -106,7 +106,7 @@ const LoanActionsPage = ({ params }: { params: { id: string } }) => {
       <Box>
         <LoanTabs params={params} isLoanActions={true} />
           <Card className="mt-5 !bg-darkGrey">
-            <Flex gap={"3"} direction={"column"}>
+            <Flex gap={"3"} direction={"column"} className="animate-dropIn">
               <Flex direction={"column"} gap="4" align={"center"}>
                 <NextLink href={`/loans/edit/${loan?.id}`}>
                   <Button color="indigo" className="hover:cursor-pointer">
@@ -118,7 +118,7 @@ const LoanActionsPage = ({ params }: { params: { id: string } }) => {
               </Flex>
 
               <Separator my="3" size="4" />
-              <Flex justify={"between"}>
+              <Flex justify={"between"} className="animate-dropIn">
                 {previousStageInfo && (
                   <Button
                     onClick={() => handleStageChange(previousStageInfo)}

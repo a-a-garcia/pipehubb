@@ -18,10 +18,21 @@ const config: Config = {
             transform: "translateY(0)",
             opacity: "1",
           },
+        },
+        dropInLite: {
+          "0%": {
+            transform: "translateY(-25%)",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "translateY(0)",
+            opacity: "1",
+          },
         }
       },
       animation: {
         dropIn: "dropIn 0.3s ease-in-out",
+        dropInLite: "dropInLite 1s ease-in-out",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
