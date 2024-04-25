@@ -24,13 +24,18 @@ const TabHeader = ({
   isTasks = false,
   isDocumentChecklist = false,
   isFileNotes = false,
+  isTaskUpdates = false,
+  taskId,
   loan,
 }: {
   isTasks?: Boolean;
   isDocumentChecklist?: Boolean;
   isFileNotes?: Boolean;
+  isTaskUpdates?: Boolean;
   loan?: Loan;
+  taskId?: number;
 }) => {
+  // Deleting all items for file notes, document checklist, task list, and task updates
   const deleteAll = async () => {
     if (isDocumentChecklist) {
       await fetch(`/api/documentchecklist/${loan!.id}`, {
@@ -54,7 +59,7 @@ const TabHeader = ({
           deleteAll: true,
         }),
       });
-    } else {
+    } else if (isTasks){
       await fetch(`/api/tasklist/${loan!.id}`, {
         method: "DELETE",
         headers: {
@@ -65,6 +70,17 @@ const TabHeader = ({
           deleteAll: true,
         }),
       });
+    } else if (isTaskUpdates){
+      await fetch(`/api/taskupdates`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          taskListId: taskId,
+          deleteAll: true,
+        }),
+      });
     }
     window.location.reload();
   };
@@ -72,11 +88,14 @@ const TabHeader = ({
   return (
     <Card className="!bg-darkGrey mt-4">
       <Flex justify={"between"} align={"center"}>
+        {isTaskUpdates && <NoteForm isTaskUpdates={true} taskId={taskId} isEditMode={false} />}
         {isTasks && <TasksForm loan={loan!} isEditMode={false} />}
         {isDocumentChecklist && (
           <ChecklistForm loan={loan!} isEditMode={false} />
         )}
-        {isFileNotes && <NoteForm loan={loan!} isEditMode={false} isFileNotes={true}/>}
+        {isFileNotes && (
+          <NoteForm loan={loan!} isEditMode={false} isFileNotes={true} />
+        )}
         <AlertDialog.Root>
           <AlertDialog.Trigger>
             <Button color="red" size="1" className="hover:cursor-pointer">
@@ -86,14 +105,21 @@ const TabHeader = ({
           <AlertDialog.Content maxWidth="450px">
             <AlertDialog.Title>
               <Flex gap="2" align="center">
-                <FaCircleExclamation color="red" size="20px" /> <Text color="red">WARNING! Continuing will delete
-                {isDocumentChecklist && " your entire checklist."}
-                {isFileNotes && " all File Notes."}
-                {isTasks && " all Tasks."}
+                <FaCircleExclamation color="red" size="20px" />{" "}
+                <Text color="red">
+                  WARNING! Continuing will delete
+                  {isDocumentChecklist && " your entire checklist."}
+                  {isFileNotes && " all File Notes."}
+                  {isTasks && " all Tasks."}
+                  {isTaskUpdates && " all Task Updates."}
                 </Text>
               </Flex>
             </AlertDialog.Title>
-            <AlertDialog.Description size="2">This button is to clear all items. This action is <strong>permanent</strong>, so make sure this is what you want before continuing.</AlertDialog.Description>
+            <AlertDialog.Description size="2">
+              This button is to clear all items. This action is{" "}
+              <strong>permanent</strong>, so make sure this is what you want
+              before continuing.
+            </AlertDialog.Description>
             <Flex gap="3" mt="4" justify="end">
               <AlertDialog.Cancel>
                 <Button variant="soft" color="gray">

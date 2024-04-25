@@ -97,7 +97,7 @@ const ChecklistForm = ({
       <Dialog.Trigger>
         {isEditMode ? (
           <Button className="myCustomButton hover:cursor-pointer" size="1">
-            <FaEdit />
+            Edit <FaEdit />
           </Button>
         ) : (
           <Button className="myCustomButton hover:cursor-pointer" size="1">

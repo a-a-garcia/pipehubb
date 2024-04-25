@@ -8,7 +8,7 @@ import React from "react";
 
 const TasksListPage = ({ params }: { params: { id: string } }) => {
   const queryClient = useQueryClient();
-  const loan = queryClient.getQueryData<Loan>(["loan", params.id]);
+  const loan = queryClient.getQueryData<Loan>(["loan"]);
 
   if (!loan) {
     return <div>No loan found.</div>

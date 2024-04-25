@@ -11,11 +11,11 @@ export async function GET(request: NextRequest, {params} : {params: {taskid : st
     }
 
     const taskUpdates = await prisma.taskUpdates.findMany({
-        where: {taskListId: parseInt(params.taskid)}
+        where: {taskListId: parseInt(params.taskid)},
+        // if you're ordering by more than one field, you need to pass it as an array of objects.
+        orderBy: [{createdAt: "desc"}, {important: "desc"}]
     })
 
 
     return NextResponse.json({taskItem, taskUpdates}, { status: 200 });
 }
-
-

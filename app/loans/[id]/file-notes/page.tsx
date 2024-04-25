@@ -1,21 +1,19 @@
 'use client'
+import ErrorMessage from '@/app/components/ErrorMessage';
 import FileNotesComponent from '@/app/components/FileNotes';
 import LoanTabs from '@/app/components/LoanTabs';
-import { useQuery } from '@tanstack/react-query';
+import { Loan } from '@prisma/client';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React from 'react'
 
 const FileNotesPage = ({params} : {params: {id: string}}) => {
-    const {
-        isFetching,
-        isStale,
-        isFetched,
-        error,
-        isPending,
-        data: loan,
-      } = useQuery({
-        queryKey: ["loan", params.id],
-        queryFn: () => fetch(`/api/loans/${params.id}`).then((res) => res.json()),
-      });
+  const queryClient = useQueryClient();
+  const loan = queryClient.getQueryData<Loan>(["loan"]);
+
+  if (!loan) {
+    return <ErrorMessage>Could not find loan.</ErrorMessage>
+  }
+
   return (
     <div>
         <LoanTabs params={params} isFileNotes={true}/>

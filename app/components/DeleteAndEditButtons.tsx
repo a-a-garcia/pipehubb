@@ -85,7 +85,7 @@ const DeleteAndEditButtons = ({
       });
       console.log(response);
     } else if (isTaskUpdates) {
-      const response = await fetch(`/api/taskupdates/${loan.id}`, {
+      const response = await fetch(`/api/taskupdates/`, {
         body: JSON.stringify({
           taskUpdateId: item.id,
         }),
@@ -98,11 +98,12 @@ const DeleteAndEditButtons = ({
     }
     window.location.reload();
   };
+  console.log("fileNotes: " + isFileNotes, "taskUpdates: " + isTaskUpdates, "taskList: " + isTaskList, "documentChecklist: " + isDocumentChecklist)
 
   return (
-    <Flex gap="2" direction={isFileNotes ? "row" : "column"}>
+    <Flex gap="2" direction={"column"}>
       {isFileNotes && (
-        <NoteForm loan={loan} isEditMode={true} item={item as FileNotes} />
+        <NoteForm loan={loan} isEditMode={true} item={item as FileNotes} isFileNotes={true}/>
       )}
       {isDocumentChecklist && (
         <ChecklistForm
@@ -115,7 +116,7 @@ const DeleteAndEditButtons = ({
         <TasksForm isEditMode={true} loan={loan} item={item as TaskList} />
       )}
       {isTaskUpdates && (
-        <NoteForm isEditMode={true} loan={loan} item={item as TaskUpdates} />
+        <NoteForm isEditMode={true} loan={loan} item={item as TaskUpdates} isTaskUpdates={true}/>
       )}
       <HoverCard.Root>
         <HoverCard.Trigger>
@@ -126,7 +127,7 @@ const DeleteAndEditButtons = ({
             disabled={!item}
             onClick={() => handleDelete()}
           >
-            <FaTrashCan />
+            Delete <FaTrashCan />
           </Button>
         </HoverCard.Trigger>
         <HoverCard.Content className=" max-w-64" size={"1"}>
@@ -160,6 +161,12 @@ const DeleteAndEditButtons = ({
                   <Text size="1">Click this button to delete this task.</Text>
                 </Box>
               )}
+              {isTaskUpdates && (
+                <Box>
+                  <Heading size={"2"}>Delete Task Update</Heading>
+                  <Text size="1">Click this button to delete this task update.</Text>
+                </Box>
+              )}
               <Flex gap="2" className="mt-2" align={"center"}>
                 <FaCircleExclamation color="red" size="15px" />
                 <Text size="1" color="red">
@@ -184,7 +191,7 @@ const DeleteAndEditButtons = ({
                   color="purple"
                   className="hover:cursor-pointer"
                 >
-                  <BsFillChatTextFill />
+                  Log <BsFillChatTextFill />
                 </Button>
               </Flex>
             </NextLink>

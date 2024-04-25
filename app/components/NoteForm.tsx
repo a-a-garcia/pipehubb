@@ -43,24 +43,30 @@ const NoteForm = ({
   const [error, setError] = useState("");
   const [noteInput, setNoteInput] = useState("");
   const [importantInput, setImportantInput] = useState(false);
+  console.log(item)
 
   useEffect(() => {
     if (isEditMode && isFileNotes) {
       setNoteInput((item as FileNotes)?.note);
       // if the important field is null or undefined, set it to false. This is probably from the radix-UI Checkbox component having the indeterminate value possibility
       setImportantInput((item as FileNotes)?.important ?? false);
+    } else if (isEditMode && isTaskUpdates) {
+      setNoteInput((item as TaskUpdates)?.message);
+      setImportantInput((item as TaskUpdates)?.important ?? false);
     }
   }, []);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      //editing a file note
       if (isEditMode && isFileNotes) {
         await axios.patch(`/api/filenotes/${loan!.id}`, {
           noteId: (item as FileNotes).id,
           note: noteInput,
           important: importantInput,
         });
+        //creation of a new note
       } else if (isFileNotes) {
         const validate = createFileNoteSchema.safeParse({
           note: noteInput,
@@ -90,6 +96,13 @@ const NoteForm = ({
           }),
         });
         console.log("Response from server:", response.data);
+        //creating a task
+      } else if (isEditMode && isTaskUpdates) {
+        await axios.patch(`/api/taskupdates`, {
+          taskUpdateId: (item as TaskUpdates).id,
+          message: noteInput,
+          important: importantInput,
+        });
       } else if (isTaskUpdates) {
         await axios.post(`/api/taskupdates`, {
           taskId: taskId,
@@ -111,7 +124,6 @@ const NoteForm = ({
           <Flex align={"center"} gap="1">
             <Text>
               {!isEditMode ? "Create" : "Edit"}{" "}
-              {isFileNotes ? "Note" : isTaskUpdates && "Task Update"}
             </Text>
             {!isEditMode ? <MdOutlineCreate /> : <FaEdit />}
           </Flex>

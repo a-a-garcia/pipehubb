@@ -6,6 +6,7 @@ import "./globals.css";
 import NavBar from "./NavBar";
 import { Container, Theme, ThemePanel } from "@radix-ui/themes";
 import ReactQueryClientProvider from "./api/ReactQueryProviderClient";
+import { AuthProvider } from "./auth/Provider";
 
 const roboto_flex = Roboto_Flex({
   subsets: ["latin"],
@@ -28,12 +29,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={roboto_flex.variable}>
         <ReactQueryClientProvider>
-          <Theme accentColor="gray" grayColor="slate">
-            <NavBar />
-            <main className="p-5">
-              <Container>{children}</Container>
-            </main>
-          </Theme>
+          <AuthProvider>
+            <Theme accentColor="gray" grayColor="slate">
+              <NavBar />
+              <main className="p-5">
+                <Container>{children}</Container>
+              </main>
+            </Theme>
+          </AuthProvider>
         </ReactQueryClientProvider>
       </body>
     </html>

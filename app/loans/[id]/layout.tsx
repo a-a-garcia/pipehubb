@@ -38,10 +38,8 @@ const ActivityLogPage = ({
     error,
     data: loan,
   } = useQuery({
-    queryKey: ["loan", params.id],
+    queryKey: ["loan"],
     queryFn: () => fetch(`/api/loans/${params.id}`).then((res) => res.json()),
-    staleTime: 300000,
-    gcTime: 300000,
   });
 
   useEffect(() => {

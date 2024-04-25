@@ -1,14 +1,18 @@
 import { Loan } from "@prisma/client";
-import { Card, Flex, Heading } from "@radix-ui/themes";
+import { Button, Card, Flex, Heading, Link } from "@radix-ui/themes";
 import React from "react";
+import NextLink from 'next/link';
 
-const LoanHeading = ({loan} : {loan: Loan}) => {
+const LoanHeading = ({ loan }: { loan: Loan }) => {
   return (
     <Card className="!bg-cactus">
       <Flex justify={"between"} align="center">
         <Heading size={"5"}>
           You're viewing {loan?.borrowerName}'s loan.
         </Heading>
+        <NextLink href={"/loans/pipeline"}>
+          <Button size={"1"} className="hover:cursor-pointer">Return to Pipeline</Button>
+        </NextLink>
       </Flex>
     </Card>
   );

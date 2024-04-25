@@ -153,7 +153,7 @@ const Checklist = ({
                         <DropdownMenu.Content>
                           <DeleteAndEditButtons
                             item={item}
-                            type="checklistItem"
+                            isDocumentChecklist={true}
                             loan={loan}
                           />
                         </DropdownMenu.Content>
@@ -224,15 +224,15 @@ const Checklist = ({
                     <Table.Cell>
                       <DropdownMenu.Root>
                         <DropdownMenu.Trigger>
-                          <Button variant="surface">
+                          <Button variant="surface" size={"1"} className="hover:cursor-pointer">
                             <DropdownMenu.TriggerIcon />
                           </Button>
                         </DropdownMenu.Trigger>
                         <DropdownMenu.Content>
                           <DeleteAndEditButtons
                             item={item}
-                            type="taskList"
                             loan={loan}
+                            isTaskList={true}
                           />
                         </DropdownMenu.Content>
                       </DropdownMenu.Root>

@@ -2,6 +2,8 @@ import {
   ActivityLog,
   DocumentChecklist,
   FileNotes,
+  Loan,
+  TaskList,
   TaskUpdates,
 } from "@prisma/client";
 import {
@@ -33,7 +35,11 @@ const InfoCard = ({
   taskUpdate?: TaskUpdates;
   fileNote?: FileNotes;
 }) => {
-
+  const queryClient = useQueryClient();
+  const loan: Loan | undefined = queryClient.getQueryData(["loan"]);
+  if (!loan) {
+    return null;
+  }
   return (
     <Box
       key={
@@ -66,26 +72,29 @@ const InfoCard = ({
                   </Flex>
                 </Box>
               </Flex>
-              <Flex>
+              <Flex direction={"column"} gap="2">
                 {fileNote && fileNote.important && <ImportantBadge />}
                 {taskUpdate && taskUpdate.important && <ImportantBadge />}
-                <DropdownMenu.Root>
-                  <DropdownMenu.Trigger>
-                    <Button variant="surface">
-                      <DropdownMenu.TriggerIcon />
-                    </Button>
-                  </DropdownMenu.Trigger>
-                  <DropdownMenu.Content>
-                    <DeleteAndEditButtons
-                      item={fileNote || taskUpdate || checklistItem}
-                      isFileNotes={fileNote ? true : false}
-                      isTaskList={taskUpdate ? true : false}
-                      isDocumentChecklist={checklistItem ? true : false}
-                      isTaskUpdates={taskUpdate ? true : false}
-                      loan={loan}
-                    />
-                  </DropdownMenu.Content>
-                </DropdownMenu.Root>
+                {!activity && (
+                  <Flex justify={"end"}>
+                    <DropdownMenu.Root>
+                      <DropdownMenu.Trigger>
+                        <Button variant="surface" size={"1"} className="hover:cursor-pointer">
+                          <DropdownMenu.TriggerIcon />
+                        </Button>
+                      </DropdownMenu.Trigger>
+                      <DropdownMenu.Content>
+                        <DeleteAndEditButtons
+                          item={fileNote || taskUpdate || checklistItem}
+                          isFileNotes={fileNote ? true : false}
+                          isDocumentChecklist={checklistItem ? true : false}
+                          isTaskUpdates={taskUpdate ? true : false}
+                          loan={loan}
+                        />
+                      </DropdownMenu.Content>
+                    </DropdownMenu.Root>
+                  </Flex>
+                )}
               </Flex>
             </Flex>
           </Card>

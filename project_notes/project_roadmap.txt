@@ -285,3 +285,31 @@ It maintains a state status which is initially set to item.status.
 In the useEffect hook, it calls fetchDocumentChecklist with item.loanId as a parameter whenever status changes.
 It defines a function handleChange that takes a value as a parameter, makes a PATCH request to an API endpoint with item.id and value, and sets the status state with the value.
 In summary, DocumentChecklist.tsx fetches a list of documents when it mounts and passes a function to fetch the document checklist to StatusDropdown.tsx. StatusDropdown.tsx uses this function to fetch the document checklist whenever the status changes. It also updates the status of a specific document in the checklist when the dropdown value changes.
+
+13. On DeleteAndEditButtons.tsx, cannot pass the type of what `item` is (FileNotes or TaskUpdates)... via doing `item instanceof FileNotes` or `item as FileNotes`.
+
+Why not `instanceof`? 
+
+-The instanceof operator in JavaScript (and by extension, TypeScript) is used to check the prototype chain of an object to see if it matches the prototype property of a constructor function. It's typically used with classes, not interfaces.
+
+In TypeScript, FileNotes is likely an interface, which is a compile-time construct. Interfaces don't exist at runtime, so you can't use instanceof to check if an object implements an interface.
+
+The TypeScript compiler uses interfaces to perform type checking at compile time, but once the code is compiled to JavaScript, the interfaces are removed. This is why you can't use instanceof with interfaces.
+
+The Boolean flag isFileNotes is a workaround for this limitation. By setting isFileNotes to true when item is of type FileNotes, you're manually keeping track of the type of item at runtime. This allows you to conditionally render components or perform other actions based on the type of item.
+
+In summary, TypeScript interfaces are a compile-time construct used for type checking, and they don't exist at runtime. This is why you can't use instanceof with interfaces, and why you need to use a separate Boolean flag to keep track of the type of an object at runtime.
+
+Why not `as`?
+
+-the as keyword in TypeScript is a type assertion. It's a way to tell the TypeScript compiler "trust me, I know what I'm doing, this value is of this type".
+
+In your code, item as FileNotes is telling TypeScript to treat item as if it's of type FileNotes. This allows you to access properties on item that are defined in the FileNotes interface, like note and important.
+
+However, it's important to note that type assertions don't perform any special checking or restructuring of data. They're simply a way to tell the TypeScript compiler to treat a value as a specific type.
+
+In your useEffect hook, you're using a type assertion to treat item as FileNotes, but you're not actually checking if item is of type FileNotes. This could potentially lead to runtime errors if item is not of type FileNotes. It's better to have a runtime check such as via the isFileNotes Boolean.
+
+ The as keyword in TypeScript is a type assertion, not a type check. When you write item as FileNotes, you're telling TypeScript to treat item as if it's of type FileNotes, but TypeScript doesn't actually check if item is of type FileNotes at runtime.
+
+On the other hand, the isFileNotes Boolean is a runtime check. It's a value that you set based on the actual type of item at runtime. This allows you to conditionally execute code based on the type of item.

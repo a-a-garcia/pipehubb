@@ -50,15 +50,6 @@ const TaskUpdatesPage = ({
       fetch(`/api/task/${params.taskid}`).then((res) => res.json()),
   });
 
-  const {
-    data: loan,
-    error: loanError,
-    isPending: loanIsPending,
-  } = useQuery<Loan>({
-    queryKey: ["task", params.id],
-    queryFn: () =>
-      fetch(`/api/task/${params.taskid}`).then((res) => res.json()),
-  });
 
   const determineStatusColor = (
     status: "COMPLETED" | "IN_PROGRESS" | "NOT_STARTED" | "PENDING"

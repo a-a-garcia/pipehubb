@@ -1,13 +1,16 @@
 import { DocumentChecklist, Loan } from "@prisma/client";
-import { AlertDialog, Button, Flex, Separator, Text } from "@radix-ui/themes";
-import React from "react";
+import { AlertDialog, Button, Flex, Separator, Spinner, Text } from "@radix-ui/themes";
+import React, { useState } from "react";
 import { FaTrashCan } from "react-icons/fa6";
 import Image from "next/image";
 import logo from "@/public/images/pipeHubb_logo_transparent.png";
 
 const CustomAlertDialog = ({ loan }: { loan?: Loan }, { checklistItem } : { checklistItem? : DocumentChecklist}) => {
+  const [loading, setLoading] = useState(false)
+
   const handleDelete = async () => {
     try {
+      setLoading(true);
       fetch(`/api/loans/${loan?.id}`, {
         method: "DELETE",
         headers: {
@@ -52,11 +55,13 @@ const CustomAlertDialog = ({ loan }: { loan?: Loan }, { checklistItem } : { chec
           <AlertDialog.Action>
             <Button
               onClick={handleDelete}
+              disabled={loading}
               variant="solid"
               color="red"
               className="hover:cursor-pointer"
             >
               Delete Loan
+              {loading && <Spinner />}
             </Button>
           </AlertDialog.Action>
         </Flex>

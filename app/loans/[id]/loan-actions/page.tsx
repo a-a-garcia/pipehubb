@@ -1,29 +1,41 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import {
   loansDisplayData,
   loansDisplayDataInterface,
 } from "../../loansDisplayData";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import CustomAlertDialog from "@/app/components/CustomAlertDialog";
-import { Box, Card, Flex, Button, Separator, Text } from "@radix-ui/themes";
+import {
+  Box,
+  Card,
+  Flex,
+  Button,
+  Separator,
+  Text,
+  Spinner,
+} from "@radix-ui/themes";
 import NextLink from "next/link";
 import { FaEdit } from "react-icons/fa";
-import { IoArrowBackCircleOutline, IoArrowForwardCircleOutline } from "react-icons/io5";
+import {
+  IoArrowBackCircleOutline,
+  IoArrowForwardCircleOutline,
+} from "react-icons/io5";
 import LoanTabs from "@/app/components/LoanTabs";
+import ErrorMessage from "@/app/components/ErrorMessage";
+import { Loan } from "@prisma/client";
 
 const LoanActionsPage = ({ params }: { params: { id: string } }) => {
-  const {
-    isFetching,
-    isStale,
-    isFetched,
-    error,
-    isPending,
-    data: loan,
-  } = useQuery({
-    queryKey: ["loan", params.id],
-    queryFn: () => fetch(`/api/loans/${params.id}`).then((res) => res.json()),
-  });
+  const queryClient = useQueryClient();
+  const loan = queryClient.getQueryData<Loan>(["loan"]);
+  if (!loan) {
+    return <ErrorMessage>Could not find loan.</ErrorMessage>;
+  }
+
+  const [editLoading, setEditLoading] = useState(false);
+  const [prevStageLoading, setPrevStageLoading] = useState(false);
+  const [nextStageLoading, setNextStageLoading] = useState(false);
+
   const [loanColor, setLoanColor] = useState<string>("");
 
   const [currentStageIndex, setCurrentStageIndex] = useState<number>(0);
@@ -50,7 +62,7 @@ const LoanActionsPage = ({ params }: { params: { id: string } }) => {
         )
       );
     }
-  }, [isFetched]);
+  }, [loan]);
 
   // separate useEffect to handle the forward and back buttons
   useEffect(() => {
@@ -103,50 +115,56 @@ const LoanActionsPage = ({ params }: { params: { id: string } }) => {
     }
   };
   return (
-      <Box>
-        <LoanTabs params={params} isLoanActions={true} />
-          <Card className="mt-5 !bg-darkGrey">
-            <Flex gap={"3"} direction={"column"} className="animate-dropIn">
-              <Flex direction={"column"} gap="4" align={"center"}>
-                <NextLink href={`/loans/edit/${loan?.id}`}>
-                  <Button color="indigo" className="hover:cursor-pointer">
-                    <Text>Edit loan</Text>
-                    <FaEdit />
-                  </Button>
-                </NextLink>
-                <CustomAlertDialog loan={loan!} />
-              </Flex>
+    <Box>
+      <LoanTabs params={params} isLoanActions={true} />
+      <Card className="mt-5 !bg-darkGrey">
+        <Flex gap={"3"} direction={"column"} className="animate-dropInLite">
+          <Flex direction={"column"} gap="4" align={"center"}>
+            <NextLink href={`/loans/edit/${loan?.id}`}>
+              <Button
+                color="indigo"
+                className="hover:cursor-pointer"
+                onClick={() => setEditLoading(true)}
+                disabled={editLoading}
+              >
+                <Text>Edit loan</Text>
+                <FaEdit />
+                {editLoading && <Spinner />}
+              </Button>
+            </NextLink>
+            <CustomAlertDialog loan={loan!} />
+          </Flex>
 
-              <Separator my="3" size="4" />
-              <Flex justify={"between"} className="animate-dropIn">
-                {previousStageInfo && (
-                  <Button
-                    onClick={() => handleStageChange(previousStageInfo)}
-                    className="hover:cursor-pointer"
-                    style={{
-                      backgroundColor: previousStageInfo?.color,
-                    }}
-                  >
-                    <IoArrowBackCircleOutline />
-                    Return loan to {previousStageInfo?.value} stage
-                  </Button>
-                )}
-                {nextStageInfo && (
-                  <Button
-                    onClick={() => handleStageChange(nextStageInfo)}
-                    className="hover:cursor-pointer"
-                    style={{
-                      backgroundColor: nextStageInfo?.color,
-                    }}
-                  >
-                    Advance loan to {nextStageInfo?.value} stage
-                    <IoArrowForwardCircleOutline />
-                  </Button>
-                )}
-              </Flex>
-            </Flex>
-          </Card>
-      </Box>
+          <Separator my="3" size="4" />
+          <Flex justify={"between"} className="animate-dropIn">
+            {previousStageInfo && (
+              <Button
+                onClick={() => handleStageChange(previousStageInfo)}
+                className="hover:cursor-pointer"
+                style={{
+                  backgroundColor: previousStageInfo?.color,
+                }}
+              >
+                <IoArrowBackCircleOutline />
+                Return loan to {previousStageInfo?.value} stage
+              </Button>
+            )}
+            {nextStageInfo && (
+              <Button
+                onClick={() => handleStageChange(nextStageInfo)}
+                className="hover:cursor-pointer"
+                style={{
+                  backgroundColor: nextStageInfo?.color,
+                }}
+              >
+                Advance loan to {nextStageInfo?.value} stage
+                <IoArrowForwardCircleOutline />
+              </Button>
+            )}
+          </Flex>
+        </Flex>
+      </Card>
+    </Box>
   );
 };
 

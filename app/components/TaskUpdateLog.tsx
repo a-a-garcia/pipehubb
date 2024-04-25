@@ -1,10 +1,11 @@
-import { Flex, Badge, Strong, Separator, Button } from "@radix-ui/themes";
+import { Flex, Badge, Strong, Separator, Button, Box } from "@radix-ui/themes";
 import React from "react";
 import { MdOutlineCreate } from "react-icons/md";
 import InfoCard from "./InfoCard";
 import { TaskUpdates } from "@prisma/client";
 import NoteForm from "./NoteForm";
 import NoItemsFound from "./NoItemsFound";
+import TabHeader from "./TabHeader";
 
 const TaskUpdateLog = ({
   taskUpdates,
@@ -21,9 +22,9 @@ const TaskUpdateLog = ({
         </Badge>
         <Separator my="4" size="4" />
       </Flex>
-      <Flex justify={"end"} className="mb-2">
-        <NoteForm isTaskUpdates={true} taskId={taskId} isEditMode={false} />
-      </Flex>
+      <Box className="my-5">
+        <TabHeader taskId={taskId} isTaskUpdates={true} />
+      </Box>
       <Flex direction={"column"} gap="4">
         {taskUpdates.length === 0 && <NoItemsFound />}
         {taskUpdates.map((taskUpdate) => {
