@@ -1,13 +1,27 @@
 "use client";
-import { Button, Card, Flex, Grid, Heading, Spinner, Text } from "@radix-ui/themes";
+import {
+  Button,
+  Card,
+  Flex,
+  Grid,
+  Heading,
+  Spinner,
+  Text,
+} from "@radix-ui/themes";
 import Image from "next/image";
 import Logo from "../public/images/pipeHubb_logo_with_text.png";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const { status, data: session } = useSession();
+  const { status } = useSession();
+  const router = useRouter();
+  if (status === "authenticated") {
+    router.push("/loans/pipeline");
+  }
+
 
   return (
     <div className="flex flex-col items-center md:flex-row md:items-stretch md:pt-24">
@@ -30,29 +44,21 @@ export default function Home() {
             direction="column"
             align={"center"}
           >
-            {status === "unauthenticated" ? (
-                <Button
-                  className="hover:cursor-pointer myCustomButton"
-                  size={"3"}
-                  onClick={() => signIn(undefined, { callbackUrl: '/loans/pipeline' })}
-                >
-                  Log In
-                </Button>
-            ) : status === "authenticated" ? (
-              <Link href="/loans/pipeline">
-                <Button
-                  className="hover:cursor-pointer myCustomButton"
-                  size={"3"}
-                >
-                  Go to Pipeline
-                </Button>
-              </Link>
-            ) : <Spinner />}
-            {status === "unauthenticated" && (
-            <Button className="hover:cursor-pointer myCustomButton" size={"3"}>
-              Sign Up
+            <Button
+              className="hover:cursor-pointer myCustomButton"
+              size={"3"}
+              onClick={() =>
+                signIn(undefined, { callbackUrl: "/loans/pipeline" })
+              }
+            >
+              Log In
             </Button>
-            )}
+              <Button
+                className="hover:cursor-pointer myCustomButton"
+                size={"3"}
+              >
+                Sign Up
+              </Button>
           </Flex>
         </Flex>
       </Card>
