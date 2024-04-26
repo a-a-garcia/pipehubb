@@ -3,47 +3,66 @@ import React from "react";
 import Image from "next/image";
 import logo from "@/public/images/pipeHubb_logo_nav.png";
 import { RxDropdownMenu } from "react-icons/rx";
-import { Flex, Container, DropdownMenu, Box, Button, Avatar, Link, Skeleton } from "@radix-ui/themes";
+import {
+  Flex,
+  Container,
+  DropdownMenu,
+  Box,
+  Button,
+  Avatar,
+  Link,
+  Skeleton,
+  Card,
+  Text
+} from "@radix-ui/themes";
 import NextLink from "next/link";
-import { useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { FaUserTie } from "react-icons/fa6";
 
 const AuthStatus = () => {
   const { status, data: session } = useSession();
 
+  console.log(status, session);
+
   if (status === "loading") {
-    return <Skeleton width={"3rem"} />;
+    return;
   }
 
   if (status === "unauthenticated") {
-    return (
-      <Link className="nav-link" href="/api/auth/signin">
-        Login
-      </Link>
-    );
+    return;
   }
 
   return (
     <Box>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
-          <Avatar
-            src={session!.user!.image!}
-            fallback="?"
-            size="2"
-            radius="full"
-            className="cursor-pointer"
-          />
+          <Button size="3" className="hover:cursor-pointer">
+            <Avatar
+              src={session!.user!.image!}
+              fallback={<FaUserTie />}
+              size="2"
+              radius="full"
+            />
+          </Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
-          <DropdownMenu.Label>{session!.user!.email}</DropdownMenu.Label>
-          <DropdownMenu.Item>
-            <Link
-              href="/api/auth/signout
-            "
-            >
+          <DropdownMenu.Label>Welcome to PipeHubb, {session!.user!.name} </DropdownMenu.Label>
+          <DropdownMenu.Separator />
+          <DropdownMenu.Item onClick={() => signOut({callbackUrl: '/'})}>
+            <Text className="hover:underline hover:cursor-pointer">
               Log Out
-            </Link>
+            </Text>
           </DropdownMenu.Item>
+          {status === "authenticated" && (
+            <DropdownMenu.Item>
+              <Link
+                href="/loans/pipeline
+            "
+              >
+                Pipeline
+              </Link>
+            </DropdownMenu.Item>
+          )}
         </DropdownMenu.Content>
       </DropdownMenu.Root>
     </Box>
@@ -51,25 +70,6 @@ const AuthStatus = () => {
 };
 
 const NavBar = () => {
-  const navLinks = [
-    {
-      name: "Login",
-      href: "/login",
-    },
-    {
-      name: "Sign Up",
-      href: "/signup",
-    },
-    {
-      name: "Logout",
-      href: "/logout",
-    },
-    {
-      name: "Settings",
-      href: "/settings",
-    },
-  ];
-
   return (
     <nav
       className="bg-darkGrey
@@ -80,31 +80,8 @@ const NavBar = () => {
           <NextLink href="/">
             <Image src={logo} alt="Pipehub logo" className="size-20" />
           </NextLink>
-
           <Box>
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
-                <Button variant="soft" className="hover:cursor-pointer">
-                  <RxDropdownMenu className="size-8 text-white" />
-                </Button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content variant="soft">
-                <DropdownMenu.Label>Hi, USER.</DropdownMenu.Label>
-                <DropdownMenu.Item>
-                  <AuthStatus />
-                </DropdownMenu.Item>
-                {/* {navLinks.map((navLink) => {
-                  return (
-                    <DropdownMenu.Item
-                      key={navLink.name}
-                      className="hover:cursor-pointer"
-                    >
-                      <NextLink href={navLink.href}>{navLink.name}</NextLink>
-                    </DropdownMenu.Item>
-                  );
-                })} */}
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
+            <AuthStatus />
           </Box>
         </Flex>
       </Container>

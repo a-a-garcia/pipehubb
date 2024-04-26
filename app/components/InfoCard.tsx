@@ -47,8 +47,9 @@ const InfoCard = ({
         (taskUpdate && taskUpdate.id) ||
         (fileNote && fileNote.id)
       }
+      className={`animate-dropInLite`}
     >
-      <Card size="2" className="!bg-neutral-100 animate-dropInLite">
+      <Card size="2" className={`!bg-neutral-100`}>
         <Inset clip="padding-box" side="top" pb="current">
           <Card className="!bg-darkGrey">
             <Flex justify={"between"}>

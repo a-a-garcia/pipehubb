@@ -43,12 +43,6 @@ const ActivityLogPage = ({
   });
 
   useEffect(() => {
-    if (isFetched) {
-      setIsLoading(false);
-    }
-  });
-
-  useEffect(() => {
     // mapping over loansDisplayData, and if an item's .value matches loanStage, dynamically set the color
     if (loan) {
       loansDisplayData.map((displayData) => {
@@ -65,7 +59,7 @@ const ActivityLogPage = ({
         )
       );
     }
-  }, [isFetched]);
+  }, [isFetched, loan]);
 
   if (isPending) {
     return (

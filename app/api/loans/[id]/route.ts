@@ -75,34 +75,15 @@ export async function DELETE(response:NextResponse, {params} : {params : {id: st
         // if loan not found, return 404
         if (!loanToDelete) {
             return NextResponse.json({message: "Loan not found"}, {status: 404})
-        } else {
-            // otherwise, locate activity logs associated with said loan
-            const activityLogsToDelete = await prisma.activityLog.findMany({
-                where: {loanId: loanToDelete.id}
-            })
-
-            // delete all logs with associated loan - there should normally always be at least one log to delete because a log is editd on loan creation
-            if (activityLogsToDelete) {
-                await prisma.activityLog.deleteMany({
-                    where: {loanId: loanToDelete.id}
-                })
-            } else {
-                // error handling just in case
-                return NextResponse.json({message: "Could not find activity logs to delete"}, {status: 404})
-            }
-
-            //add deletemany for filenotes, and documentchecklist as well later
-            
-            // delete loan after deleting associated logs
+        } 
+        // because we are utilizing prisma's cascading delete (onDelete: 'CASCADE' in schema), we can simply delete the loan - any model associations with the loan will also be deleted.
             await prisma.loan.delete({
                 where: {id: loanToDelete.id}
               })
 
                 // return success message
-             return NextResponse.json({message: "Loan and related activity logs (if any) deleted."}, {status: 200})
-        }
+             return NextResponse.json({message: "Loan deleted."}, {status: 200})
         // error handling
-
 
        } catch (error) {
          console.error(error)

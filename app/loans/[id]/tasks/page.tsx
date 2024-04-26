@@ -11,7 +11,7 @@ const TasksListPage = ({ params }: { params: { id: string } }) => {
   const loan = queryClient.getQueryData<Loan>(["loan"]);
 
   if (!loan) {
-    return <div>No loan found.</div>
+    return <div>No loan found.</div>;
   }
 
   return (

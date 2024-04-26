@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createLoanSchema } from "../../validationSchemas";
 import prisma from "@/prisma/client";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/authOptions"
 
-export async function POST(request:NextRequest) {
+
+export async function POST(request:NextRequest, response:NextResponse) {
+    const session = await getServerSession(request, response, authOptions)
+
     const body = await request.json();
 
     const validated = createLoanSchema.safeParse(body);
@@ -16,6 +21,7 @@ export async function POST(request:NextRequest) {
 
     const newLoan = await prisma.loan.create({
         data: {
+            assignedToUserId: body.assignedToUserId,
             transactionType: body.transactionType,
             borrowerName: body.borrowerName ? body.borrowerName.trim() : undefined,
             loanAmount: body.loanAmount,

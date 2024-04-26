@@ -27,10 +27,12 @@ model Loan {
   creditScore       Int?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
-  activityLog       ActivityLog[]
-  fileNotes         FileNotes[]
-  DocumentChecklist DocumentChecklist[]
-  TaskList          TaskList[]
+  activityLog       ActivityLog[]       @relation("ActivityLogToLoan")
+  fileNotes         FileNotes[]         @relation("FileNotesToLoan")
+  DocumentChecklist DocumentChecklist[] @relation("DocumentChecklistToLoan")
+  TaskList          TaskList[]          @relation("TaskListToLoan")
+  assignedToUserId  String?             @db.VarChar(255)
+  assignedToUser    User?               @relation(fields: [assignedToUserId], references: [id])
 }
 
 enum TransactionType {
@@ -50,7 +52,7 @@ enum PipelineStage {
 model ActivityLog {
   id        Int      @id @default(autoincrement())
   loanId    Int
-  loan      Loan     @relation(fields: [loanId], references: [id])
+  loan      Loan     @relation("ActivityLogToLoan", fields: [loanId], references: [id], onDelete: Cascade)
   message   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -61,7 +63,7 @@ model ActivityLog {
 model FileNotes {
   id        Int      @id @default(autoincrement())
   loanId    Int
-  loan      Loan     @relation(fields: [loanId], references: [id])
+  loan      Loan     @relation("FileNotesToLoan",fields: [loanId], references: [id], onDelete: Cascade)
   note      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -71,7 +73,7 @@ model FileNotes {
 model DocumentChecklist {
   id           Int            @id @default(autoincrement())
   loanId       Int
-  loan         Loan           @relation(fields: [loanId], references: [id])
+  loan         Loan           @relation("DocumentChecklistToLoan", fields: [loanId], references: [id], onDelete: Cascade)
   documentName String
   dueDate      DateTime?
   important    Boolean?       @default(false)
@@ -89,7 +91,7 @@ enum DocumentStatus {
 model TaskList {
   id          Int           @id @default(autoincrement())
   loanId      Int
-  loan        Loan          @relation(fields: [loanId], references: [id])
+  loan        Loan          @relation("TaskListToLoan", fields: [loanId], references: [id], onDelete: Cascade)
   title       String        @db.VarChar(255)
   description String?       @db.VarChar(2000)
   dueDate     DateTime?
@@ -97,7 +99,7 @@ model TaskList {
   status      TaskStatus    @default(NOT_STARTED)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  taskUpdates TaskUpdates[]
+  taskUpdates TaskUpdates[] @relation("TaskListToTaskUpdates")
 }
 
 enum TaskStatus {
@@ -111,42 +113,42 @@ model TaskUpdates {
   id         Int      @id @default(autoincrement())
   taskListId Int
   important  Boolean? @default(false)
-  taskList   TaskList @relation(fields: [taskListId], references: [id])
+  taskList   TaskList @relation("TaskListToTaskUpdates",fields: [taskListId], references: [id], onDelete: Cascade)
   message    String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String  @map("user_id")
-  type               String
-  provider           String
-  providerAccountId  String  @map("provider_account_id")
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
- 
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@unique([provider, providerAccountId])
   @@map("accounts")
 }
- 
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique @map("session_token")
   userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@map("sessions")
 }
- 
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -155,15 +157,16 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
- 
+  assignedLoans Loan[]
+
   @@map("users")
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@unique([identifier, token])
   @@map("verificationtokens")
 }
