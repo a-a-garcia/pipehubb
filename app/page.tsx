@@ -14,6 +14,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import SignUpForm from "./components/SignUpForm";
 
 export default function Home() {
   const { status } = useSession();
@@ -21,7 +22,6 @@ export default function Home() {
   if (status === "authenticated") {
     router.push("/loans/pipeline");
   }
-
 
   return (
     <div className="flex flex-col items-center md:flex-row md:items-stretch md:pt-24">
@@ -53,12 +53,7 @@ export default function Home() {
             >
               Log In
             </Button>
-              <Button
-                className="hover:cursor-pointer myCustomButton"
-                size={"3"}
-              >
-                Sign Up
-              </Button>
+            <SignUpForm />
           </Flex>
         </Flex>
       </Card>

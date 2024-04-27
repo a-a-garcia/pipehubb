@@ -3,6 +3,7 @@ import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "path";
 import { editLoanSchema } from "@/app/validationSchemas";
+import { getServerSession } from "next-auth";
 
 export async function GET(response: NextResponse, {params} : {params: {id: string}}) {
     try {
