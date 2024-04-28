@@ -15,12 +15,19 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import SignUpForm from "./components/SignUpForm";
+import { useState } from "react";
 
 export default function Home() {
+  const [loading, setLoading] = useState(false);
   const { status } = useSession();
   const router = useRouter();
   if (status === "authenticated") {
     router.push("/loans/pipeline");
+  }
+
+  const handleLoginClick = () => {
+    signIn(undefined, { callbackUrl: "/loans/pipeline" })
+    setLoading(true);
   }
 
   return (
@@ -48,10 +55,11 @@ export default function Home() {
               className="hover:cursor-pointer myCustomButton"
               size={"3"}
               onClick={() =>
-                signIn(undefined, { callbackUrl: "/loans/pipeline" })
+                handleLoginClick()
               }
             >
               Log In
+              {loading && <Spinner />}
             </Button>
             <SignUpForm />
           </Flex>

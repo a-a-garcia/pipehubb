@@ -1,3 +1,4 @@
+import { count } from 'console';
 import { z } from 'zod';
 
 export const createLoanSchema = z.object({
@@ -68,4 +69,36 @@ export const editDocumentChecklistStatusSchema = z.object({
 
 export const editTaskStatusSchema = z.object({
     status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED", "NOT_STARTED"])
+})
+
+export const createUserSchema = z.object({
+    name: z.string().min(1, "Name must be at least 1 character.").max(255, "Name must be less than 255 characters."),
+
+    email: z.string().email().max(255, "Email must be less than 255 characters."),
+
+    password: z.string().min(8, "Password must be at least 8 characters.").max(255, "Password must be less than 255 characters."),
+
+    confirmPassword: z.string().min(8, "Password must be at least 8 characters.").max(255, "Password must be less than 255 characters.")
+}).superRefine(({ password }, checkPwComplexity) => {
+    const containsUppercase = (ch: string) => /[A-Z]/.test(ch);
+    const containsLowercase = (ch: string) => /[a-z]/.test(ch);
+    const containsSpecial = (ch: string) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(ch);
+    let countOfUpperCase = 0;
+    let countOfLowerCase = 0;
+    let countOfNumber = 0;
+    let countOfSpecial = 0;
+    for (let i = 0; i < password.length; i++) {
+        let ch = password.charAt(i);
+        if (!isNaN(parseInt(ch))) countOfNumber++;
+        else if (containsUppercase(ch)) countOfUpperCase++;
+        else if (containsLowercase(ch)) countOfLowerCase++;
+        else if (containsSpecial(ch)) countOfSpecial++;
+    }
+    checkPwComplexity.addIssue({
+        code: "custom",
+        message: "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.",
+    })
+}).refine(({ password, confirmPassword }) => password !== confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"]
 })
