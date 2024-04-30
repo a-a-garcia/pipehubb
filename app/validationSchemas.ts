@@ -78,27 +78,24 @@ export const createUserSchema = z.object({
 
     password: z.string().min(8, "Password must be at least 8 characters.").max(255, "Password must be less than 255 characters."),
 
-    confirmPassword: z.string().min(8, "Password must be at least 8 characters.").max(255, "Password must be less than 255 characters.")
+    confirmPassword: z.string().min(8, "Password must be at least 8 characters.").max(255, "Password must be less than 255 characters."),
+
+    existingUserEmail: z.string().email().max(255, "Email must be less than 255 characters.").optional()
+
 }).superRefine(({ password }, checkPwComplexity) => {
-    const containsUppercase = (ch: string) => /[A-Z]/.test(ch);
-    const containsLowercase = (ch: string) => /[a-z]/.test(ch);
-    const containsSpecial = (ch: string) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(ch);
-    let countOfUpperCase = 0;
-    let countOfLowerCase = 0;
-    let countOfNumber = 0;
-    let countOfSpecial = 0;
-    for (let i = 0; i < password.length; i++) {
-        let ch = password.charAt(i);
-        if (!isNaN(parseInt(ch))) countOfNumber++;
-        else if (containsUppercase(ch)) countOfUpperCase++;
-        else if (containsLowercase(ch)) countOfLowerCase++;
-        else if (containsSpecial(ch)) countOfSpecial++;
+    const containsUppercase = /[A-Z]/.test(password);
+    const containsLowercase = /[a-z]/.test(password);
+    const containsNumber = /\d/.test(password);
+    const containsSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+    if (!containsUppercase || !containsLowercase || !containsNumber || !containsSpecial) {
+        checkPwComplexity.addIssue({
+            code: "custom",
+            message: "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.",
+            path: ["password"]
+        });
     }
-    checkPwComplexity.addIssue({
-        code: "custom",
-        message: "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.",
-    })
-}).refine(({ password, confirmPassword }) => password !== confirmPassword, {
+}).refine(({ password, confirmPassword }) => password === confirmPassword, {
     message: "Passwords do not match.",
     path: ["confirmPassword"]
 })
