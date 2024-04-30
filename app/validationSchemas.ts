@@ -1,3 +1,4 @@
+import { count } from 'console';
 import { z } from 'zod';
 
 export const createLoanSchema = z.object({
@@ -68,4 +69,33 @@ export const editDocumentChecklistStatusSchema = z.object({
 
 export const editTaskStatusSchema = z.object({
     status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED", "NOT_STARTED"])
+})
+
+export const createUserSchema = z.object({
+    name: z.string().min(1, "Name must be at least 1 character.").max(255, "Name must be less than 255 characters."),
+
+    email: z.string().email().max(255, "Email must be less than 255 characters."),
+
+    password: z.string().min(8, "Password must be at least 8 characters.").max(255, "Password must be less than 255 characters."),
+
+    confirmPassword: z.string().min(8, "Password must be at least 8 characters.").max(255, "Password must be less than 255 characters."),
+
+    existingUserEmail: z.string().email().max(255, "Email must be less than 255 characters.").optional()
+
+}).superRefine(({ password }, checkPwComplexity) => {
+    const containsUppercase = /[A-Z]/.test(password);
+    const containsLowercase = /[a-z]/.test(password);
+    const containsNumber = /\d/.test(password);
+    const containsSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+    if (!containsUppercase || !containsLowercase || !containsNumber || !containsSpecial) {
+        checkPwComplexity.addIssue({
+            code: "custom",
+            message: "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.",
+            path: ["password"]
+        });
+    }
+}).refine(({ password, confirmPassword }) => password === confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"]
 })

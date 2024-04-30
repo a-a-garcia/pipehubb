@@ -14,14 +14,27 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import SignUpForm from "./components/SignUpForm";
+import { useState } from "react";
 
 export default function Home() {
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [signupLoading, setSigupLoading] = useState(false);
   const { status } = useSession();
   const router = useRouter();
   if (status === "authenticated") {
     router.push("/loans/pipeline");
   }
 
+  const handleClick = (isLogin: Boolean, isSignup: Boolean) => {
+    if (isLogin) {
+      setLoginLoading(true);
+      signIn(undefined, { callbackUrl: "/loans/pipeline" });
+    } else if (isSignup) {
+      setSigupLoading(true);
+      router.push("/sign-up");
+    }
+  };
 
   return (
     <div className="flex flex-col items-center md:flex-row md:items-stretch md:pt-24">
@@ -47,18 +60,19 @@ export default function Home() {
             <Button
               className="hover:cursor-pointer myCustomButton"
               size={"3"}
-              onClick={() =>
-                signIn(undefined, { callbackUrl: "/loans/pipeline" })
-              }
+              onClick={() => handleClick(true, false)}
             >
               Log In
+              {loginLoading && <Spinner />}
             </Button>
-              <Button
-                className="hover:cursor-pointer myCustomButton"
-                size={"3"}
-              >
-                Sign Up
-              </Button>
+            <Button
+              className="hover:cursor-pointer myCustomButton"
+              size={"3"}
+              onClick={() => handleClick(false, true)}
+            >
+              Sign Up
+              {signupLoading && <Spinner />}
+            </Button>
           </Flex>
         </Flex>
       </Card>

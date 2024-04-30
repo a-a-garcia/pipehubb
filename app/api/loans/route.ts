@@ -4,9 +4,7 @@ import prisma from "@/prisma/client";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/authOptions"
 
-
 export async function POST(request:NextRequest, response:NextResponse) {
-    const session = await getServerSession(request, response, authOptions)
 
     const body = await request.json();
 
@@ -41,6 +39,9 @@ export async function GET(request:NextRequest) {
     const pipelineStages = ['PROSPECT', 'APPLICATION', 'PROCESSING', 'UNDERWRITING', 'CONDITIONAL', 'CLOSED'];
 
     try {
+        const session = await getServerSession(authOptions);
+        console.log("session contents", session);
+
         // initialze object to store loans for each stage
         const loansByStage: Record<string, {}> = {};
         // get all loans

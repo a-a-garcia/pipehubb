@@ -63,7 +63,7 @@ model ActivityLog {
 model FileNotes {
   id        Int      @id @default(autoincrement())
   loanId    Int
-  loan      Loan     @relation("FileNotesToLoan",fields: [loanId], references: [id], onDelete: Cascade)
+  loan      Loan     @relation("FileNotesToLoan", fields: [loanId], references: [id], onDelete: Cascade)
   note      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -113,7 +113,7 @@ model TaskUpdates {
   id         Int      @id @default(autoincrement())
   taskListId Int
   important  Boolean? @default(false)
-  taskList   TaskList @relation("TaskListToTaskUpdates",fields: [taskListId], references: [id], onDelete: Cascade)
+  taskList   TaskList @relation("TaskListToTaskUpdates", fields: [taskListId], references: [id], onDelete: Cascade)
   message    String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -150,14 +150,15 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  assignedLoans Loan[]
+  id             String    @id @default(cuid())
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime? @map("email_verified")
+  hashedPassword String?
+  image          String?
+  accounts       Account[]
+  sessions       Session[]
+  assignedLoans  Loan[]
 
   @@map("users")
 }

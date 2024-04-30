@@ -43,7 +43,6 @@ const NoteForm = ({
   const [error, setError] = useState("");
   const [noteInput, setNoteInput] = useState("");
   const [importantInput, setImportantInput] = useState(false);
-  console.log(item)
 
   useEffect(() => {
     if (isEditMode && isFileNotes) {
@@ -69,10 +68,12 @@ const NoteForm = ({
         //creation of a new note
       } else if (isFileNotes) {
         const validate = createFileNoteSchema.safeParse({
+          loanId: loan!.id,
           note: noteInput,
           important: importantInput,
         });
         if (!validate.success) {
+          console.log(validate.error.errors[0].message)
           setError(validate.error.errors[0].message);
           return;
         }
@@ -81,6 +82,8 @@ const NoteForm = ({
           note: noteInput,
           important: importantInput,
         });
+
+        console.log(response, response.data)
         const correctedMessage = importantInput
           ? "USER created a new important note."
           : "USER created a new note.";
