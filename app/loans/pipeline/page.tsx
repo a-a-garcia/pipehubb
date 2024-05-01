@@ -19,8 +19,10 @@ import {
 import PipelineHeader from "@/app/components/PipelineHeader";
 import { useQuery } from "@tanstack/react-query";
 import ErrorMessage from "@/app/components/ErrorMessage";
+import { useSession } from "next-auth/react";
 
 const PipelinePage = () => {
+  const { status, data: session } = useSession();
   const [isLoadingPage, setIsLoadingPage] = useState(true);
   const {
     isFetched,
@@ -35,6 +37,8 @@ const PipelinePage = () => {
       setIsLoadingPage(false);
     }
   }, [isFetched]);
+
+  console.log(session)
 
   if (error)
     return (

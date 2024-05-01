@@ -19,7 +19,7 @@ export async function POST(request:NextRequest, response:NextResponse) {
 
     const newLoan = await prisma.loan.create({
         data: {
-            assignedToUserId: body.assignedToUserId,
+            loanTeamId: body.loanTeamId,
             transactionType: body.transactionType,
             borrowerName: body.borrowerName ? body.borrowerName.trim() : undefined,
             loanAmount: body.loanAmount,
@@ -41,6 +41,10 @@ export async function GET(request:NextRequest) {
     try {
         const session = await getServerSession(authOptions);
         console.log("session contents", session);
+        const user = await prisma.user.findUnique({
+            where: {email: session!.user!.email ?? undefined}
+        })
+
 
         // initialze object to store loans for each stage
         const loansByStage: Record<string, {}> = {};

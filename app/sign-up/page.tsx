@@ -28,8 +28,9 @@ interface SignUpFormProps extends User {
 
 //manually validating without Zod because for unknown reason, `existingUserEmail` is not being included in the data object when trying to {...register("existingUserEmail")}, and therefore can't be validated.
 function validateEmail(email: string) {
-  const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(email) && email.length <= 255
+  const re =
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email) && email.length <= 255;
 }
 
 const SignUpForm = () => {
@@ -52,7 +53,7 @@ const SignUpForm = () => {
   const onSubmit: SubmitHandler<SignUpFormProps> = async (data) => {
     if (existingEmail && !validateEmail(existingEmail)) {
       // Handle invalid email
-      console.error('Invalid email');
+      console.error("Invalid email");
       return;
     }
     try {
@@ -60,28 +61,33 @@ const SignUpForm = () => {
         name: data.name,
         email: data.email,
         password: data.password,
-        existingUserEmail: existingEmail,
+        confirmPassword: data.confirmPassword,
+        // if existingUserEmail is left blank, cast it into undefined because Zod expects undefined if .optional()
+        existingUserEmail: existingEmail === "" ? undefined : existingEmail,
       });
-      console.log(response);
+      console.log("response: " + JSON.stringify(response));
     } catch (error: any) {
-      console.log(error);
-      if (
-        error.response &&
-        error.response.data.error === "Email already exists."
-      ) {
-        setError("email", {
-          type: "manual",
-          message: "Email already exists.",
-        });
-      }
-      if (
-        error.response &&
-        error.response.data.error === "Couldn't find a user with that email."
-      ) {
-        setError("existingUserEmail", {
-          type: "manual",
-          message: "Couldn't find a user with that email.",
-        });
+      console.log("error: " + JSON.stringify(error.response.data));
+      switch (error.response?.data.error) {
+        case "Email already exists.":
+          setError("email", {
+            type: "manual",
+            message: "Email already exists.",
+          });
+          break;
+        case "Couldn't find a user with that email.":
+          setError("existingUserEmail", {
+            type: "manual",
+            message: "Couldn't find a user with that email.",
+          });
+          break;
+        case "New user email and existing user email cannot be the same.":
+          setError("existingUserEmail", {
+            type: "manual",
+            message:
+              "New user email and existing user email cannot be the same.",
+          });
+          break;
       }
     }
   };

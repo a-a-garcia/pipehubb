@@ -31,8 +31,8 @@ model Loan {
   fileNotes         FileNotes[]         @relation("FileNotesToLoan")
   DocumentChecklist DocumentChecklist[] @relation("DocumentChecklistToLoan")
   TaskList          TaskList[]          @relation("TaskListToLoan")
-  assignedToUserId  String?             @db.VarChar(255)
-  assignedToUser    User?               @relation(fields: [assignedToUserId], references: [id])
+  loanTeamId        Int
+  loanTeam          LoanTeam            @relation(fields: [loanTeamId], references: [id])
 }
 
 enum TransactionType {
@@ -150,16 +150,17 @@ model Session {
 }
 
 model User {
-  id             String    @id @default(cuid())
-  name           String?
-  email          String?   @unique
-  emailVerified  DateTime? @map("email_verified")
-  hashedPassword String?
-  image          String?
-  accounts       Account[]
-  sessions       Session[]
-  assignedLoans  Loan[]
-
+  id              String           @id @default(cuid())
+  name            String?
+  email           String?          @unique
+  emailVerified   DateTime?        @map("email_verified")
+  hashedPassword  String?
+  image           String?
+  accounts        Account[]
+  sessions        Session[]
+  teamMemberships LoanTeamMember[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
   @@map("users")
 }
 
@@ -170,4 +171,45 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verificationtokens")
+}
+
+model LoanTeam {
+  id          Int              @id @default(autoincrement())
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  teamMembers LoanTeamMember[]
+  loans       Loan[]
+}
+
+model LoanTeamMember {
+  id         Int      @id @default(autoincrement())
+  loanTeamId Int
+  userId     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  loanTeam   LoanTeam @relation(fields: [loanTeamId], references: [id])
+  User       User     @relation(fields: [userId], references: [id])
+}
+
+// The LoanTeamMember model is acting as a bridge between the LoanTeam and User models, enabling the many-to-many relationship between them. The LoanTeamMember model is often referred to as a "junction table" or "linking table" because it links the LoanTeam and User models together, it has a one to many relationship with both the LoanTeam and User models.
+
+// In a many-to-many relationship, one User can belong to many LoanTeams, and one LoanTeam can have many Users. This is achieved by having a separate LoanTeamMember record for each combination of User and LoanTeam.
+
+// So, if a User belongs to two LoanTeams, there would be two LoanTeamMember records for that User, each with a different loanTeamId. Similarly, if a LoanTeam has two Users, there would be two LoanTeamMember records for that LoanTeam, each with a different userId.
+
+// This structure allows you to query all the LoanTeams that a User belongs to, all the Users that belong to a LoanTeam, or all the LoanTeamMember records, which would give you all combinations of Users and LoanTeams.
+
+model LoanTeamRequest {
+  id          Int      @id @default(autoincrement())
+  requestorId String 
+  requesteeId String
+  status      LoanTeamRequestStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum LoanTeamRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
