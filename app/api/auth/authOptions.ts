@@ -52,6 +52,12 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    jwt: async ({ user, token }) => {
+      if (user) {
+        token.uid = user.id;
+      }
+      return token;
+    },
   },
 //   when we use an adapter next auth changes the session strategy from jwt to database, but databse strategy doesnt work with oAuth providers like google. So we need to change the session strategy back to jwt
   session: {

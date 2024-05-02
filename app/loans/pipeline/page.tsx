@@ -3,6 +3,7 @@ import Skeleton from "@/app/components/Skeleton";
 import { Loan } from "@prisma/client";
 import {
   Badge,
+  Button,
   Card,
   Flex,
   Grid,
@@ -20,6 +21,10 @@ import PipelineHeader from "@/app/components/PipelineHeader";
 import { useQuery } from "@tanstack/react-query";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import { useSession } from "next-auth/react";
+import PipelineSelect from "@/app/components/PipelineSelect";
+import { MdOutlineCreate } from "react-icons/md";
+import NextLink from "next/link";
+import FirstTimeLogin from "@/app/components/LoginMessage";
 
 const PipelinePage = () => {
   const { status, data: session } = useSession();
@@ -38,7 +43,7 @@ const PipelinePage = () => {
     }
   }, [isFetched]);
 
-  console.log(session)
+  console.log(session);
 
   if (error)
     return (
@@ -51,9 +56,21 @@ const PipelinePage = () => {
 
   return (
     <div>
+      <FirstTimeLogin />
       <Flex direction={"column"} gap={"5"}>
-        <PipelineHeader />
+        <Flex justify={"between"} align={"center"}>
+          <PipelineHeader />
+          <PipelineSelect />
+        </Flex>
         <Card className="!bg-maroon">
+          <Flex justify={"end"} className="mb-3">
+            <NextLink href="/loans/new">
+              <Button size="1" className="hover:cursor-pointer myCustomButton">
+                Create Loan
+                <MdOutlineCreate />
+              </Button>
+            </NextLink>
+          </Flex>
           <Grid columns={{ initial: "1", md: "6" }} gap={"4"}>
             {loansDisplayData.map((data: loansDisplayDataInterface) => (
               <div key={data.name}>
@@ -69,7 +86,10 @@ const PipelinePage = () => {
                     {isLoadingPage && <Skeleton count={5} height={"5rem"} />}
                     {loans?.[data.value]?.length === 0 ? (
                       <Flex justify={"center"}>
-                        <Badge color="gray"><GrDocumentMissing />No loans found</Badge>
+                        <Badge color="gray">
+                          <GrDocumentMissing />
+                          No loans found
+                        </Badge>
                       </Flex>
                     ) : (
                       (loans?.[data.value] || []).map((loan: Loan) => {

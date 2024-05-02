@@ -23,7 +23,6 @@ import axios from "axios";
 interface SignUpFormProps extends User {
   password: string;
   confirmPassword: string;
-  existingUserEmail?: string;
 }
 
 //manually validating without Zod because for unknown reason, `existingUserEmail` is not being included in the data object when trying to {...register("existingUserEmail")}, and therefore can't be validated.
@@ -75,26 +74,10 @@ const SignUpForm = () => {
             message: "Email already exists.",
           });
           break;
-        case "Couldn't find a user with that email.":
-          setError("existingUserEmail", {
-            type: "manual",
-            message: "Couldn't find a user with that email.",
-          });
-          break;
-        case "New user email and existing user email cannot be the same.":
-          setError("existingUserEmail", {
-            type: "manual",
-            message:
-              "New user email and existing user email cannot be the same.",
-          });
-          break;
       }
     }
   };
 
-  console.log(
-    "this is the existingUserEmail input: " + watch("existingUserEmail")
-  );
 
   return (
     <Card>
@@ -193,51 +176,6 @@ const SignUpForm = () => {
             </TextField.Root>
           </label>
           <Separator size={"4"} my={"2"} />
-
-          <label>
-            <Flex justify={"center"}>
-              <Text
-                as="div"
-                size="1"
-                mb="3"
-                align={"center"}
-                className="italic"
-              >
-                <strong>
-                  Trying to join a loan team that's already on Pipehubb?{" "}
-                </strong>
-                <br></br>
-                Enter the email of an existing user. They'll be notified, and
-                once approved by that user, you'll have access to that team's
-                loans and pipeline.
-              </Text>
-            </Flex>
-            <div className="my-3">
-              {errors.existingUserEmail && (
-                <ErrorMessage>{errors.existingUserEmail.message}</ErrorMessage>
-              )}
-            </div>
-            <TextField.Root
-              placeholder="Enter existing user's email."
-              //manually setting the existing email state because for unknown reason, `existingUserEmail` is not being included in the data object when trying to {...register("existingUserEmail")}.
-              onChange={(e) => setExistingEmail(e.target.value)}
-              type="email"
-            />
-            <Flex justify={"center"}>
-              <Text
-                as="div"
-                size="1"
-                mt="3"
-                align={"center"}
-                className="italic"
-              >
-                <strong>Don't have a loan team yet?</strong> <br></br> No
-                worries! Simply continue without providing an existing user
-                email, and a new loan team will be created with you as the first
-                member.
-              </Text>
-            </Flex>
-          </label>
         </Flex>
         <Flex gap="3" mt="4" justify="end">
           <Button

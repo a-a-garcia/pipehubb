@@ -22,8 +22,6 @@ import { FaUserTie } from "react-icons/fa6";
 const AuthStatus = () => {
   const { status, data: session } = useSession();
 
-  console.log(status, session);
-
   if (status === "loading") {
     return;
   }

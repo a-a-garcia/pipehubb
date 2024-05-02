@@ -159,6 +159,7 @@ model User {
   accounts        Account[]
   sessions        Session[]
   teamMemberships LoanTeamMember[]
+  firstTimeLogin  Boolean          @default(true)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   @@map("users")
@@ -175,6 +176,7 @@ model VerificationToken {
 
 model LoanTeam {
   id          Int              @id @default(autoincrement())
+  teamName    String           @db.VarChar(255)
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   teamMembers LoanTeamMember[]

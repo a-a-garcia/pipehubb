@@ -14,7 +14,6 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import SignUpForm from "./components/SignUpForm";
 import { useState } from "react";
 
 export default function Home() {
