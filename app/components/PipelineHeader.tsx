@@ -4,7 +4,7 @@ import NextLink from "next/link";
 import { MdOutlineCreate } from "react-icons/md";
 import { useSession } from "next-auth/react";
 
-const PipelineHeader = () => {
+const PipelineHeader = ({teamName} : {teamName?: string}) => {
   const { status, data: session } = useSession();
   return (
     <Card className="!bg-cactus">
@@ -13,7 +13,9 @@ const PipelineHeader = () => {
           <Heading size={"5"}>Welcome, {session!.user!.name}!</Heading>
         ) : <Spinner />
         }
-        <Text>You're currently viewing USER'S pipeline.</Text>
+        {teamName ? (
+        <Text>You're currently viewing {teamName}'s pipeline.</Text>
+        ) : <Text>No pipeline to view.</Text>}
       </Flex>
     </Card>
   );

@@ -80,8 +80,6 @@ export const createUserSchema = z.object({
 
     confirmPassword: z.string().min(8, "Password must be at least 8 characters.").max(255, "Password must be less than 255 characters."),
 
-    existingUserEmail: z.string().email().max(255, "Email must be less than 255 characters.").optional()
-
 }).superRefine(({ password }, checkPwComplexity) => {
     const containsUppercase = /[A-Z]/.test(password);
     const containsLowercase = /[a-z]/.test(password);
@@ -98,4 +96,8 @@ export const createUserSchema = z.object({
 }).refine(({ password, confirmPassword }) => password === confirmPassword, {
     message: "Passwords do not match.",
     path: ["confirmPassword"]
+})
+
+export const loanTeamExistingUserSchema = z.object({
+    existingUserEmail: z.string().email().max(255, "Email must be less than 255 characters.").optional()
 })

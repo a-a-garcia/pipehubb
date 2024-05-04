@@ -4,12 +4,14 @@ import { getSession } from "next-auth/react";
 import { NextRequest, NextResponse } from "next/server";
 import authOptions from "../../auth/authOptions";
 import prisma from "@/prisma/client";
+import { LoanTeam } from "@prisma/client";
 
 export async function GET(response: NextResponse, {params} : {params: {id: string}}) {
     const user = await prisma.user.findUnique({
         where: {id: params.id}
     })
 
+    
     if (!user) {
         return NextResponse.json({error: "User not found."}, {status: 404})
     }
@@ -22,7 +24,18 @@ export async function GET(response: NextResponse, {params} : {params: {id: strin
         return NextResponse.json({error: "User is not a member of any loan teams. User should be a member of at least one team."}, {status: 404})
     }
 
-    return NextResponse.json([user, usersLoanTeams], {status: 200})
+    const loanTeams: LoanTeam[] = [];
+
+    //wrap prisma call to loanTeam in a Promise.all(), to ensure that all promises returned by the map() are resolved before proceeding futher. By using Promise.all(), we can execute all the promises concurrently. This means that all the promises are initiated at the same time, and the code doesn't wait for each promise to resolve before moving on to the next one.
+    await Promise.all(usersLoanTeams.map(async (team) => {
+        const loanTeam = await prisma.loanTeam.findUnique({
+            where: {id: team.loanTeamId}
+        })
+        loanTeams.push(loanTeam!)
+    }))
+
+
+    return NextResponse.json(loanTeams, {status: 200})
 }
 
 

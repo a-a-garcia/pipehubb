@@ -35,38 +35,11 @@ export async function POST(request: NextRequest, response: NextResponse) {
         }
     })
 
-    if (body.existingUserEmail) {
-        const existingUser = await prisma.user.findUnique({
-            where: { email: body?.existingUserEmail }
-        })
-        if (body.existingUserEmail === body.email) {
-            return NextResponse.json({error: "New user email and existing user email cannot be the same."}, {status: 400})
-        }
-        if (!existingUser) {
-            return NextResponse.json({error: "Couldn't find a user with that email."}, {status: 400})
-        }
-        const newLoanTeamRequest = await prisma.loanTeamRequest.create({
-            data: {
-                requestorId: newUser.id,
-                requesteeId: existingUser.id
-            }
-        })
-        return NextResponse.json([newUser, newLoanTeamRequest], {status:200})
-    } else {
-        const newLoanTeam = await prisma.loanTeam.create({
-            data: {}
-        })
+
     
-        const newLoanTeamMember = await prisma.loanTeamMember.create({
-            data: {
-                userId: newUser.id,
-                loanTeamId: newLoanTeam.id
-            }
-        })
-    
-        return NextResponse.json([newUser, newLoanTeam, newLoanTeamMember],{status: 200})
-    }
+    return NextResponse.json(newUser ,{status: 200})
 }
+
 
 export async function GET(request: NextRequest, response: NextResponse) {
     const body = await request.json();

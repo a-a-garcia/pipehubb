@@ -8,6 +8,7 @@ import {
   Flex,
   Grid,
   Heading,
+  Spinner,
   Text,
 } from "@radix-ui/themes";
 import { GrDocumentMissing } from "react-icons/gr";
@@ -25,6 +26,7 @@ import PipelineSelect from "@/app/components/PipelineSelect";
 import { MdOutlineCreate } from "react-icons/md";
 import NextLink from "next/link";
 import FirstTimeLogin from "@/app/components/LoginMessage";
+import LoadingBadge from "@/app/components/LoadingBadge";
 
 const PipelinePage = () => {
   const { status, data: session } = useSession();
@@ -32,9 +34,10 @@ const PipelinePage = () => {
   const {
     isFetched,
     error,
-    data: loans,
+    isLoading,
+    data: pipelineData,
   } = useQuery({
-    queryKey: ["allLoans"],
+    queryKey: ["allLoans", session?.user.id],
     queryFn: () => fetch("/api/loans").then((res) => res.json()),
   });
   useEffect(() => {
@@ -43,8 +46,6 @@ const PipelinePage = () => {
     }
   }, [isFetched]);
 
-  console.log(session);
-
   if (error)
     return (
       <ErrorMessage>
@@ -52,16 +53,17 @@ const PipelinePage = () => {
       </ErrorMessage>
     );
 
-  console.log(loans);
-
   return (
     <div>
       <FirstTimeLogin />
       <Flex direction={"column"} gap={"5"}>
+        {isLoading && <LoadingBadge />}
         <Flex justify={"between"} align={"center"}>
-          <PipelineHeader />
+        {pipelineData && pipelineData[1] ? (
+            <PipelineHeader teamName={pipelineData[1].teamName} />
+          ) : <PipelineHeader />}
           <PipelineSelect />
-        </Flex>
+          </Flex>
         <Card className="!bg-maroon">
           <Flex justify={"end"} className="mb-3">
             <NextLink href="/loans/new">
@@ -84,7 +86,9 @@ const PipelinePage = () => {
                 <Card className="!bg-neutral-300">
                   <Flex direction={"column"} gap="5">
                     {isLoadingPage && <Skeleton count={5} height={"5rem"} />}
-                    {loans?.[data.value]?.length === 0 ? (
+                    {/* checking for the existence of data before trying to access data or will get a runtime `pipelineData is undefined` error.  Additionally, we must access `pipelineData[0]` now as the data returned from the API is an [{...pipeline data...}}, {...loan team data...}]*/}
+                    {pipelineData &&
+                    pipelineData[0]?.[data.value]?.length === 0 ? (
                       <Flex justify={"center"}>
                         <Badge color="gray">
                           <GrDocumentMissing />
@@ -92,12 +96,16 @@ const PipelinePage = () => {
                         </Badge>
                       </Flex>
                     ) : (
-                      (loans?.[data.value] || []).map((loan: Loan) => {
+                      (
+                        (pipelineData && pipelineData[0]?.[data.value]) ||
+                        []
+                      ).map((loan: Loan) => {
                         return (
                           <div>
-                            {loans[data.value].length === 0 && (
-                              <Text>No loans in this stage</Text>
-                            )}
+                            {pipelineData &&
+                              pipelineData[0][data.value].length === 0 && (
+                                <Text>No loans in this stage</Text>
+                              )}
                             <LoanCard
                               key={loan.borrowerName}
                               loan={loan}
