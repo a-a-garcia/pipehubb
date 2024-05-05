@@ -176,7 +176,7 @@ model VerificationToken {
 
 model LoanTeam {
   id          Int              @id @default(autoincrement())
-  teamName    String           @db.VarChar(255)
+  teamName    String           @db.VarChar(255) @unique
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   teamMembers LoanTeamMember[]

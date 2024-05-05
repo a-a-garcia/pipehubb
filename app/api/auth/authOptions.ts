@@ -63,6 +63,22 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt"
   },
-} 
+} satisfies NextAuthOptions
 
 export default authOptions
+
+import type {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from "next"
+
+// Use it in server contexts
+export function serverSessionAuth(
+  ...args:
+    | [GetServerSidePropsContext["req"], GetServerSidePropsContext["res"]]
+    | [NextApiRequest, NextApiResponse]
+    | []
+) {
+  return getServerSession(...args, authOptions)
+}

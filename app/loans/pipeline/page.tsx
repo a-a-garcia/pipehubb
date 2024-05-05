@@ -53,17 +53,22 @@ const PipelinePage = () => {
       </ErrorMessage>
     );
 
+    console.log(pipelineData)
   return (
     <div>
       <FirstTimeLogin />
       <Flex direction={"column"} gap={"5"}>
         {isLoading && <LoadingBadge />}
         <Flex justify={"between"} align={"center"}>
-        {pipelineData && pipelineData[1] ? (
+          {isLoading ? (
+            <Spinner />
+          ) : pipelineData && pipelineData[1] ? (
             <PipelineHeader teamName={pipelineData[1].teamName} />
-          ) : <PipelineHeader />}
+          ) : (
+            <PipelineHeader />
+          )}
           <PipelineSelect />
-          </Flex>
+        </Flex>
         <Card className="!bg-maroon">
           <Flex justify={"end"} className="mb-3">
             <NextLink href="/loans/new">

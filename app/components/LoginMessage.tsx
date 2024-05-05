@@ -29,7 +29,7 @@ function validateEmail(email: string) {
 }
 
 const LoginMessage = () => {
-  const { data: session, status } = useSession();
+  const { data: session, status, } = useSession();
   const {
     data: user,
     isPending,
@@ -38,7 +38,10 @@ const LoginMessage = () => {
     queryKey: ["userInSession", { userId: session?.user.id }],
     queryFn: () =>
       fetch(`/api/user/${session?.user.id}`).then((res) => res.json()),
+    enabled: !!session
   });
+
+  console.log("session: ", session)
 
   const { handleSubmit } = useForm({
     resolver: zodResolver(loanTeamExistingUserSchema),
