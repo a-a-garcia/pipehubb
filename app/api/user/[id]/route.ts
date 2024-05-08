@@ -9,11 +9,27 @@ export async function GET(response: NextResponse, {params} : {params: {id: strin
         if (!user) {
             return NextResponse.json({message: "User not found"}, {status: 404})
         }
-        return NextResponse.json(user, {status: 200})
+
+        const userTeams = await prisma.loanTeamMember.findMany({
+            where: {userId: user.id}
+        })
+
+
+        if (userTeams.length === 0) {
+            return NextResponse.json([user,{message: "userTeams=0"}], {status: 404})
+        }
+
+        return NextResponse.json([user, {message: "userTeams>=1"}], {status: 200})
     }
     catch {
         return NextResponse.json({message: "An error occurred"}, {status: 500})
     }
+}
+
+interface RequestsData {
+    requesteeId: string;
+    requestorId: string;
+    loanTeamId: number;
 }
 
 export async function PUT(request: NextRequest, response: NextResponse) {
@@ -28,22 +44,40 @@ export async function PUT(request: NextRequest, response: NextResponse) {
     }
 
     if (body.existingUserEmail) {
-        const existingUser = await prisma.user.findUnique({
-            where: { email: body?.existingUserEmail }
-        })
         if (body.existingUserEmail === newUser?.email) {
             return NextResponse.json({error: "Existing user email and new user email can't be the same. If you want to create a new team, continue without providing an existing user email."}, {status: 400})
         }
+        
+        const existingUser = await prisma.user.findUnique({
+            where: { email: body?.existingUserEmail }
+        })
+
         if (!existingUser) {
             return NextResponse.json({error: "Couldn't find a user with that email."}, {status: 400})
         }
-        
-        await prisma.loanTeamRequest.create({
-            data: {
-                requestorId: body.id,
-                requesteeId: existingUser.id
-            }
+
+        const existingUsersLoanTeamMemberships = await prisma.loanTeamMember.findMany({
+            where: {userId: existingUser.id}
         })
+
+        if (!existingUsersLoanTeamMemberships) {
+            return NextResponse.json({error: "Existing user is not a member of any loan teams. Existing user should be a member of at least one team."}, {status: 400})
+        }
+
+        const requestsData: RequestsData[] = []
+
+        await Promise.all(existingUsersLoanTeamMemberships.map((membership) => {
+            requestsData.push({
+                requesteeId: existingUser.id,
+                requestorId: body.id,
+                loanTeamId: membership.loanTeamId,
+            })
+        }))
+
+        await prisma.loanTeamRequest.createMany({
+            data: requestsData
+        })
+
     } else {
         const newLoanTeam = await prisma.loanTeam.create({
             data: {

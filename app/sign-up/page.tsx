@@ -64,7 +64,7 @@ const SignUpForm = () => {
         // if existingUserEmail is left blank, cast it into undefined because Zod expects undefined if .optional()
         existingUserEmail: existingEmail === "" ? undefined : existingEmail,
       });
-      console.log("response: " + JSON.stringify(response));
+      router.push(`/loans/pipeline`);
     } catch (error: any) {
       console.log("error: " + JSON.stringify(error.response.data));
       switch (error.response?.data.error) {

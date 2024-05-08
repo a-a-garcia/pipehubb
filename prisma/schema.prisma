@@ -162,6 +162,7 @@ model User {
   firstTimeLogin  Boolean          @default(true)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+
   @@map("users")
 }
 
@@ -175,12 +176,13 @@ model VerificationToken {
 }
 
 model LoanTeam {
-  id          Int              @id @default(autoincrement())
-  teamName    String           @db.VarChar(255) @unique
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  teamMembers LoanTeamMember[]
-  loans       Loan[]
+  id               Int               @id @default(autoincrement())
+  teamName         String            @unique @db.VarChar(255)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  loanTeamRequests LoanTeamRequest[]
+  teamMembers      LoanTeamMember[]
+  loans            Loan[]
 }
 
 model LoanTeamMember {
@@ -202,16 +204,19 @@ model LoanTeamMember {
 // This structure allows you to query all the LoanTeams that a User belongs to, all the Users that belong to a LoanTeam, or all the LoanTeamMember records, which would give you all combinations of Users and LoanTeams.
 
 model LoanTeamRequest {
-  id          Int      @id @default(autoincrement())
-  requestorId String 
+  id          Int                   @id @default(autoincrement())
+  requestorId String
   requesteeId String
+  loanTeam    LoanTeam              @relation(fields: [loanTeamId], references: [id])
+  loanTeamId  Int
   status      LoanTeamRequestStatus @default(PENDING)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
 }
 
 enum LoanTeamRequestStatus {
   PENDING
   ACCEPTED
+  CONFIRMED
   REJECTED
 }

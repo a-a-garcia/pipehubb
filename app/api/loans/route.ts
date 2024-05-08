@@ -59,6 +59,7 @@ export async function GET(request: NextRequest) {
 
         const session = await serverSessionAuth()
         console.log("session contents ", session)
+
         const user = await prisma.user.findUnique({
             where: {id: session!.user!.id}
         })
@@ -81,18 +82,19 @@ export async function GET(request: NextRequest) {
             })
 
             if (!validateUser) {
-                return NextResponse.json({message: "User isn't a member of this team."}, {status: 403})
+                return NextResponse.json({message: "teamPermissions=false"}, {status: 403})
             }
+
 
             const loans = await prisma.loan.findMany({
                 where: {loanTeamId: loanTeam.id}
             })
 
             const loansByStage = await organizeLoans(loans)
+
             return NextResponse.json([ loansByStage, loanTeam], {status: 200})
 
         } else {
-
             const firstLoanTeamMembership = await prisma.loanTeamMember.findFirst({
                 where: {userId: session!.user!.id}
             })
@@ -116,10 +118,10 @@ export async function GET(request: NextRequest) {
             if (!firstLoanTeamsLoans) {
                 return NextResponse.json({message: "Could not find any loans for the user's team."}, {status: 404})
             }
-            const loansByStage = organizeLoans(firstLoanTeamsLoans)
+            const loansByStage = await organizeLoans(firstLoanTeamsLoans)
     
     
-            return NextResponse.json([loansByStage, firstLoanTeam, url, searchParams],{status: 200});
+            return NextResponse.json([loansByStage, firstLoanTeam],{status: 200});
         }  
     } catch {
         return NextResponse.json({message: "An error occurred"}, {status: 500})

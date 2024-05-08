@@ -38,7 +38,19 @@ const PipelinePage = () => {
     data: pipelineData,
   } = useQuery({
     queryKey: ["allLoans", session?.user.id],
-    queryFn: () => fetch("/api/loans").then((res) => res.json()),
+    queryFn: () => {
+      const url = new URL(window.location.href);
+      const teamName = url.searchParams.get("teamName");
+      const fetchUrl = teamName
+        ? `/api/loans?teamName=${teamName}`
+        : `/api/loans`;
+      return fetch(fetchUrl).then(async (res) => {
+        const response = await res.json();
+        if (response.message === "teamPermissions=false") {
+          throw new Error("You are not apart of this team.");
+        } else return response;
+      });
+    },
   });
   useEffect(() => {
     if (isFetched) {
@@ -49,11 +61,11 @@ const PipelinePage = () => {
   if (error)
     return (
       <ErrorMessage>
-        An error occurred: <strong>{error.message}</strong>
+        <strong>{error.message}</strong>
       </ErrorMessage>
     );
 
-    console.log(pipelineData)
+  console.log(pipelineData);
   return (
     <div>
       <FirstTimeLogin />

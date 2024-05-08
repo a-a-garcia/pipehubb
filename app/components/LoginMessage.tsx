@@ -15,11 +15,11 @@ import { useForm } from "react-hook-form";
 import { loanTeamExistingUserSchema } from "../validationSchemas";
 import axios from "axios";
 import ErrorMessage from "./ErrorMessage";
+import LoanTeamRequests from "./LoanTeamRequests";
 
 interface formDataProps {
   existingUserEmail?: string;
 }
-
 
 //manually validating without Zod because for unknown reason, `existingUserEmail` is not being included in the data object when trying to {...register("existingUserEmail")}, and therefore can't be validated.
 function validateEmail(email: string) {
@@ -29,19 +29,33 @@ function validateEmail(email: string) {
 }
 
 const LoginMessage = () => {
-  const { data: session, status, } = useSession();
+  const { data: session, status } = useSession();
   const {
-    data: user,
+    data: userData,
     isPending,
     error,
   } = useQuery({
     queryKey: ["userInSession", { userId: session?.user.id }],
     queryFn: () =>
       fetch(`/api/user/${session?.user.id}`).then((res) => res.json()),
-    enabled: !!session
+    enabled: !!session,
   });
 
-  console.log("session: ", session)
+  console.log(userData);
+
+  const {
+    data: loanTeamRequests,
+    isPending: isPendingLoanTeamRequests,
+    error: errorLoanTeamRequests,
+  } = useQuery({
+    queryKey: ["loanTeamRequets", session?.user.id],
+    queryFn: () =>
+      fetch(`/api/loanteamrequests/${session?.user.id}`).then((res) =>
+        res.json()
+      ),
+  });
+
+  console.log(loanTeamRequests);
 
   const { handleSubmit } = useForm({
     resolver: zodResolver(loanTeamExistingUserSchema),
@@ -59,11 +73,11 @@ const LoginMessage = () => {
       const response = await axios.put(`/api/user/${session?.user.id}`, {
         id: session?.user.id,
         existingUserEmail: existingEmail,
-        teamName: `${session?.user.name}'s team`
+        teamName: `${session?.user.name}'s team`,
       });
-      console.log(response.data);
+      window.location.reload();
     } catch (error: any) {
-      console.log(error)
+      console.log(error);
       setFormError(error.response.data.error);
     }
   };
@@ -71,7 +85,7 @@ const LoginMessage = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    setOpen(true)
+    setOpen(true);
     if (formError) {
       setOpen(true);
     }
@@ -80,7 +94,125 @@ const LoginMessage = () => {
   return (
     <div>
       <Dialog.Root open={open} onOpenChange={setOpen}>
-        {user && user.firstTimeLogin && (
+        {userData &&
+          userData[1].message === "userTeams>=1" &&
+          loanTeamRequests &&
+          loanTeamRequests[1].length > 0 && (
+            <Dialog.Content>
+              <Heading>
+                Heads up, here's an update on your loan team requests.
+              </Heading>
+              <Separator my="4" size={"4"} />
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <label>
+                  <Flex justify={"center"}>
+                    <Text
+                      as="div"
+                      size="1"
+                      mb="3"
+                      align={"center"}
+                      className="italic"
+                    >
+                      <LoanTeamRequests loanTeamRequests={loanTeamRequests} />
+                      <br></br>
+                      Want to send a request to join a another team? Enter the
+                      email of an existing user. They'll be notified, and once
+                      approved by that user, you'll have access to the loans and
+                      pipelines that the user has approved you to access.
+                    </Text>
+                  </Flex>
+                  <div className="my-3">
+                    {formError && <ErrorMessage>{formError}</ErrorMessage>}
+                  </div>
+                  <TextField.Root
+                    placeholder="Enter existing user's email."
+                    type="email"
+                    onChange={(e) => setExistingEmail(e.target.value)}
+                  />
+                </label>
+                <Flex gap="3" mt="4" justify="end">
+                  <Dialog.Close>
+                    <Button variant="soft" color="gray">
+                      Cancel
+                    </Button>
+                  </Dialog.Close>
+                  <Dialog.Close>
+                    <Button className="myCustomButton" type="submit">
+                      Submit
+                    </Button>
+                  </Dialog.Close>
+                </Flex>
+              </form>
+            </Dialog.Content>
+          )}
+        {/* user logs beyond their first time, but has not joined at least one team yet. */}
+
+        {userData && userData[1].message === "userTeams=0" && (
+          <Dialog.Content>
+            <Heading>Welcome to Pipehubb!</Heading>
+            <Text as="div" size="1" mb="4">
+              We know you're eager to get started, but you either need to join
+              an existing loan team or start your own.
+            </Text>
+            <Separator my="4" size={"4"} />
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <label>
+                <Flex justify={"center"}>
+                  <Text
+                    as="div"
+                    size="1"
+                    mb="3"
+                    align={"center"}
+                    className="italic"
+                  >
+                    <LoanTeamRequests loanTeamRequests={loanTeamRequests} />
+                    <br></br>
+                    Want to send a request to a different team? Enter the email
+                    of an existing user. They'll be notified, and once approved
+                    by that user, you'll have access to the loans and pipelines
+                    that the user has approved you to access.
+                  </Text>
+                </Flex>
+                <div className="my-3">
+                  {formError && <ErrorMessage>{formError}</ErrorMessage>}
+                </div>
+                <TextField.Root
+                  placeholder="Enter existing user's email."
+                  type="email"
+                  onChange={(e) => setExistingEmail(e.target.value)}
+                />
+                <Flex justify={"center"}>
+                  <Text
+                    as="div"
+                    size="1"
+                    mt="3"
+                    align={"center"}
+                    className="italic"
+                  >
+                    <strong>Don't have a loan team yet?</strong> <br></br> No
+                    worries! Simply continue without providing an existing user
+                    email, and a new loan team will be created with you as the
+                    first member.
+                  </Text>
+                </Flex>
+              </label>
+              <Flex gap="3" mt="4" justify="end">
+                <Dialog.Close>
+                  <Button variant="soft" color="gray">
+                    Cancel
+                  </Button>
+                </Dialog.Close>
+                <Dialog.Close>
+                  <Button className="myCustomButton" type="submit">
+                    Submit
+                  </Button>
+                </Dialog.Close>
+              </Flex>
+            </form>
+          </Dialog.Content>
+        )}
+        {/* user logs in for first time. */}
+        {userData && userData[0].firstTimeLogin && (
           <Dialog.Content>
             <Heading>Welcome to Pipehubb!</Heading>
             <Text as="div" size="1" mb="4">
@@ -101,16 +233,13 @@ const LoginMessage = () => {
                     <strong>Is your team already on PipeHubb? </strong>
                     <br></br>
                     Enter the email of an existing user. They'll be notified,
-                    and once approved by that user, you'll have access to that
-                    team's loans and pipeline.
+                    and once approved by that user, you'll have access to the
+                    loans and pipelines that the user has approved you to
+                    access.
                   </Text>
                 </Flex>
                 <div className="my-3">
-                  {formError && (
-                    <ErrorMessage>
-                      {formError}
-                    </ErrorMessage>
-                  )}
+                  {formError && <ErrorMessage>{formError}</ErrorMessage>}
                 </div>
                 <TextField.Root
                   placeholder="Enter existing user's email."
