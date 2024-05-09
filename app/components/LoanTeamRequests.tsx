@@ -14,9 +14,27 @@ import { MdCancel } from "react-icons/md";
 interface LoanTeamRequestWithName extends LoanTeamRequest {
   requesteeEmail?: string;
   requestorEmail?: string;
+  teamName?: string;
 }
 
 const LoanTeamRequests = ({loanTeamRequests} : {loanTeamRequests : LoanTeamRequest[][]}) => {
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>, action: string, requestId: number) => {
+    e.preventDefault();
+    console.log(action, requestId);
+    const response = fetch(`/api/loanteamrequests`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: action,
+        id: requestId
+      })
+    })
+    console.log(response)
+  }
+
   return (
     <Flex direction={"column"} gap="2">
       <Card className="!bg-cactus">
@@ -25,6 +43,7 @@ const LoanTeamRequests = ({loanTeamRequests} : {loanTeamRequests : LoanTeamReque
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeaderCell>Request Sent To</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Requested Team to Join</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Requested On</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
             </Table.Row>
@@ -44,7 +63,7 @@ const LoanTeamRequests = ({loanTeamRequests} : {loanTeamRequests : LoanTeamReque
               ))}
             {loanTeamRequests && loanTeamRequests[0].length === 0 && (
               <Table.Row>
-                <Table.Cell colSpan={3}>
+                <Table.Cell colSpan={4}>
                   <NoItemsFound />
                 </Table.Cell>
               </Table.Row>
@@ -58,6 +77,7 @@ const LoanTeamRequests = ({loanTeamRequests} : {loanTeamRequests : LoanTeamReque
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeaderCell>Requested By</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Requested Team To Join</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Requested On</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Take Action</Table.ColumnHeaderCell>
@@ -70,21 +90,23 @@ const LoanTeamRequests = ({loanTeamRequests} : {loanTeamRequests : LoanTeamReque
               loanTeamRequests[1].map((request: LoanTeamRequestWithName) => (
                 <Table.Row key={request.id}>
                   <Table.Cell>{request.requestorEmail}</Table.Cell>
+                  <Table.Cell>{request.teamName}</Table.Cell>
                   <Table.Cell>
                     {formatDateDisplay(request.createdAt)}
                   </Table.Cell>
                   <Table.Cell>{request.status}</Table.Cell>
                   <Table.Cell>
-                    <Flex gap={"2"}>
-                      <Button color="green">Approve <FaCheck /></Button>
-                      <Button color="red">Reject <MdCancel /></Button>
+                    <Flex gap={"2"} direction={"column"}>
+                      <Button color="green"
+                      onClick={(e) => handleClick(e, "ACCEPTED", request.id)} >Approve <FaCheck /></Button>
+                      <Button color="red" onClick={(e) => handleClick(e, "REJECTED", request.id)}>Reject <MdCancel /></Button>
                     </Flex>
                   </Table.Cell>
                 </Table.Row>
               ))}
             {loanTeamRequests && loanTeamRequests[1].length === 0 && (
               <Table.Row>
-                <Table.Cell colSpan={4}>
+                <Table.Cell colSpan={5}>
                   <NoItemsFound />
                 </Table.Cell>
               </Table.Row>

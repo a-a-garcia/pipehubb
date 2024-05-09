@@ -67,11 +67,20 @@ export async function PUT(request: NextRequest, response: NextResponse) {
         const requestsData: RequestsData[] = []
 
         await Promise.all(existingUsersLoanTeamMemberships.map((membership) => {
-            requestsData.push({
-                requesteeId: existingUser.id,
-                requestorId: body.id,
-                loanTeamId: membership.loanTeamId,
+            const userAlreadyInTeam = prisma.loanTeamMember.findFirst({
+                where: {
+                    userId: newUser.id,
+                    loanTeamId: membership.loanTeamId
+                }
             })
+
+            if (!userAlreadyInTeam) {
+                requestsData.push({
+                    requesteeId: existingUser.id,
+                    requestorId: body.id,
+                    loanTeamId: membership.loanTeamId,
+                })
+            }
         }))
 
         await prisma.loanTeamRequest.createMany({

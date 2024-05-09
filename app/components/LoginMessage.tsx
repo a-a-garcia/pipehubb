@@ -7,6 +7,7 @@ import {
   Text,
   Separator,
   Button,
+  Grid,
 } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -94,6 +95,7 @@ const LoginMessage = () => {
   return (
     <div>
       <Dialog.Root open={open} onOpenChange={setOpen}>
+        {/* Shown when user is a member of at least one team, and has at least one incoming loan team */}
         {userData &&
           userData[1].message === "userTeams>=1" &&
           loanTeamRequests &&
@@ -124,21 +126,25 @@ const LoginMessage = () => {
                   <div className="my-3">
                     {formError && <ErrorMessage>{formError}</ErrorMessage>}
                   </div>
-                  <TextField.Root
-                    placeholder="Enter existing user's email."
-                    type="email"
-                    onChange={(e) => setExistingEmail(e.target.value)}
-                  />
+                  <Grid rows={"1"} gap="2" columns={"2"} className="!border !rounded-md !border-solid !border-maroon p-5">
+                    <TextField.Root
+                      placeholder="Enter existing user's email."
+                      type="email"
+                      onChange={(e) => setExistingEmail(e.target.value)}
+                    />
+                    <Dialog.Close>
+                      <Flex justify={"end"}>
+                        <Button className="myCustomButton !w-1/2" type="submit">
+                          Submit
+                        </Button>
+                      </Flex>
+                    </Dialog.Close>
+                  </Grid>
                 </label>
-                <Flex gap="3" mt="4" justify="end">
+                <Flex gap="3" mt="4" align={"end"} direction={"column"}>
                   <Dialog.Close>
                     <Button variant="soft" color="gray">
-                      Cancel
-                    </Button>
-                  </Dialog.Close>
-                  <Dialog.Close>
-                    <Button className="myCustomButton" type="submit">
-                      Submit
+                      Close
                     </Button>
                   </Dialog.Close>
                 </Flex>
