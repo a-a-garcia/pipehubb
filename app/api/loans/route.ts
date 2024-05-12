@@ -34,7 +34,7 @@ export async function POST(request:NextRequest, response:NextResponse) {
 
     const newLoan = await prisma.loan.create({
         data: {
-            loanTeamId: body.loanTeamId,
+            loanTeamId: parseInt(body.loanTeamId),
             transactionType: body.transactionType,
             borrowerName: body.borrowerName ? body.borrowerName.trim() : undefined,
             loanAmount: body.loanAmount,

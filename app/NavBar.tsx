@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import logo from "@/public/images/pipeHubb_logo_nav.png";
 import { RxDropdownMenu } from "react-icons/rx";
@@ -13,11 +13,12 @@ import {
   Link,
   Skeleton,
   Card,
-  Text
+  Text,
 } from "@radix-ui/themes";
 import NextLink from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { FaUserTie } from "react-icons/fa6";
+import LoginMessage from "./components/LoginMessage";
 
 const AuthStatus = () => {
   const { status, data: session } = useSession();
@@ -44,22 +45,26 @@ const AuthStatus = () => {
           </Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
-          <DropdownMenu.Label>Welcome to PipeHubb, {session!.user!.name} </DropdownMenu.Label>
+          <DropdownMenu.Label>
+            Welcome to PipeHubb, {session!.user!.name}{" "}
+          </DropdownMenu.Label>
           <DropdownMenu.Separator />
-          <DropdownMenu.Item onClick={() => signOut({callbackUrl: '/'})}>
+          <DropdownMenu.Item onClick={() => signOut({ callbackUrl: "/" })}>
             <Text className="hover:underline hover:cursor-pointer">
               Log Out
             </Text>
           </DropdownMenu.Item>
           {status === "authenticated" && (
-            <DropdownMenu.Item>
-              <Link
-                href="/loans/pipeline
+            <div>
+              <DropdownMenu.Item>
+                <Link
+                  href="/loans/pipeline
             "
-              >
-                Pipeline
-              </Link>
-            </DropdownMenu.Item>
+                >
+                  Pipeline
+                </Link>
+              </DropdownMenu.Item>
+            </div>
           )}
         </DropdownMenu.Content>
       </DropdownMenu.Root>

@@ -23,6 +23,8 @@ import { z } from "zod";
 import { IoMdAlert } from "react-icons/io";
 import ErrorMessage from "./ErrorMessage";
 import NextLink from "next/link";
+import PipelineSelect from "./PipelineSelect";
+import { useSession } from "next-auth/react";
 
 type LoanFormData = z.infer<typeof createLoanSchema>;
 
@@ -30,11 +32,14 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<LoanFormData>({
     resolver: zodResolver(createLoanSchema),
     mode: "onSubmit",
   });
+
+  console.log(watch("loanTeamId"));
 
   const [validationErrors, setValidationErrors] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,6 +50,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
 
   const submitForm = handleSubmit(async (data) => {
     try {
+      console.log("submitting");
       setIsSubmitting(true);
       if (!loan) {
         const response = await axios.post("/api/loans", data);
@@ -59,7 +65,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
         router.push("/loans/pipeline");
       }
     } catch {
-      console.error("Failed to create loan");
+      console.error(errors);
       setValidationErrors("Failed to create loan");
     }
   });
@@ -99,7 +105,13 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
   return (
     <div>
       {validationErrors && (
-        <Callout.Root size="3" variant="surface" role="alert" className="my-5">
+        <Callout.Root
+          size="3"
+          color="red"
+          variant="surface"
+          role="alert"
+          className="my-5"
+        >
           <Callout.Icon>
             <IoMdAlert />
           </Callout.Icon>
@@ -118,11 +130,11 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
       !bg-darkGrey"
       >
         <form onSubmit={submitForm}>
-          <Box className="border border-deepPink p-5 rounded-md">
-            <h2 className="text-white mb-2">Required: </h2>
+          <Box className="border border-deepPink p-5 rounded-md !bg-neutral-300">
+            <h2 className="mb-2">Required: </h2>
             <Flex gap={"5"} direction={"column"}>
               <Card>
-                <Flex direction={"column"} gap="1">
+                <Flex align="center" justify="between" gap="1">
                   <Controller
                     defaultValue={loan?.borrowerName}
                     control={control}
@@ -139,12 +151,31 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
                       );
                     }}
                   ></Controller>
+                  <Controller
+                    control={control}
+                    name="loanTeamId"
+                    render={({ field }) => {
+                      return (
+                        <Flex direction={"column"} gap="2">
+                          <ErrorMessage>
+                            {errors.loanTeamId?.message}
+                          </ErrorMessage>
+                          <PipelineSelect
+                            isLoanForm={true}
+                            selectedPipeline={field.value}
+                            setSelectedPipeline={field.onChange}
+                            {...field}
+                          />
+                        </Flex>
+                      );
+                    }}
+                  ></Controller>
                 </Flex>
               </Card>
             </Flex>
           </Box>
-          <Box className="mt-4 border border-maroon p-5 rounded-md">
-            <h2 className="text-white mb-2">Other fields:</h2>
+          <Box className="mt-4 border border-maroon p-5 rounded-md !bg-neutral-300">
+            <h2 className="mb-2">Other fields:</h2>
             <Grid gap={"5"} columns={{ initial: "1", md: "2" }}>
               <Card>
                 <Controller

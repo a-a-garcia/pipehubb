@@ -1,13 +1,14 @@
 import { LoanTeam, User } from "@prisma/client";
-import { Select, Spinner } from "@radix-ui/themes";
+import { Button, Flex, Select, Spinner } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import React from "react";
+import React, { useState } from "react";
 import ErrorMessage from "./ErrorMessage";
 import { useRouter, useSearchParams } from "next/navigation";
 import { queryClient } from "../api/ReactQueryProviderClient";
+import LoginMessage from "./LoginMessage";
 
-const PipelineSelect = () => {
+const PipelineSelect = ({ isLoanForm, selectedPipeline, setSelectedPipeline }: { isLoanForm?: Boolean, selectedPipeline: string, setSelectedPipeline: (value: string) => void }) => {
   const { status, data: session } = useSession();
   const router = useRouter();
   const {
@@ -19,16 +20,14 @@ const PipelineSelect = () => {
     queryFn: () =>
       fetch(`/api/pipelines/${session?.user.id}`).then((res) => res.json()),
   });
+  const [openLoginMessage, setOpenLoginMessage] = useState(false);
 
   const switchPipelines = async (value: string) => {
     const response = await fetch(`/api/loans/?teamName=${value}`);
     const data = await response.json();
-    console.log(data)
+    console.log(data);
 
-    queryClient.setQueryData(
-      ["allLoans", session?.user.id],
-      data
-    );
+    queryClient.setQueryData(["allLoans", session?.user.id], data);
     router.push(`/loans/pipeline?teamName=${value}`);
   };
 
@@ -37,26 +36,55 @@ const PipelineSelect = () => {
   }
 
   return (
-    <Select.Root onValueChange={switchPipelines}>
-      <Select.Trigger placeholder="Switch To Another Pipeline" />
-      <Select.Content>
-        <Select.Group>
-          <Select.Label>Choose a team pipeline: </Select.Label>
-          {loanTeams &&
-            loanTeams.map((loanTeam: LoanTeam) => {
-              return (
-                <Select.Item
-                  key={loanTeam.id}
-                  value={loanTeam.teamName}
-                  className="hover:cursor-pointer"
-                >
-                  {loanTeam.teamName}
-                </Select.Item>
-              );
-            })}
-        </Select.Group>
-      </Select.Content>
-    </Select.Root>
+    <Flex direction={"column"} gap={"2"}>
+      <Select.Root onValueChange={isLoanForm ? value => setSelectedPipeline(value) : switchPipelines}>
+        <Select.Trigger
+          placeholder={
+            isPending
+              ? "Loading..."
+              : isLoanForm
+              ? "Assign Loan To Team..."
+              : "Switch To Another Pipeline"
+          }
+        ></Select.Trigger>
+        <Select.Content>
+          <Select.Group>
+            <Select.Label>
+              {isLoanForm ? "Choose a loan team: " : "Choose a team pipeline: "}
+            </Select.Label>
+            {loanTeams &&
+              loanTeams.map((loanTeam: LoanTeam) => {
+                return (
+                  <Select.Item
+                    key={loanTeam.id}
+                    value={isLoanForm ? loanTeam.id.toString() : loanTeam.teamName}
+                    className="hover:cursor-pointer"
+                  >
+                    {loanTeam.teamName}
+                  </Select.Item>
+                );
+              })}
+          </Select.Group>
+        </Select.Content>
+      </Select.Root>
+      {!isLoanForm && (
+        <Flex justify={"center"}>
+          <Button
+            variant="soft"
+            color="plum"
+            onClick={() => setOpenLoginMessage(true)}
+          >
+            Open Loan Request Menu
+          </Button>
+          {openLoginMessage && (
+            <LoginMessage
+              open={openLoginMessage}
+              setOpen={setOpenLoginMessage}
+            />
+          )}
+        </Flex>
+      )}
+    </Flex>
   );
 };
 

@@ -2,7 +2,6 @@ import prisma from "@/prisma/client"
 import { LoanTeamRequest } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server"
 
-type ExtendedLoanTeamRequest = LoanTeamRequest & {requesteeEmail?: string, requestorEmail?: string, teamName?: string} ;
 
 export async function GET(request: NextRequest, {params} : {params: {id: string}}) {
     //find all loan team requests where the user is the requestor (requesting to join a team).
@@ -24,7 +23,7 @@ export async function GET(request: NextRequest, {params} : {params: {id: string}
     }
 
     // need to add the email of the requestor to each request object returned to the client. this array will represent all the requests that the user has made to join other teams.
-    const outgoingLoanTeamRequests: LoanTeamRequest[] = await Promise.all(requestorTeamRequests.map(async (request) => {
+    let outgoingLoanTeamRequests: LoanTeamRequest[] = await Promise.all(requestorTeamRequests.map(async (request) => {
         const teamName = await prisma.loanTeam.findUnique({
             where: {id: request.loanTeamId}
         })
@@ -44,6 +43,8 @@ export async function GET(request: NextRequest, {params} : {params: {id: string}
         })
         return {...request, requestorEmail: requestor?.email || null, teamName: teamName?.teamName || null};
     }))
+
+    outgoingLoanTeamRequests = outgoingLoanTeamRequests.filter(request => request.status !== "CONFIRMED")
 
     incomingLoanTeamRequests = incomingLoanTeamRequests.filter(request => request.status === "PENDING")
 

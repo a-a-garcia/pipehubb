@@ -5,6 +5,8 @@ export const createLoanSchema = z.object({
     transactionType: z.string().min(1, "Transaction Type cannot be blank.").max(100).optional(),
 
     borrowerName: z.string().min(1, "Name must be at least 1 character.").max(255, "Name must be less than 255 characters.").refine(value => value.trim().length > 0, { message: "Name cannot be blank."}),
+
+    loanTeamId: z.string().min(1, "You must select a loan team to assign this loan to."),
     
     loanAmount: z.number().min(1, "Loan amount must be at least $1.").optional(),
     

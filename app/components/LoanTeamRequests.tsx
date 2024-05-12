@@ -17,10 +17,12 @@ interface LoanTeamRequestWithName extends LoanTeamRequest {
   teamName?: string;
 }
 
-const LoanTeamRequests = ({loanTeamRequests} : {loanTeamRequests : LoanTeamRequest[][]}) => {
-
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>, action: string, requestId: number) => {
-    e.preventDefault();
+const LoanTeamRequests = ({
+  loanTeamRequests,
+}: {
+  loanTeamRequests: LoanTeamRequest[][];
+}) => {
+  const handleClick = (action: string, requestId: number) => {
     console.log(action, requestId);
     const response = fetch(`/api/loanteamrequests`, {
       method: "PUT",
@@ -29,11 +31,11 @@ const LoanTeamRequests = ({loanTeamRequests} : {loanTeamRequests : LoanTeamReque
       },
       body: JSON.stringify({
         status: action,
-        id: requestId
-      })
-    })
-    console.log(response)
-  }
+        id: requestId,
+      }),
+    });
+    window.location.reload();
+  };
 
   return (
     <Flex direction={"column"} gap="2">
@@ -43,9 +45,12 @@ const LoanTeamRequests = ({loanTeamRequests} : {loanTeamRequests : LoanTeamReque
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeaderCell>Request Sent To</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Requested Team to Join</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>
+                Requested Team to Join
+              </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Requested On</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>Take Action</Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
 
@@ -55,15 +60,28 @@ const LoanTeamRequests = ({loanTeamRequests} : {loanTeamRequests : LoanTeamReque
               loanTeamRequests[0].map((request: LoanTeamRequestWithName) => (
                 <Table.Row key={request.id}>
                   <Table.Cell>{request.requesteeEmail}</Table.Cell>
+                  <Table.Cell>{request.teamName}</Table.Cell>
                   <Table.Cell>
                     {formatDateDisplay(request.createdAt)}
                   </Table.Cell>
                   <Table.Cell>{request.status}</Table.Cell>
+                  <Table.Cell>
+                    <Button
+                      disabled={request.status === "PENDING" ? true : false}
+                      color="blue"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleClick("CONFIRMED", request.id);
+                      }}
+                    >
+                      Confirm
+                    </Button>
+                  </Table.Cell>
                 </Table.Row>
               ))}
             {loanTeamRequests && loanTeamRequests[0].length === 0 && (
               <Table.Row>
-                <Table.Cell colSpan={4}>
+                <Table.Cell colSpan={5}>
                   <NoItemsFound />
                 </Table.Cell>
               </Table.Row>
@@ -77,7 +95,9 @@ const LoanTeamRequests = ({loanTeamRequests} : {loanTeamRequests : LoanTeamReque
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeaderCell>Requested By</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Requested Team To Join</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>
+                Requested Team To Join
+              </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Requested On</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>Take Action</Table.ColumnHeaderCell>
@@ -97,9 +117,24 @@ const LoanTeamRequests = ({loanTeamRequests} : {loanTeamRequests : LoanTeamReque
                   <Table.Cell>{request.status}</Table.Cell>
                   <Table.Cell>
                     <Flex gap={"2"} direction={"column"}>
-                      <Button color="green"
-                      onClick={(e) => handleClick(e, "ACCEPTED", request.id)} >Approve <FaCheck /></Button>
-                      <Button color="red" onClick={(e) => handleClick(e, "REJECTED", request.id)}>Reject <MdCancel /></Button>
+                      <Button
+                        color="green"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleClick("ACCEPTED", request.id);
+                        }}
+                      >
+                        Approve <FaCheck />
+                      </Button>
+                      <Button
+                        color="red"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleClick("REJECTED", request.id);
+                        }}
+                      >
+                        Reject <MdCancel />
+                      </Button>
                     </Flex>
                   </Table.Cell>
                 </Table.Row>

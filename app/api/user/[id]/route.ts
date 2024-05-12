@@ -66,8 +66,8 @@ export async function PUT(request: NextRequest, response: NextResponse) {
 
         const requestsData: RequestsData[] = []
 
-        await Promise.all(existingUsersLoanTeamMemberships.map((membership) => {
-            const userAlreadyInTeam = prisma.loanTeamMember.findFirst({
+        await Promise.all(existingUsersLoanTeamMemberships.map(async (membership) => {
+            const userAlreadyInTeam = await prisma.loanTeamMember.findFirst({
                 where: {
                     userId: newUser.id,
                     loanTeamId: membership.loanTeamId
@@ -83,7 +83,19 @@ export async function PUT(request: NextRequest, response: NextResponse) {
             }
         }))
 
-        await prisma.loanTeamRequest.createMany({
+        const existingRequest = await prisma.loanTeamRequest.findFirst({
+            where: {
+                requestorId: newUser.id,
+                requesteeId: existingUser.id
+              }
+          })
+
+        if (existingRequest) {
+            await prisma.loanTeamRequest.update({
+                where: {id: existingRequest.id},
+                data: {status: "PENDING"}
+            })
+        } else await prisma.loanTeamRequest.createMany({
             data: requestsData
         })
 
@@ -101,14 +113,16 @@ export async function PUT(request: NextRequest, response: NextResponse) {
         })
     }
 
-    const updatedUser = await prisma.user.update({
-        where: {id: newUser.id},
-        data: {
-            firstTimeLogin: false
-        }
-    })
+    if (newUser.firstTimeLogin === true) {
+        await prisma.user.update({
+            where: {id: newUser.id},
+            data: {
+                firstTimeLogin: false
+            }
+        })
+    }
 
-    return NextResponse.json(updatedUser, {status: 200})
+    return NextResponse.json(newUser, {status: 200})
 }
 
 // export async function PUT(request:NextRequest, response:NextResponse) {
