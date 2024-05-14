@@ -40,6 +40,7 @@ const LoginMessage = ({
   setOpen: externalSetOpen,
 }: Props) => {
   const { data: session, status } = useSession();
+
   const {
     data: userData,
     isPending,
@@ -48,7 +49,6 @@ const LoginMessage = ({
     queryKey: ["userInSession", { userId: session?.user.id }],
     queryFn: () =>
       fetch(`/api/user/${session?.user.id}`).then((res) => res.json()),
-    enabled: !!session,
   });
 
   console.log(userData);
@@ -92,7 +92,8 @@ const LoginMessage = ({
           id: session?.user.id,
           existingUserEmail: existingEmail,
           teamName: `${session?.user.name}'s team`,
-        }).then((response) => {
+        })
+        .then((response) => {
           setOpen(false);
           return response; // return the response from the server
         });
@@ -173,68 +174,67 @@ const LoginMessage = ({
           </Dialog.Content>
         )}
         {/* Shown when user is a member of at least one team, and has at least one incoming loan team */}
-        {(userData &&
-          userData[1].message === "userTeams>=1" &&
+        {/* refactored using optional chaining `?`, to avoid trying to access properties of undefined */}
+        {/* loanTeamRequests[0]?.length > 0 will first check if loanTeamRequests[0] exists. If it does, it will then check if its length is greater than 0. If loanTeamRequests[0] does not exist (i.e., it's undefined), it will immediately return undefined and not attempt to access the length property, thus avoiding a TypeError. */}
+        {((userData &&
+          userData[1]?.message === "userTeams>=1" &&
           loanTeamRequests &&
-          loanTeamRequests[1] &&
-          loanTeamRequests[1].length > 0) ||
-          (loanTeamRequests &&
-            loanTeamRequests[0] &&
-            loanTeamRequests[0].length > 0 && (
-              <Dialog.Content>
-                <Heading>
-                  Heads up, here's an update on your loan team requests.
-                </Heading>
-                <Separator my="4" size={"4"} />
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <label>
-                    <Flex justify={"center"}>
-                      <Text
-                        as="div"
-                        size="1"
-                        mb="3"
-                        align={"center"}
-                        className="italic"
-                      >
-                        <LoanTeamRequests loanTeamRequests={loanTeamRequests} />
-                        <br></br>
-                        Want to send a request to join a another team? Enter the
-                        email of an existing user. They'll be notified, and once
-                        approved by that user, you'll have access to the loans
-                        and pipelines that the user has approved you to access.
-                      </Text>
-                    </Flex>
-                    <div className="my-3">
-                      {formError && <ErrorMessage>{formError}</ErrorMessage>}
-                    </div>
-                    <Grid
-                      rows={"1"}
-                      gap="2"
-                      columns={"2"}
-                      className="!border !rounded-md !border-solid !border-maroon p-5"
-                    >
-                      <TextField.Root
-                        placeholder="Enter existing user's email."
-                        type="email"
-                        onChange={(e) => setExistingEmail(e.target.value)}
-                      />
-                      <Flex justify={"end"}>
-                        <Button className="myCustomButton !w-1/2" type="submit">
-                          Submit
-                        </Button>
-                      </Flex>
-                    </Grid>
-                  </label>
-                  <Flex gap="3" mt="4" align={"end"} direction={"column"}>
-                    <Dialog.Close>
-                      <Button variant="soft" color="gray">
-                        Close
-                      </Button>
-                    </Dialog.Close>
+          loanTeamRequests[1]?.length > 0) ||
+          (loanTeamRequests && loanTeamRequests[0]?.length > 0)) && (
+          <Dialog.Content>
+            <Heading>
+              Heads up, here's an update on your loan team requests.
+            </Heading>
+            <Separator my="4" size={"4"} />
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <label>
+                <Flex justify={"center"}>
+                  <Text
+                    as="div"
+                    size="1"
+                    mb="3"
+                    align={"center"}
+                    className="italic"
+                  >
+                    <LoanTeamRequests loanTeamRequests={loanTeamRequests} />
+                    <br></br>
+                    Want to send a request to join a another team? Enter the
+                    email of an existing user. They'll be notified, and once
+                    approved by that user, you'll have access to the loans and
+                    pipelines that the user has approved you to access.
+                  </Text>
+                </Flex>
+                <div className="my-3">
+                  {formError && <ErrorMessage>{formError}</ErrorMessage>}
+                </div>
+                <Grid
+                  rows={"1"}
+                  gap="2"
+                  columns={"2"}
+                  className="!border !rounded-md !border-solid !border-maroon p-5"
+                >
+                  <TextField.Root
+                    placeholder="Enter existing user's email."
+                    type="email"
+                    onChange={(e) => setExistingEmail(e.target.value)}
+                  />
+                  <Flex justify={"end"}>
+                    <Button className="myCustomButton !w-1/2" type="submit">
+                      Submit
+                    </Button>
                   </Flex>
-                </form>
-              </Dialog.Content>
-            ))}
+                </Grid>
+              </label>
+              <Flex gap="3" mt="4" align={"end"} direction={"column"}>
+                <Dialog.Close>
+                  <Button variant="soft" color="gray">
+                    Close
+                  </Button>
+                </Dialog.Close>
+              </Flex>
+            </form>
+          </Dialog.Content>
+        )}
         {/* user logs beyond their first time, but has not joined at least one team yet. */}
 
         {userData &&

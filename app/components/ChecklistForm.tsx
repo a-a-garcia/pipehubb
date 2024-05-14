@@ -21,10 +21,12 @@ import axios from "axios";
 import { FaEdit } from "react-icons/fa";
 import { GrDocumentMissing } from "react-icons/gr";
 import { formatDateDisplay } from "./formatDateDisplay";
+import { useSession } from "next-auth/react";
 
 interface ChecklistItem {
   loanId: number;
   documentName: string;
+  userId: string;
   dueDate: string | null;
   important: boolean;
 }
@@ -45,9 +47,11 @@ const ChecklistForm = ({
   const [importantInput, setImportantInput] = useState(false);
   const [documentName, setDocumentName] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const userInSession = useSession().data?.user;
 
   const handleAddChecklistItem = () => {
     const newChecklistItem = {
+      userId: userInSession!.id,
       loanId: loan.id,
       documentName: documentName,
       dueDate: dueDate === "" ? null : new Date(dueDate).toISOString(),
@@ -69,15 +73,19 @@ const ChecklistForm = ({
   };
 
   const handleFinish = async () => {
-    if (isEditMode) {
-      await axios.patch(`/api/documentchecklist`, {
-        id: item?.id,
-        documentName: documentName,
-        dueDate: dueDate === "" ? null : new Date(dueDate).toISOString(),
-        important: importantInput,
-      });
-    } else {
-      await axios.post(`/api/documentchecklist`, checklistToSubmit);
+    try {
+      if (isEditMode) {
+        await axios.patch(`/api/documentchecklist`, {
+          id: item?.id,
+          documentName: documentName,
+          dueDate: dueDate === "" ? null : new Date(dueDate).toISOString(),
+          important: importantInput,
+        });
+      } else {
+        await axios.post(`/api/documentchecklist`, checklistToSubmit);
+      }
+    } catch {
+      console.log("An error occurred while attempting to submit the checklist.");
     }
     window.location.reload();
   };
@@ -246,7 +254,7 @@ const ChecklistForm = ({
               </Button>
             </Dialog.Close>
             <Dialog.Close>
-              <Button className="myCustomButton" onClick={() => handleFinish()}>
+              <Button color="blue" onClick={() => handleFinish()} disabled={checklistToSubmit.length > 0 ? false : true}>
                 Finish
               </Button>
             </Dialog.Close>

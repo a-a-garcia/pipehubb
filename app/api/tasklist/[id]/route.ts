@@ -5,7 +5,8 @@ import { NextRequest, NextResponse } from "next/server"
 export async function GET(request: NextRequest, {params} : {params: {id : string}}){
     const taskList = await prisma.taskList.findMany({
         where: {loanId: parseInt(params.id)},
-        orderBy : [{status: "desc"}, {important: "desc"}, {createdAt: "desc"}]
+        orderBy: [{status: "desc"}, {important: "desc"}, {createdAt: "desc"}],
+        include: {user: {select: {name: true, image: true, email: true}}}
     })
 
     if (!taskList) {

@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from "next/server"
 export async function GET(response:NextResponse, {params} : {params : {id: string}}) {
     const loanFileNotes = await prisma.fileNotes.findMany({
         where: {loanId: parseInt(params.id)},
-        orderBy: [{important: "desc"}, {createdAt: "desc"}]
+        orderBy: [{important: "desc"}, {createdAt: "desc"}],
+        include: {user: {select: {name: true, image: true, email: true}}}
     })
 
     if (!loanFileNotes) {

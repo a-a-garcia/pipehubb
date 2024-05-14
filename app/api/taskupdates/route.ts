@@ -16,6 +16,7 @@ export async function POST(request: NextRequest, response: NextResponse) {
     try {
         const newTaskUpdate = await prisma.taskUpdates.create({
             data: {
+                userId: body.userId,
                 taskListId: foundTask.id,
                 message: body.message,
                 important: body.important

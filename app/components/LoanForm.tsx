@@ -39,6 +39,8 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
     mode: "onSubmit",
   });
 
+  const userInSession = useSession().data?.user;
+
   console.log(watch("loanTeamId"));
 
   const [validationErrors, setValidationErrors] = useState("");
@@ -75,7 +77,8 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
       if (newLoan) {
         await axios.post("/api/activitylog", {
           loanId: newLoan.id,
-          message: `USER created a new loan for new borrower ${newLoan.borrowerName}.`,
+          userId: userInSession?.id,
+          message: `${userInSession?.name} created a new loan for new borrower ${newLoan.borrowerName}.`,
         });
         console.log("SUCCESS: Created activity log for loan creation");
       }

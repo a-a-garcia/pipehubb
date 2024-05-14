@@ -5,7 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(response:NextResponse, {params} : {params: {id: string}}) {
     const documentChecklist = await prisma.documentChecklist.findMany({
         where: {loanId: parseInt(params.id)},
-        orderBy : [{status: "desc"}, {important: "desc"}, {createdAt: "desc"}]
+        orderBy : [{status: "desc"}, {important: "desc"}, {createdAt: "desc"}],
+        include: { user: { select: {name: true, image: true, email: true}}}
     })
 
     if (!documentChecklist) {

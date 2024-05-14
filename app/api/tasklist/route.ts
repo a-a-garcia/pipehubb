@@ -16,6 +16,7 @@ export async function POST(request: NextRequest, response: NextResponse) {
     const newTask = await prisma.taskList.create({
         data: {
             loanId: body.loanId,
+            userId: body.userId,
             title: body.title,
             description: body.description,
             dueDate: body.dueDate,

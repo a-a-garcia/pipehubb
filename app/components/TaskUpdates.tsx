@@ -28,6 +28,7 @@ import InfoCard from "./InfoCard";
 import TaskUpdateLog from "./TaskUpdateLog";
 import { formatDateDisplay } from "./formatDateDisplay";
 import { Loan, TaskList, TaskUpdates } from "@prisma/client";
+import { FaU, FaUserTie } from "react-icons/fa6";
 
 // defining a new type that is for the object returned from the API call, an object with a taskList item and an array of taskUpdates. something like `useQuery<TaskList | TaskUpdates[]>` will not work because it's a union, meaning it would expect data to be either a TaskList or an array of TaskUpdates, not an object that contains both.
 type TaskData = {
@@ -98,9 +99,9 @@ const TaskUpdatesPage = ({
             <Flex gap="3" align="center" className="animate-dropInLite">
               <Avatar
                 size="3"
-                src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
+                src={task.taskItem.user.image}
                 radius="full"
-                fallback="T"
+                fallback={<FaUserTie />}
               />
               <DataList.Root>
                 <DataList.Item>

@@ -2,11 +2,13 @@ import { DocumentChecklist, Loan, TaskList } from "@prisma/client";
 import {
   Avatar,
   Badge,
+  Box,
   Button,
   Card,
   DropdownMenu,
   Flex,
   Heading,
+  HoverCard,
   Inset,
   Table,
   Text,
@@ -24,6 +26,7 @@ import { GrDocumentMissing } from "react-icons/gr";
 import { formatDateDisplay } from "./formatDateDisplay";
 import { FaExclamation, FaExclamationCircle } from "react-icons/fa";
 import NoItemsFound from "./NoItemsFound";
+import { FaU, FaUserTie } from "react-icons/fa6";
 
 //cannot conditionally declare (if (isDocumentChecklist) {} ) state, useEffects because it violates rules of hooks - hooks must be called at top level of component.
 // fetchDocumentChecklist doesn't return anything so it's type void
@@ -53,8 +56,8 @@ const Checklist = ({
           <Flex justify={"between"} align={"center"}>
             <Heading className="text-white">
               {/* Need to change documentChecklist data fetching into React Query for smoother loading of this title */}
-              Your {documentChecklist && "document checklist"} {taskList && "task list"} for{" "}
-              {loan.borrowerName}
+              Your {documentChecklist && "document checklist"}{" "}
+              {taskList && "task list"} for {loan.borrowerName}
             </Heading>
           </Flex>
         </Inset>
@@ -114,13 +117,35 @@ const Checklist = ({
                     </Table.Cell>
                     <Table.Cell style={{ maxWidth: "20px" }}>
                       <Flex direction={"column"} gap="1">
-                        <Avatar
-                          size="1"
-                          src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
-                          fallback="A"
-                          className="mr-2"
-                          radius="full"
-                        />
+                        <HoverCard.Root>
+                          <HoverCard.Trigger>
+                            <Avatar
+                              size="1"
+                              src={item.user?.image}
+                              fallback={<FaUserTie />}
+                              className="mr-2"
+                              radius="full"
+                            />
+                          </HoverCard.Trigger>
+                          <HoverCard.Content>
+                            <Flex gap="4">
+                              <Avatar
+                                size="3"
+                                fallback={<FaUserTie />}
+                                radius="full"
+                                src={item.user.image}
+                              />
+                              <Box>
+                                <Heading size="3" as="h3">
+                                  {item.user.name}
+                                </Heading>
+                                <Text as="div" size="2" color="gray" mb="2">
+                                  {item.user.email}
+                                </Text>
+                              </Box>
+                            </Flex>
+                          </HoverCard.Content>
+                        </HoverCard.Root>
                         <Text size="1">
                           On {formatDateDisplay(item.createdAt)}
                         </Text>
@@ -189,13 +214,35 @@ const Checklist = ({
                     </Table.Cell>
                     <Table.Cell>
                       <Flex direction={"column"} gap="1">
-                        <Avatar
-                          size="1"
-                          src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
-                          fallback="A"
-                          className="mr-2"
-                          radius="full"
-                        />
+                        <HoverCard.Root>
+                          <HoverCard.Trigger>
+                            <Avatar
+                              size="1"
+                              src={item.user?.image}
+                              fallback={<FaUserTie />}
+                              className="mr-2"
+                              radius="full"
+                            />
+                          </HoverCard.Trigger>
+                          <HoverCard.Content>
+                            <Flex gap="4">
+                              <Avatar
+                                size="3"
+                                fallback={<FaUserTie />}
+                                radius="full"
+                                src={item.user.image}
+                              />
+                              <Box>
+                                <Heading size="3" as="h3">
+                                  {item.user.name}
+                                </Heading>
+                                <Text as="div" size="2" color="gray" mb="2">
+                                  {item.user.email}
+                                </Text>
+                              </Box>
+                            </Flex>
+                          </HoverCard.Content>
+                        </HoverCard.Root>
                         <Text size="1">
                           On{" "}
                           {item.createdAt && formatDateDisplay(item.createdAt)}
@@ -224,7 +271,11 @@ const Checklist = ({
                     <Table.Cell>
                       <DropdownMenu.Root>
                         <DropdownMenu.Trigger>
-                          <Button variant="surface" size={"1"} className="hover:cursor-pointer">
+                          <Button
+                            variant="surface"
+                            size={"1"}
+                            className="hover:cursor-pointer"
+                          >
                             <DropdownMenu.TriggerIcon />
                           </Button>
                         </DropdownMenu.Trigger>

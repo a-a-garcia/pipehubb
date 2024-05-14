@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest, {params} : {params: {taskid : string}}){
     const taskItem = await prisma.taskList.findUnique({
-        where: {id: parseInt(params.taskid)}
+        where: {id: parseInt(params.taskid)},
+        include: {user: {select: {name: true, image: true, email: true}}}
     })
 
     if (!taskItem) {
@@ -13,7 +14,8 @@ export async function GET(request: NextRequest, {params} : {params: {taskid : st
     const taskUpdates = await prisma.taskUpdates.findMany({
         where: {taskListId: parseInt(params.taskid)},
         // if you're ordering by more than one field, you need to pass it as an array of objects.
-        orderBy: [{createdAt: "desc"}, {important: "desc"}]
+        orderBy: [{createdAt: "desc"}, {important: "desc"}],
+        include: {user: {select: {name: true, image: true, email: true}}}
     })
 
 

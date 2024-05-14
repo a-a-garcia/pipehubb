@@ -12,6 +12,7 @@ import InfoCard from "./InfoCard";
 interface ActivityLog {
   id: number;
   loanId: number;
+  userId: string;
   message: string;
   createdAt: Date;
   updatedAt: Date;
@@ -22,6 +23,7 @@ const ActivityLog = ({ loan }: { loan: Loan }) => {
   const [fetchedActivityLog, setFetchedActivityLog] = useState<ActivityLog[]>(
     []
   );
+
 
   useEffect(() => {
     // fetches the activity log for the loan

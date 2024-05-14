@@ -23,6 +23,8 @@ import ImportantBadge from "./ImportantBadge";
 import { FaEdit } from "react-icons/fa";
 import MarkAsImportant from "./MarkAsImportant";
 import { createFileNoteSchema } from "../validationSchemas";
+import { getSession, useSession } from "next-auth/react";
+import { FaUserTie } from "react-icons/fa6";
 
 const NoteForm = ({
   loan,
@@ -43,8 +45,10 @@ const NoteForm = ({
   const [error, setError] = useState("");
   const [noteInput, setNoteInput] = useState("");
   const [importantInput, setImportantInput] = useState(false);
+  const userInSession = useSession().data?.user;
 
   useEffect(() => {
+
     if (isEditMode && isFileNotes) {
       setNoteInput((item as FileNotes)?.note);
       // if the important field is null or undefined, set it to false. This is probably from the radix-UI Checkbox component having the indeterminate value possibility
@@ -78,6 +82,7 @@ const NoteForm = ({
           return;
         }
         const response = await axios.post(`/api/filenotes`, {
+          userId: userInSession?.id,
           loanId: loan!.id,
           note: noteInput,
           important: importantInput,
@@ -108,6 +113,7 @@ const NoteForm = ({
         });
       } else if (isTaskUpdates) {
         await axios.post(`/api/taskupdates`, {
+          userId: userInSession?.id,
           taskId: taskId,
           message: noteInput,
           important: importantInput,
@@ -136,8 +142,8 @@ const NoteForm = ({
         <Flex gap="3">
           <Avatar
             size="2"
-            src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
-            fallback="A"
+            src={userInSession?.image}
+            fallback={<FaUserTie />}
             radius="full"
           />
           <Box>

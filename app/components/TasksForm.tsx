@@ -14,11 +14,13 @@ import { MdOutlineCreate } from "react-icons/md";
 import MarkAsImportant from "./MarkAsImportant";
 import { Loan } from "@prisma/client";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 
 interface TaskList {
   id: number;
   loanId: number;
   title: string;
+  userId: string;
   description: string | null;
   dueDate: Date | null;
   important: boolean | null;
@@ -38,6 +40,7 @@ const TasksForm = ({
   const [description, setDescription] = useState<string | undefined>(undefined);
   const [submitting, setSubmitting] = useState(false);
   const [importantInput, setImportantInput] = useState(false);
+  const session = useSession();
 
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -45,6 +48,7 @@ const TasksForm = ({
       id: item?.id,
       loanId: loan.id,
       title: title,
+      userId: session.data!.user!.id,
       description: description,
       dueDate: dueDate === "" ? null : new Date(dueDate).toISOString(),
       important: importantInput,

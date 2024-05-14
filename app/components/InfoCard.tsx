@@ -23,6 +23,7 @@ import { formatDateDisplay } from "./formatDateDisplay";
 import ImportantBadge from "./ImportantBadge";
 import DeleteAndEditButtons from "./DeleteAndEditButtons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { FaUserTie } from "react-icons/fa6";
 
 const InfoCard = ({
   activity,
@@ -56,13 +57,13 @@ const InfoCard = ({
               <Flex gap="3" align="center">
                 <Avatar
                   size="3"
-                  src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
-                  fallback="A"
+                  src={activity ? activity!.user!.image! : taskUpdate ? taskUpdate!.user!.image! : fileNote ? fileNote!.user!.image! : ""}
+                  fallback={<FaUserTie />}
                   radius="full"
                 />
                 <Box>
                   <Text as="div" size="2" className="!text-white">
-                    Anthony Garcia
+                    {activity ? activity.user.name : taskUpdate ? taskUpdate.user.name : fileNote ? fileNote.user.name : "*Name not found*"}
                   </Text>
                   <Flex gap="2">
                     <Badge variant="solid">

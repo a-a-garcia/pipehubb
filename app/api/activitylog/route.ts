@@ -1,6 +1,8 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { createActivityLogSchema } from "../../validationSchemas";
+import { serverSessionAuth } from "../auth/authOptions";
+import { getServerSession } from "next-auth";
 
 export async function POST(request:NextRequest) {
     const body = await request.json()
@@ -25,6 +27,7 @@ export async function POST(request:NextRequest) {
         data: {
             loanId: body.loanId,
             message: body.message,
+            userId: body.userId
         }
     })
 
