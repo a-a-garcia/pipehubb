@@ -123,7 +123,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
       )}
       <Box className="bg-deepPink p-5 text-white rounded-md">
         {loan ? (
-          <Heading>Editing {loan.borrowerName}'s loan.</Heading>
+          <Heading>Editing {loan.borrowerName}&apos;s loan.</Heading>
         ) : (
           <Heading>Create a Loan</Heading>
         )}

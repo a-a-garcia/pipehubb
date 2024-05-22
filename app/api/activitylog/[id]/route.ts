@@ -1,7 +1,7 @@
 import prisma from "@/prisma/client"
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 
-export async function GET(response: NextResponse, {params} : {params: {id: string}}) {
+export async function GET(request: NextRequest, {params} : {params: {id: string}}) {
     const loansActivityLog = await prisma.activityLog.findMany({
         where: { loanId: parseInt(params.id) },
         orderBy: { createdAt: "desc"},

@@ -8,7 +8,7 @@ const LoanHeading = ({ loan }: { loan: Loan }) => {
     <Card className="!bg-cactus">
       <Flex justify={"between"} align="center">
         <Heading size={"5"}>
-          You're viewing {loan?.borrowerName}'s loan.
+          You&apos;re viewing {loan?.borrowerName}&apos;s loan.
         </Heading>
         <NextLink href={"/loans/pipeline"}>
           <Button size={"1"} className="hover:cursor-pointer">Return to Pipeline</Button>

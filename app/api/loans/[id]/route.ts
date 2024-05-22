@@ -5,7 +5,7 @@ import { parse } from "path";
 import { editLoanSchema } from "@/app/validationSchemas";
 import { getServerSession } from "next-auth";
 
-export async function GET(response: NextResponse, {params} : {params: {id: string}}) {
+export async function GET(request:NextRequest, {params} : {params: {id: string}}) {
     try {
         const loan = await prisma.loan.findUnique({
             where: {id: parseInt(params.id)}
@@ -66,7 +66,7 @@ export async function PATCH(request: NextRequest, { params } : {params : {id: st
     }
 }
 
-export async function DELETE(response:NextResponse, {params} : {params : {id: string}}) {
+export async function DELETE(request:NextRequest, {params} : {params : {id: string}}) {
     try {
         // locate loan to delete
         const loanToDelete = await prisma.loan.findUnique({

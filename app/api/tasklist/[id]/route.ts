@@ -16,7 +16,7 @@ export async function GET(request: NextRequest, {params} : {params: {id : string
     return NextResponse.json(taskList, {status: 200})
 }
 
-export async function PATCH(response:NextResponse, request:NextRequest) {
+export async function PATCH(request:NextRequest, response:NextResponse) {
     const body = await response.json();
 
     const validated = editTaskStatusSchema.safeParse(body)

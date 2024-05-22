@@ -1,12 +1,6 @@
-import { Avatar, Badge, Card, Flex, Inset, Text } from "@radix-ui/themes";
+import { Flex } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
-import { FaCheckCircle } from "react-icons/fa";
-import { set } from "zod";
-import Image from "next/image";
-import logo from "@/public/images/pipeHubb_logo_transparent.png";
-import { format } from "date-fns";
 import { Loan } from "@prisma/client";
-import { formatDateDisplay } from "./formatDateDisplay";
 import InfoCard from "./InfoCard";
 
 interface ActivityLog {
@@ -40,7 +34,7 @@ const ActivityLog = ({ loan }: { loan: Loan }) => {
       {fetchedActivityLog &&
         fetchedActivityLog.map((activity) => {
           return (
-            <InfoCard activity={activity} />
+            <InfoCard activity={activity} key={activity.id}/>
           );
         })}
     </Flex>

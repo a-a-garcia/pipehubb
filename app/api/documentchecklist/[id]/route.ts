@@ -2,7 +2,7 @@ import { editDocumentChecklistStatusSchema } from "@/app/validationSchemas";
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(response:NextResponse, {params} : {params: {id: string}}) {
+export async function GET(request: NextRequest, {params} : {params: {id: string}}) {
     const documentChecklist = await prisma.documentChecklist.findMany({
         where: {loanId: parseInt(params.id)},
         orderBy : [{status: "desc"}, {important: "desc"}, {createdAt: "desc"}],
@@ -17,7 +17,7 @@ export async function GET(response:NextResponse, {params} : {params: {id: string
 }
 
 
-export async function PATCH(response:NextResponse, request:NextRequest) {
+export async function PATCH(request:NextRequest, response: NextResponse) {
     const body = await response.json();
 
     const validated = editDocumentChecklistStatusSchema.safeParse(body)

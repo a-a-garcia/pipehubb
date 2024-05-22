@@ -49,9 +49,8 @@ const LoginMessage = ({
     queryKey: ["userInSession", { userId: session?.user.id }],
     queryFn: () =>
       fetch(`/api/user/${session?.user.id}`).then((res) => res.json()),
+    enabled: !!session?.user.id,
   });
-
-  console.log(userData);
 
   const {
     data: loanTeamRequests,
@@ -66,8 +65,6 @@ const LoginMessage = ({
   });
 
   isPendingLoanTeamRequests && <Spinner />;
-
-  console.log(loanTeamRequests);
 
   const { handleSubmit } = useForm({
     resolver: zodResolver(loanTeamExistingUserSchema),
@@ -137,8 +134,8 @@ const LoginMessage = ({
                     <LoanTeamRequests loanTeamRequests={loanTeamRequests} />
                     <br></br>
                     Want to send a request to join a another team? Enter the
-                    email of an existing user. They'll be notified, and once
-                    approved by that user, you'll have access to the loans and
+                    email of an existing user. They&apos;ll be notified, and once
+                    approved by that user, you&apos;ll have access to the loans and
                     pipelines that the user has approved you to access.
                   </Text>
                 </Flex>
@@ -183,7 +180,7 @@ const LoginMessage = ({
           (loanTeamRequests && loanTeamRequests[0]?.length > 0)) && (
           <Dialog.Content>
             <Heading>
-              Heads up, here's an update on your loan team requests.
+              Heads up, here&apos;s an update on your loan team requests.
             </Heading>
             <Separator my="4" size={"4"} />
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -199,8 +196,8 @@ const LoginMessage = ({
                     <LoanTeamRequests loanTeamRequests={loanTeamRequests} />
                     <br></br>
                     Want to send a request to join a another team? Enter the
-                    email of an existing user. They'll be notified, and once
-                    approved by that user, you'll have access to the loans and
+                    email of an existing user. They&apos;ll be notified, and once
+                    approved by that user, you&apos;ll have access to the loans and
                     pipelines that the user has approved you to access.
                   </Text>
                 </Flex>
@@ -243,7 +240,7 @@ const LoginMessage = ({
             <Dialog.Content>
               <Heading>Welcome to Pipehubb!</Heading>
               <Text as="div" size="1" mb="4">
-                We know you're eager to get started, but you either need to join
+                We know you&apos;re eager to get started, but you either need to join
                 an existing loan team or start your own.
               </Text>
               <Separator my="4" size={"4"} />
@@ -260,8 +257,8 @@ const LoginMessage = ({
                       <LoanTeamRequests loanTeamRequests={loanTeamRequests} />
                       <br></br>
                       Want to send a request to a different team? Enter the
-                      email of an existing user. They'll be notified, and once
-                      approved by that user, you'll have access to the loans and
+                      email of an existing user. They&apos;ll be notified, and once
+                      approved by that user, you&apos;ll have access to the loans and
                       pipelines that the user has approved you to access.
                     </Text>
                   </Flex>
@@ -281,7 +278,7 @@ const LoginMessage = ({
                       align={"center"}
                       className="italic"
                     >
-                      <strong>Don't have a loan team yet?</strong> <br></br> No
+                      <strong>Don&apos;t have a loan team yet?</strong> <br></br> No
                       worries! Simply continue without providing an existing
                       user email, and a new loan team will be created with you
                       as the first member.
@@ -306,7 +303,7 @@ const LoginMessage = ({
           <Dialog.Content>
             <Heading>Welcome to Pipehubb!</Heading>
             <Text as="div" size="1" mb="4">
-              To get started, you'll need to join a loan team, or create a new
+              To get started, you&apos;ll need to join a loan team, or create a new
               one.
             </Text>
             <Separator my="4" size={"4"} />
@@ -322,8 +319,8 @@ const LoginMessage = ({
                   >
                     <strong>Is your team already on PipeHubb? </strong>
                     <br></br>
-                    Enter the email of an existing user. They'll be notified,
-                    and once approved by that user, you'll have access to the
+                    Enter the email of an existing user. They&apos;ll be notified,
+                    and once approved by that user, you&apos;ll have access to the
                     loans and pipelines that the user has approved you to
                     access.
                   </Text>
@@ -344,7 +341,7 @@ const LoginMessage = ({
                     align={"center"}
                     className="italic"
                   >
-                    <strong>Don't have a loan team yet?</strong> <br></br> No
+                    <strong>Don&apos;t have a loan team yet?</strong> <br></br> No
                     worries! Simply continue without providing an existing user
                     email, and a new loan team will be created with you as the
                     first member.

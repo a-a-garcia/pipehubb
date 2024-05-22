@@ -17,7 +17,6 @@ const DocumentChecklist = ({ loan, queryClient }: { loan: Loan, queryClient: Que
     const parsedLoanId = parseInt(loanId);
     const response = await fetch(`/api/documentchecklist/${parsedLoanId}`);
     const data = await response.json();
-    console.log(data);
     setDocumentChecklist(data);
   };
 

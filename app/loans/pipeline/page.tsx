@@ -65,7 +65,6 @@ const PipelinePage = () => {
       </ErrorMessage>
     );
 
-  console.log(pipelineData);
   return (
     <div>
       <FirstTimeLogin />
@@ -118,7 +117,7 @@ const PipelinePage = () => {
                         []
                       ).map((loan: Loan) => {
                         return (
-                          <div>
+                          <div key={loan.id}>
                             {pipelineData &&
                               pipelineData[0][data.value].length === 0 && (
                                 <Text>No loans in this stage</Text>

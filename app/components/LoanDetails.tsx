@@ -61,7 +61,7 @@ const LoanDetails = ({
                 }
 
                 return (
-                  <Card className="text-black !bg-neutral-300">
+                  <Card className="text-black !bg-neutral-300" key={loanKey}>
                     <Flex direction={"column"} align={"center"}>
                       <Text>{formatKeyDisplay(loanKey)}: </Text>
                       <Card className="bg-neutral-100">{value}</Card>

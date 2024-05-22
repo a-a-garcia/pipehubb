@@ -1,7 +1,15 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(response: NextResponse, {params} : {params: {id: string}}) {
+//Note, for all API endpoints, the request object is passed as the first argument, and the response object is passed as the second argument. The request object contains information about the incoming request, such as the request body, headers, and query parameters. The response object is used to send a response back to the client. The response object can be used to send a JSON response, set response headers, and set the status code of the response.
+
+//Even if the request object is not used in the function, it should still be included in the function signature to maintain consistency with the Next.js API route structure. You'll get errors if you omit the request object from the function signature. 
+
+//Also, you cannot just include the response object in the function signature without the request object. 
+
+//Also, you cannot put the response object before the request object in the function signature. It must always be request, response, and then any other arguments (params for example).
+
+export async function GET(request: NextRequest, {params} : {params: {id: string}}) {
     try {
         const user = await prisma.user.findUnique({
             where: {id: params.id}
@@ -125,6 +133,3 @@ export async function PUT(request: NextRequest, response: NextResponse) {
     return NextResponse.json(newUser, {status: 200})
 }
 
-// export async function PUT(request:NextRequest, response:NextResponse) {
-
-// }

@@ -27,14 +27,29 @@ import { AiOutlineClear } from "react-icons/ai";
 import InfoCard from "./InfoCard";
 import TaskUpdateLog from "./TaskUpdateLog";
 import { formatDateDisplay } from "./formatDateDisplay";
-import { Loan, TaskList, TaskUpdates } from "@prisma/client";
+import { Loan, TaskList, TaskUpdates} from "@prisma/client";
 import { FaU, FaUserTie } from "react-icons/fa6";
 
-// defining a new type that is for the object returned from the API call, an object with a taskList item and an array of taskUpdates. something like `useQuery<TaskList | TaskUpdates[]>` will not work because it's a union, meaning it would expect data to be either a TaskList or an array of TaskUpdates, not an object that contains both.
+//defining a type for the user object that is nested inside of the taskItem (that's further nested inside of the taskData object returned from the API call). 
+type User = {
+  name: string;
+  image: string;
+  email: string;
+}
+
+
+//defining a new type that is a combination of the TaskList and User models. This is because a TaskList object model on its own does not "naturally" contain a user object, it's only added during the prisma call. So we explicitly define a new type that is a combination of the two.
+type TaskListWithUser = TaskList & {
+  user: User;
+}
+
+// defining a new type that is for the object returned from the API call, an object with a taskList item (with an added user) and an array of taskUpdates. something like `useQuery<TaskList | TaskUpdates[]>` will not work because it's a union, meaning it would expect data to be either a TaskList or an array of TaskUpdates, not an object that contains both.
 type TaskData = {
-  taskItem: TaskList;
+  taskItem: TaskListWithUser;
   taskUpdates: TaskUpdates[];
 };
+
+
 
 const TaskUpdatesPage = ({
   params,
@@ -51,6 +66,7 @@ const TaskUpdatesPage = ({
       fetch(`/api/task/${params.taskid}`).then((res) => res.json()),
   });
 
+  console.log(task)
 
   const determineStatusColor = (
     status: "COMPLETED" | "IN_PROGRESS" | "NOT_STARTED" | "PENDING"
@@ -99,7 +115,7 @@ const TaskUpdatesPage = ({
             <Flex gap="3" align="center" className="animate-dropInLite">
               <Avatar
                 size="3"
-                src={task.taskItem.user.image}
+                src={(task?.taskItem?.user?.image)}
                 radius="full"
                 fallback={<FaUserTie />}
               />

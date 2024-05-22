@@ -8,7 +8,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { queryClient } from "../api/ReactQueryProviderClient";
 import LoginMessage from "./LoginMessage";
 
-const PipelineSelect = ({ isLoanForm, selectedPipeline, setSelectedPipeline }: { isLoanForm?: Boolean, selectedPipeline: string, setSelectedPipeline: (value: string) => void }) => {
+interface Props {
+  setSelectedPipeline?: (value: string) => void;
+  selectedPipeline?: string;
+  isLoanForm?: boolean;
+}
+
+const PipelineSelect = ({ setSelectedPipeline = () => {}, selectedPipeline, isLoanForm}: Props) => {
   const { status, data: session } = useSession();
   const router = useRouter();
   const {
@@ -19,6 +25,7 @@ const PipelineSelect = ({ isLoanForm, selectedPipeline, setSelectedPipeline }: {
     queryKey: ["allPipelines", { userId: session?.user.id }],
     queryFn: () =>
       fetch(`/api/pipelines/${session?.user.id}`).then((res) => res.json()),
+      enabled: !!session?.user.id,
   });
   const [openLoginMessage, setOpenLoginMessage] = useState(false);
 

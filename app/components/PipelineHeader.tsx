@@ -14,7 +14,7 @@ const PipelineHeader = ({teamName} : {teamName?: string}) => {
         ) : <Spinner />
         }
         {teamName ? (
-        <Text>You're currently viewing {teamName}'s pipeline.</Text>
+        <Text>You&apos;re currently viewing {teamName}&apos;s pipeline.</Text>
         ) : <Text>No pipeline to view.</Text>}
       </Flex>
     </Card>

@@ -6,7 +6,7 @@ import authOptions from "../../auth/authOptions";
 import prisma from "@/prisma/client";
 import { LoanTeam } from "@prisma/client";
 
-export async function GET(response: NextResponse, {params} : {params: {id: string}}) {
+export async function GET(request:NextRequest, {params} : {params: {id: string}}) {
     const user = await prisma.user.findUnique({
         where: {id: params.id}
     })
