@@ -1,13 +1,8 @@
-import { LoanTeam, LoanTeamRequest } from "@prisma/client";
+import { LoanTeamRequest } from "@prisma/client";
 import React from "react";
-import { serverSessionAuth } from "../api/auth/authOptions";
-import { useQuery } from "@tanstack/react-query";
-import { Button, Card, Flex, Heading, Spinner, Table } from "@radix-ui/themes";
+import { Button, Card, Flex, Heading, Table } from "@radix-ui/themes";
 import { formatDateDisplay } from "./formatDateDisplay";
-import ErrorMessage from "./ErrorMessage";
-import { useSession } from "next-auth/react";
 import NoItemsFound from "./NoItemsFound";
-import LoadingBadge from "./LoadingBadge";
 import { FaCheck } from "react-icons/fa6";
 import { MdCancel } from "react-icons/md";
 

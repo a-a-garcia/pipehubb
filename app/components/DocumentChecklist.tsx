@@ -8,15 +8,26 @@ import TabHeader from "./TabHeader";
 import { QueryClient } from "@tanstack/react-query";
 //cannot conditionally declare (if (isDocumentChecklist) {} ) state, useEffects because it violates rules of hooks - hooks must be called at top level of component.
 
+interface User {
+  name: string;
+  email: string;
+  image: string;
+}
+
+interface DocumentChecklistWithUser extends DocumentChecklistType { 
+  user: User 
+}
+
 const DocumentChecklist = ({ loan, queryClient }: { loan: Loan, queryClient: QueryClient }) => {
   const [documentChecklist, setDocumentChecklist] = useState<
-    DocumentChecklistType[] | null
+    DocumentChecklistWithUser[] | null
   >(null);
 
   const fetchDocumentChecklist = async (loanId: string) => {
     const parsedLoanId = parseInt(loanId);
     const response = await fetch(`/api/documentchecklist/${parsedLoanId}`);
     const data = await response.json();
+    console.log(data)
     setDocumentChecklist(data);
   };
 

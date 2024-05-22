@@ -1,10 +1,10 @@
-import { LoanTeam, User } from "@prisma/client";
-import { Button, Flex, Select, Spinner } from "@radix-ui/themes";
+import { LoanTeam } from "@prisma/client";
+import { Button, Flex, Select } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import ErrorMessage from "./ErrorMessage";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { queryClient } from "../api/ReactQueryProviderClient";
 import LoginMessage from "./LoginMessage";
 

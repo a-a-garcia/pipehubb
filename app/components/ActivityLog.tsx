@@ -1,20 +1,15 @@
 import { Flex } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
-import { Loan } from "@prisma/client";
+import { Loan, ActivityLog as ActivityLogType } from "@prisma/client";
 import InfoCard from "./InfoCard";
 
-interface ActivityLog {
-  id: number;
-  loanId: number;
-  userId: string;
-  message: string;
-  createdAt: Date;
-  updatedAt: Date;
+interface activityLogWithUser extends ActivityLogType {
+  user: { name: string; image: string };
 }
 
 
 const ActivityLog = ({ loan }: { loan: Loan }) => {
-  const [fetchedActivityLog, setFetchedActivityLog] = useState<ActivityLog[]>(
+  const [fetchedActivityLog, setFetchedActivityLog] = useState<activityLogWithUser[]>(
     []
   );
 

@@ -3,7 +3,6 @@ import {
   DocumentChecklist,
   FileNotes,
   Loan,
-  TaskList,
   TaskUpdates,
 } from "@prisma/client";
 import {
@@ -15,15 +14,26 @@ import {
   DropdownMenu,
   Flex,
   Inset,
-  Strong,
   Text,
 } from "@radix-ui/themes";
 import React from "react";
 import { formatDateDisplay } from "./formatDateDisplay";
 import ImportantBadge from "./ImportantBadge";
 import DeleteAndEditButtons from "./DeleteAndEditButtons";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { FaUserTie } from "react-icons/fa6";
+
+interface activityLogWithUser extends ActivityLog {
+  user: { name: string; image: string };
+}
+
+interface taskUpdatesWithUser extends TaskUpdates {
+  user: { name: string; image: string };
+}
+
+interface fileNotesWithUser extends FileNotes {
+  user: { name: string; image: string };
+}
 
 const InfoCard = ({
   activity,
@@ -32,9 +42,9 @@ const InfoCard = ({
   fileNote,
 }: {
   checklistItem?: DocumentChecklist;
-  activity?: ActivityLog;
-  taskUpdate?: TaskUpdates;
-  fileNote?: FileNotes;
+  activity?: activityLogWithUser;
+  taskUpdate?: taskUpdatesWithUser;
+  fileNote?: fileNotesWithUser;
 }) => {
   const queryClient = useQueryClient();
   const loan: Loan | undefined = queryClient.getQueryData(["loan"]);

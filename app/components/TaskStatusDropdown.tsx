@@ -1,8 +1,6 @@
-import { DocumentChecklist, Loan, TaskList } from "@prisma/client";
-import { Select, Table, Badge } from "@radix-ui/themes";
+import { TaskList } from "@prisma/client";
+import { Select, Badge } from "@radix-ui/themes";
 import axios from "axios";
-import fetchDocumentChecklist from "./Checklist";
-import { useEffect, useState } from "react";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
 //destructure both item and fetchDocumentChecklist from props, the same object.

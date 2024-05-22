@@ -1,14 +1,17 @@
 import { Flex } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
-import { format } from "date-fns";
 import { Loan } from "@prisma/client";
 import { FileNotes } from "@prisma/client";
 import TabHeader from "./TabHeader";
 import InfoCard from "./InfoCard";
 import NoItemsFound from "./NoItemsFound";
 
+interface FileNotesWithUser extends FileNotes {
+  user: { name: string; image: string };
+}
+
 const FileNotesComponent = ({ loan }: { loan: Loan }) => {
-  const [fetchedFileNotes, setFetchedFileNotes] = useState<FileNotes[]>([]);
+  const [fetchedFileNotes, setFetchedFileNotes] = useState<FileNotesWithUser[]>([]);
 
   useEffect(() => {
     const fetchFileNotes = async () => {

@@ -1,7 +1,6 @@
 import { DocumentChecklist, Loan, TaskList } from "@prisma/client";
 import {
   Avatar,
-  Badge,
   Box,
   Button,
   Card,
@@ -13,20 +12,29 @@ import {
   Table,
   Text,
 } from "@radix-ui/themes";
-import { format } from "date-fns";
 import React from "react";
-import { MdCancel } from "react-icons/md";
 import DocumentStatusDropdown from "./DocumentStatusDropdown";
 import DeleteAndEditButtons from "./DeleteAndEditButtons";
 import ImportantBadge from "./ImportantBadge";
-import TabHeader from "./TabHeader";
 import TaskStatusDropdown from "./TaskStatusDropdown";
 import { QueryClient } from "@tanstack/react-query";
-import { GrDocumentMissing } from "react-icons/gr";
 import { formatDateDisplay } from "./formatDateDisplay";
-import { FaExclamation, FaExclamationCircle } from "react-icons/fa";
 import NoItemsFound from "./NoItemsFound";
-import { FaU, FaUserTie } from "react-icons/fa6";
+import { FaUserTie } from "react-icons/fa6";
+
+interface User {
+  name: string;
+  image: string;
+  email: string;
+}
+
+interface DocumentChecklistItemWithUser extends DocumentChecklist {
+  user: User;
+}
+
+interface TaskListItemWithUser extends TaskList {
+  user: User;
+}
 
 //cannot conditionally declare (if (isDocumentChecklist) {} ) state, useEffects because it violates rules of hooks - hooks must be called at top level of component.
 // fetchDocumentChecklist doesn't return anything so it's type void
@@ -39,8 +47,8 @@ const Checklist = ({
   queryClient,
 }: {
   loan: Loan;
-  taskList?: TaskList[] | null;
-  documentChecklist?: DocumentChecklist[];
+  taskList?: TaskListItemWithUser[] | null;
+  documentChecklist?: DocumentChecklistItemWithUser[];
   fetchDocumentChecklist?(): void;
   queryClient: QueryClient;
 }) => {

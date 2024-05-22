@@ -2,23 +2,16 @@ import {
   Card,
   Flex,
   Button,
-  HoverCard,
-  Avatar,
-  Box,
-  Heading,
   Text,
   AlertDialog,
 } from "@radix-ui/themes";
 import React from "react";
 import { AiOutlineClear } from "react-icons/ai";
 import { FaCircleExclamation } from "react-icons/fa6";
-import { MdOutlineCreate } from "react-icons/md";
-import { DocumentChecklist, Loan } from "@prisma/client";
-import NextLink from "next/link";
+import { Loan } from "@prisma/client";
 import NoteForm from "./NoteForm";
 import ChecklistForm from "./ChecklistForm";
 import TasksForm from "./TasksForm";
-import CustomAlertDialog from "./CustomAlertDialog";
 
 const TabHeader = ({
   isTasks = false,

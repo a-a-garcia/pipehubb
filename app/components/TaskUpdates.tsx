@@ -2,33 +2,26 @@ import {
   Avatar,
   Badge,
   Box,
-  Button,
   Card,
   Code,
   DataList,
   Flex,
   IconButton,
   Inset,
-  Link,
   Separator,
-  Spinner,
-  Strong,
   Text,
 } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import ErrorMessage from "./ErrorMessage";
-import { MdCancel, MdOutlineCreate } from "react-icons/md";
+import { MdCancel } from "react-icons/md";
 import ImportantBadge from "./ImportantBadge";
-import { format } from "date-fns";
 import { GrDocumentMissing } from "react-icons/gr";
 import LoadingBadge from "./LoadingBadge";
-import { AiOutlineClear } from "react-icons/ai";
-import InfoCard from "./InfoCard";
 import TaskUpdateLog from "./TaskUpdateLog";
 import { formatDateDisplay } from "./formatDateDisplay";
-import { Loan, TaskList, TaskUpdates} from "@prisma/client";
-import { FaU, FaUserTie } from "react-icons/fa6";
+import { TaskList, TaskUpdates} from "@prisma/client";
+import { FaUserTie } from "react-icons/fa6";
 
 //defining a type for the user object that is nested inside of the taskItem (that's further nested inside of the taskData object returned from the API call). 
 type User = {
@@ -43,10 +36,14 @@ type TaskListWithUser = TaskList & {
   user: User;
 }
 
+type TaskUpdatesWithUser = TaskUpdates & {
+  user: User;
+}
+
 // defining a new type that is for the object returned from the API call, an object with a taskList item (with an added user) and an array of taskUpdates. something like `useQuery<TaskList | TaskUpdates[]>` will not work because it's a union, meaning it would expect data to be either a TaskList or an array of TaskUpdates, not an object that contains both.
 type TaskData = {
   taskItem: TaskListWithUser;
-  taskUpdates: TaskUpdates[];
+  taskUpdates: TaskUpdatesWithUser[];
 };
 
 

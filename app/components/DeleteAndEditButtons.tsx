@@ -16,7 +16,6 @@ import {
   Spinner,
 } from "@radix-ui/themes";
 import React, { useState } from "react";
-import { FaEdit } from "react-icons/fa";
 import { FaTrashCan, FaCircleExclamation } from "react-icons/fa6";
 import NoteForm from "./NoteForm";
 import ChecklistForm from "./ChecklistForm";

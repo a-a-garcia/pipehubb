@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
 import TabHeader from "./TabHeader";
-import { Loan, TaskList } from "@prisma/client";
+import { Loan } from "@prisma/client";
 import Checklist from "./Checklist";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import LoadingBadge from "./LoadingBadge";

@@ -1,17 +1,19 @@
-import { Flex, Badge, Strong, Separator, Button, Box } from "@radix-ui/themes";
+import { Flex, Badge, Strong, Separator, Box } from "@radix-ui/themes";
 import React from "react";
-import { MdOutlineCreate } from "react-icons/md";
 import InfoCard from "./InfoCard";
 import { TaskUpdates } from "@prisma/client";
-import NoteForm from "./NoteForm";
 import NoItemsFound from "./NoItemsFound";
 import TabHeader from "./TabHeader";
+
+interface TaskUpdatesWithUser extends TaskUpdates {
+  user: { name: string; image: string };
+}
 
 const TaskUpdateLog = ({
   taskUpdates,
   taskId,
 }: {
-  taskUpdates: TaskUpdates[];
+  taskUpdates: TaskUpdatesWithUser[];
   taskId: number;
 }) => {
   return (

@@ -1,5 +1,4 @@
 import {
-  DocumentChecklist,
   FileNotes,
   Loan,
   TaskUpdates,
@@ -11,7 +10,6 @@ import {
   Avatar,
   Box,
   TextArea,
-  Checkbox,
   Text,
   Heading,
   Spinner,
@@ -19,11 +17,10 @@ import {
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { MdOutlineCreate } from "react-icons/md";
-import ImportantBadge from "./ImportantBadge";
 import { FaEdit } from "react-icons/fa";
 import MarkAsImportant from "./MarkAsImportant";
 import { createFileNoteSchema } from "../validationSchemas";
-import { getSession, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { FaUserTie } from "react-icons/fa6";
 
 const NoteForm = ({
