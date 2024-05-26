@@ -1,10 +1,11 @@
 import { editDocumentChecklistStatusSchema } from "@/app/validationSchemas";
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { convertObjectIdsToString, convertBigIntToString } from "../../helperFunctions";
 
 export async function GET(request: NextRequest, {params} : {params: {id: string}}) {
     const documentChecklist = await prisma.documentChecklist.findMany({
-        where: {loanId: parseInt(params.id)},
+        where: {loanId: BigInt(params.id)},
         orderBy : [{status: "desc"}, {important: "desc"}, {createdAt: "desc"}],
         include: { user: { select: {name: true, image: true, email: true}}}
     })
@@ -13,12 +14,14 @@ export async function GET(request: NextRequest, {params} : {params: {id: string}
         return NextResponse.json({error: "Could not find any document checklist items for requested loan."}, {status: 404})
     }
 
-    return NextResponse.json(documentChecklist, {status: 200})
+    const convertedDocumentChecklist = await convertObjectIdsToString(documentChecklist)
+
+    return NextResponse.json(convertedDocumentChecklist, {status: 200})
 }
 
 
 export async function PATCH(request:NextRequest, response: NextResponse) {
-    const body = await response.json();
+    const body = await request.json();
 
     const validated = editDocumentChecklistStatusSchema.safeParse(body)
 
@@ -27,7 +30,7 @@ export async function PATCH(request:NextRequest, response: NextResponse) {
     }
 
     const foundChecklistItem = await prisma.documentChecklist.findUnique({
-        where: { id: parseInt(body.id) }
+        where: { id: BigInt(body.id) }
     })
 
     if (!foundChecklistItem) {
@@ -35,11 +38,13 @@ export async function PATCH(request:NextRequest, response: NextResponse) {
     }
 
     const updatedChecklistItem = await prisma.documentChecklist.update({
-            where: { id: parseInt(body.id) },
+            where: { id: BigInt(body.id) },
             data: { status: body.status }
         });
 
-    return NextResponse.json(updatedChecklistItem, {status: 200})
+    const convertedUpdatedChecklistItem = await convertBigIntToString(updatedChecklistItem)
+
+    return NextResponse.json(convertedUpdatedChecklistItem, {status: 200})
 }
 
 export async function DELETE(request:NextRequest, response:NextResponse) {

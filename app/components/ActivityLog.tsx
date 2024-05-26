@@ -2,6 +2,7 @@ import { Flex } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import { Loan, ActivityLog as ActivityLogType } from "@prisma/client";
 import InfoCard from "./InfoCard";
+import { useQuery } from "@tanstack/react-query";
 
 interface activityLogWithUser extends ActivityLogType {
   user: { name: string; image: string };
@@ -9,20 +10,12 @@ interface activityLogWithUser extends ActivityLogType {
 
 
 const ActivityLog = ({ loan }: { loan: Loan }) => {
-  const [fetchedActivityLog, setFetchedActivityLog] = useState<activityLogWithUser[]>(
-    []
-  );
-
-
-  useEffect(() => {
-    // fetches the activity log for the loan
-    const fetchActivityLog = async () => {
-      const response = await fetch(`/api/activitylog/${loan.id}`);
-      const activityLog = await response.json();
-      setFetchedActivityLog(activityLog);
-    };
-    fetchActivityLog();
+  const { data: fetchedActivityLog, isPending, error } = useQuery<activityLogWithUser[]>({
+    queryKey: ["activityLog", loan.id],
+    queryFn: () => fetch(`/api/activitylog/${loan.id}`).then((res) => res.json())
   });
+
+  console.log(fetchedActivityLog)
 
   return (
     <Flex direction={"column"} gap={"4"} className="mt-4">

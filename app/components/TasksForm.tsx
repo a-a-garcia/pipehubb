@@ -15,16 +15,7 @@ import MarkAsImportant from "./MarkAsImportant";
 import { Loan } from "@prisma/client";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-
-interface TaskList {
-  id: number;
-  loanId: number;
-  title: string;
-  userId: string;
-  description: string | null;
-  dueDate: Date | null;
-  important: boolean | null;
-}
+import { TaskList } from "@prisma/client";
 
 const TasksForm = ({
   isEditMode,

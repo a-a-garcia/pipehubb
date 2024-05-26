@@ -1,5 +1,6 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { convertBigIntToString } from "../helperFunctions";
 
 
 export async function POST(request: NextRequest, response: NextResponse) {
@@ -24,7 +25,8 @@ export async function POST(request: NextRequest, response: NextResponse) {
         }
     })
 
-    return NextResponse.json(newTask, {status: 201})
+    const newTaskCasted = convertBigIntToString(newTask)
+    return NextResponse.json(newTaskCasted, {status: 201})
 }
 
 export async function PATCH(request: NextRequest, response: NextResponse){

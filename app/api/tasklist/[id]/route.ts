@@ -1,10 +1,11 @@
 import { editTaskStatusSchema } from "@/app/validationSchemas"
 import prisma from "@/prisma/client"
 import { NextRequest, NextResponse } from "next/server"
+import { convertBigIntToString, convertObjectIdsToString } from "../../helperFunctions"
 
 export async function GET(request: NextRequest, {params} : {params: {id : string}}){
     const taskList = await prisma.taskList.findMany({
-        where: {loanId: parseInt(params.id)},
+        where: {loanId: BigInt(params.id)},
         orderBy: [{status: "desc"}, {important: "desc"}, {createdAt: "desc"}],
         include: {user: {select: {name: true, image: true, email: true}}}
     })
@@ -13,11 +14,13 @@ export async function GET(request: NextRequest, {params} : {params: {id : string
         return NextResponse.json({error: "Could not find any task list items for requested loan."}, {status: 404})
     }
 
-    return NextResponse.json(taskList, {status: 200})
+    const convertedTaskList = await convertObjectIdsToString(taskList)
+
+    return NextResponse.json(convertedTaskList, {status: 200});
 }
 
 export async function PATCH(request:NextRequest, response:NextResponse) {
-    const body = await response.json();
+    const body = await request.json();
 
     const validated = editTaskStatusSchema.safeParse(body)
 
@@ -26,7 +29,7 @@ export async function PATCH(request:NextRequest, response:NextResponse) {
     }
 
     const foundTaskItem = await prisma.taskList.findUnique({
-        where: { id: parseInt(body.id) }
+        where: { id: BigInt(body.id) }
     })
 
     if (!foundTaskItem) {
@@ -34,11 +37,13 @@ export async function PATCH(request:NextRequest, response:NextResponse) {
     }
 
     const updatedTaskItem = await prisma.taskList.update({
-            where: { id: parseInt(body.id) },
+            where: { id: BigInt(body.id) },
             data: { status: body.status }
         });
 
-    return NextResponse.json(updatedTaskItem, {status: 200})
+    const convertedTaskItem = await convertBigIntToString(updatedTaskItem)
+    
+    return NextResponse.json(convertedTaskItem, {status: 200})
 }
 
 export async function DELETE(request:NextRequest, response:NextResponse) {

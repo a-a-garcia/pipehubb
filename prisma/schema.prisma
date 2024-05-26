@@ -9,20 +9,24 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "cockroachdb"
   url      = env("DATABASE_URL")
 }
 
+model Widget {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+}
+
 model Loan {
-  id                Int                 @id @default(autoincrement())
-  borrowerName      String              @db.VarChar(255)
+  id                BigInt                 @id @default(autoincrement())
+  borrowerName      String              @db.String(255)
   pipelineStage     PipelineStage       @default(PROSPECT)
   loanAmount        Int?
   transactionType   TransactionType?
-  referralSource    String?             @db.VarChar(255)
-  borrowerEmail     String?             @db.VarChar(255)
-  propertyAddress   String?             @db.VarChar(255)
-  borrowerPhone     String?             @db.VarChar(50)
+  referralSource    String?             @db.String(255)
+  borrowerEmail     String?             @db.String(255)
+  propertyAddress   String?             @db.String(255)
+  borrowerPhone     String?             @db.String(50)
   purchasePrice     Int?
   creditScore       Int?
   createdAt         DateTime            @default(now())
@@ -31,7 +35,7 @@ model Loan {
   fileNotes         FileNotes[]         @relation("FileNotesToLoan")
   DocumentChecklist DocumentChecklist[] @relation("DocumentChecklistToLoan")
   TaskList          TaskList[]          @relation("TaskListToLoan")
-  loanTeamId        Int
+  loanTeamId        BigInt
   loanTeam          LoanTeam            @relation(fields: [loanTeamId], references: [id])
 }
 
@@ -50,8 +54,8 @@ enum PipelineStage {
 }
 
 model ActivityLog {
-  id        Int      @id @default(autoincrement())
-  loanId    Int
+  id        BigInt      @id @default(autoincrement())
+  loanId    BigInt
   loan      Loan     @relation("ActivityLogToLoan", fields: [loanId], references: [id], onDelete: Cascade)
   message   String
   userId    String
@@ -63,8 +67,8 @@ model ActivityLog {
 // The @relation directive in the ActivityLog model establishes the relationship between the two models. The fields: [loanId] part indicates that the loanId field in the ActivityLog model is used to connect it to the Loan model. The references: [id] part indicates that the loanId field in the ActivityLog model corresponds to the id field in the Loan model.
 
 model FileNotes {
-  id        Int      @id @default(autoincrement())
-  loanId    Int
+  id        BigInt      @id @default(autoincrement())
+  loanId    BigInt
   loan      Loan     @relation("FileNotesToLoan", fields: [loanId], references: [id], onDelete: Cascade)
   userId    String
   user      User     @relation(fields: [userId], references: [id])
@@ -75,8 +79,8 @@ model FileNotes {
 }
 
 model DocumentChecklist {
-  id           Int            @id @default(autoincrement())
-  loanId       Int
+  id           BigInt            @id @default(autoincrement())
+  loanId       BigInt
   loan         Loan           @relation("DocumentChecklistToLoan", fields: [loanId], references: [id], onDelete: Cascade)
   userId       String
   user         User           @relation(fields: [userId], references: [id])
@@ -95,13 +99,13 @@ enum DocumentStatus {
 }
 
 model TaskList {
-  id          Int           @id @default(autoincrement())
-  loanId      Int
+  id          BigInt           @id @default(autoincrement())
+  loanId      BigInt
   loan        Loan          @relation("TaskListToLoan", fields: [loanId], references: [id], onDelete: Cascade)
   userId      String
   user        User          @relation(fields: [userId], references: [id])
-  title       String        @db.VarChar(255)
-  description String?       @db.VarChar(2000)
+  title       String        @db.String(255)
+  description String?       @db.String(2000)
   dueDate     DateTime?
   important   Boolean?      @default(false)
   status      TaskStatus    @default(NOT_STARTED)
@@ -118,8 +122,8 @@ enum TaskStatus {
 }
 
 model TaskUpdates {
-  id         Int      @id @default(autoincrement())
-  taskListId Int
+  id         BigInt      @id @default(autoincrement())
+  taskListId BigInt
   important  Boolean? @default(false)
   taskList   TaskList @relation("TaskListToTaskUpdates", fields: [taskListId], references: [id], onDelete: Cascade)
   user       User     @relation(fields: [userId], references: [id])
@@ -135,12 +139,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String  @map("provider_account_id")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String? @db.String
+  access_token      String? @db.String
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String? @db.String
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -191,8 +195,8 @@ model VerificationToken {
 }
 
 model LoanTeam {
-  id               Int               @id @default(autoincrement())
-  teamName         String            @unique @db.VarChar(255)
+  id               BigInt               @id @default(autoincrement())
+  teamName         String            @unique @db.String(255)
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   loanTeamRequests LoanTeamRequest[]
@@ -201,8 +205,8 @@ model LoanTeam {
 }
 
 model LoanTeamMember {
-  id         Int      @id @default(autoincrement())
-  loanTeamId Int
+  id         BigInt      @id @default(autoincrement())
+  loanTeamId BigInt
   userId     String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -219,11 +223,11 @@ model LoanTeamMember {
 // This structure allows you to query all the LoanTeams that a User belongs to, all the Users that belong to a LoanTeam, or all the LoanTeamMember records, which would give you all combinations of Users and LoanTeams.
 
 model LoanTeamRequest {
-  id          Int                   @id @default(autoincrement())
+  id          BigInt                   @id @default(autoincrement())
   requestorId String
   requesteeId String
   loanTeam    LoanTeam              @relation(fields: [loanTeamId], references: [id])
-  loanTeamId  Int
+  loanTeamId  BigInt
   status      LoanTeamRequestStatus @default(PENDING)
   createdAt   DateTime              @default(now())
   updatedAt   DateTime              @updatedAt

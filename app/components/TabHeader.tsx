@@ -26,7 +26,7 @@ const TabHeader = ({
   isFileNotes?: Boolean;
   isTaskUpdates?: Boolean;
   loan?: Loan;
-  taskId?: number;
+  taskId?: bigint;
 }) => {
   // Deleting all items for file notes, document checklist, task list, and task updates
   const deleteAll = async () => {

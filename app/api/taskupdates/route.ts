@@ -1,6 +1,7 @@
 import prisma from "@/prisma/client";
 import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
+import { convertBigIntToString } from "../helperFunctions";
 
 export async function POST(request: NextRequest, response: NextResponse) {
     const body = await request.json();
@@ -22,7 +23,8 @@ export async function POST(request: NextRequest, response: NextResponse) {
                 important: body.important
             }
         })
-        return NextResponse.json(newTaskUpdate, {status: 201})
+        const convertedNewTaskUpdate = await convertBigIntToString(newTaskUpdate)
+        return NextResponse.json(convertedNewTaskUpdate, {status: 201})
     } catch {
         return NextResponse.json({error: "An error occurred while attempting to create a new task update."}, {status: 500})
     }
@@ -48,7 +50,8 @@ export async function PATCH(request: NextRequest, response: NextResponse){
             }
         })
 
-        return NextResponse.json(updatedTaskUpdate, {status: 200})
+        const convertedUpdatedTaskUpdate = await convertBigIntToString(updatedTaskUpdate)
+        return NextResponse.json(convertedUpdatedTaskUpdate, {status: 200})
     } catch {
         return NextResponse.json({error: `An error occurred while attempting to update task update item ${body.id}.`}, {status: 500})
     }

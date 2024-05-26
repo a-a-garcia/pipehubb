@@ -21,8 +21,16 @@ import {
 import LoanTabs from "@/app/components/LoanTabs";
 import ErrorMessage from "@/app/components/ErrorMessage";
 import { Loan } from "@prisma/client";
+import { set } from "date-fns";
 
-const LoanActions = ({ params }: { params: { id: string } }) => {
+type User = {
+  id: string
+  name: string
+  email: string
+  image: string
+}
+
+const LoanActions = ({ params, user }: { params: { id: string }, user: User }) => {
   const queryClient = useQueryClient();
   const loan = queryClient.getQueryData<Loan>(["loan"]);
   
@@ -72,6 +80,7 @@ const LoanActions = ({ params }: { params: { id: string } }) => {
     }, [currentStageIndex, nextStageInfo, previousStageInfo]);
     
     const handleStageChange = async (stageInfo: loansDisplayDataInterface) => {
+      try {
         //patch request to update the pipelineStage
         await fetch(`/api/loans/${params.id}`, {
             method: "PATCH",
@@ -81,16 +90,20 @@ const LoanActions = ({ params }: { params: { id: string } }) => {
             body: JSON.stringify({ pipelineStage: stageInfo.value }),
         });
         
-        await fetch(`/api/activitylog`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                loanId: parseInt(params.id),
-                message: `USER moved loan to ${stageInfo.value} stage.`,
-            }),
-        });
+        // await fetch(`/api/activitylog`, {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //     },
+        //     body: JSON.stringify({
+        //         loanId: params.id,
+        //         userId: user.id,
+        //         message: `${user.name} moved loan to ${stageInfo.value} stage.`,
+        //     }),
+        // });
+      } catch (error) {
+        console.error("ERROR: " + error)
+      }
         //refresh the page to reflect the change
         window.location.reload();
     };
@@ -137,19 +150,26 @@ const LoanActions = ({ params }: { params: { id: string } }) => {
           <Flex justify={"between"} className="animate-dropIn">
             {previousStageInfo && (
               <Button
-                onClick={() => handleStageChange(previousStageInfo)}
+                onClick={() => {
+                  handleStageChange(previousStageInfo)
+                  setPrevStageLoading(true)
+                }}
                 className="hover:cursor-pointer"
                 style={{
                   backgroundColor: previousStageInfo?.color,
                 }}
               >
+                {prevStageLoading && <Spinner />}
                 <IoArrowBackCircleOutline />
                 Return loan to {previousStageInfo?.value} stage
               </Button>
             )}
             {nextStageInfo && (
               <Button
-                onClick={() => handleStageChange(nextStageInfo)}
+                onClick={() =>  {
+                  handleStageChange(nextStageInfo) 
+                  setNextStageLoading(true)
+                }}
                 className="hover:cursor-pointer"
                 style={{
                   backgroundColor: nextStageInfo?.color,
@@ -157,6 +177,7 @@ const LoanActions = ({ params }: { params: { id: string } }) => {
               >
                 Advance loan to {nextStageInfo?.value} stage
                 <IoArrowForwardCircleOutline />
+                {nextStageLoading && <Spinner />}
               </Button>
             )}
           </Flex>

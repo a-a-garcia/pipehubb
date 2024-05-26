@@ -31,6 +31,7 @@ import LoadingBadge from "@/app/components/LoadingBadge";
 const PipelinePage = () => {
   const { status, data: session } = useSession();
   const [isLoadingPage, setIsLoadingPage] = useState(true);
+  const [isLoadingCreateLoan, setIsLoadingCreateLoan] = useState(false);
   const {
     isFetched,
     error,
@@ -52,6 +53,9 @@ const PipelinePage = () => {
       });
     },
   });
+
+  console.log(pipelineData);
+  
   useEffect(() => {
     if (isFetched) {
       setIsLoadingPage(false);
@@ -83,9 +87,10 @@ const PipelinePage = () => {
         <Card className="!bg-maroon">
           <Flex justify={"end"} className="mb-3">
             <NextLink href="/loans/new">
-              <Button size="1" className="hover:cursor-pointer myCustomButton">
+              <Button size="1" className="hover:cursor-pointer myCustomButton" onClick={() => setIsLoadingCreateLoan(true)}>
                 Create Loan
                 <MdOutlineCreate />
+                {isLoadingCreateLoan && <Spinner />}
               </Button>
             </NextLink>
           </Flex>

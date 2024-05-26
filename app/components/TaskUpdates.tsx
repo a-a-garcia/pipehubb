@@ -23,7 +23,7 @@ import { formatDateDisplay } from "./formatDateDisplay";
 import { TaskList, TaskUpdates} from "@prisma/client";
 import { FaUserTie } from "react-icons/fa6";
 
-//defining a type for the user object that is nested inside of the taskItem (that's further nested inside of the taskData object returned from the API call). 
+//defining a type for the user object that is nested inside of the taskItemConverted (that's further nested inside of the taskData object returned from the API call). 
 type User = {
   name: string;
   image: string;
@@ -42,8 +42,8 @@ type TaskUpdatesWithUser = TaskUpdates & {
 
 // defining a new type that is for the object returned from the API call, an object with a taskList item (with an added user) and an array of taskUpdates. something like `useQuery<TaskList | TaskUpdates[]>` will not work because it's a union, meaning it would expect data to be either a TaskList or an array of TaskUpdates, not an object that contains both.
 type TaskData = {
-  taskItem: TaskListWithUser;
-  taskUpdates: TaskUpdatesWithUser[];
+  taskItemConverted: TaskListWithUser;
+  taskUpdatesConverted: TaskUpdatesWithUser[];
 };
 
 
@@ -101,7 +101,7 @@ const TaskUpdatesPage = ({
           <Card
             className="!bg-neutral-100"
             style={
-              task.taskItem.status === "COMPLETED"
+              task.taskItemConverted.status === "COMPLETED"
                 ? {
                     textDecorationLine: "line-through",
                     opacity: "0.5",
@@ -112,33 +112,33 @@ const TaskUpdatesPage = ({
             <Flex gap="3" align="center" className="animate-dropInLite">
               <Avatar
                 size="3"
-                src={(task?.taskItem?.user?.image)}
+                src={(task?.taskItemConverted?.user?.image)}
                 radius="full"
                 fallback={<FaUserTie />}
               />
               <DataList.Root>
                 <DataList.Item>
                   <DataList.Label minWidth="88px">Task Title</DataList.Label>
-                  <DataList.Value>{task.taskItem.title}</DataList.Value>
+                  <DataList.Value>{task.taskItemConverted.title}</DataList.Value>
                 </DataList.Item>
                 <DataList.Item>
                   <DataList.Label minWidth="88px">Task Details</DataList.Label>
-                  <DataList.Value>{task.taskItem.description}</DataList.Value>
+                  <DataList.Value>{task.taskItemConverted.description}</DataList.Value>
                 </DataList.Item>
                 <DataList.Item align="center">
                   <DataList.Label minWidth="88px">Status</DataList.Label>
                   <DataList.Value>
                     <Badge
-                      color={determineStatusColor(task.taskItem.status)}
+                      color={determineStatusColor(task.taskItemConverted.status)}
                       variant="soft"
                       radius="full"
                     >
                       {/* Remember that you cannot use `if` statements in JSX. Only ternary operators or functions. */}
-                      {task.taskItem.status === "IN_PROGRESS"
+                      {task.taskItemConverted.status === "IN_PROGRESS"
                         ? "IN PROGRESS"
-                        : task.taskItem.status === "NOT_STARTED"
+                        : task.taskItemConverted.status === "NOT_STARTED"
                         ? "NOT STARTED"
-                        : task.taskItem.status}
+                        : task.taskItemConverted.status}
                     </Badge>
                   </DataList.Value>
                 </DataList.Item>
@@ -149,7 +149,7 @@ const TaskUpdatesPage = ({
                       <Flex align="center" gap="2">
                         <Code variant="ghost">
                           {" "}
-                          {task.taskItem.important ? (
+                          {task.taskItemConverted.important ? (
                             <ImportantBadge />
                           ) : (
                             <Badge variant="surface">
@@ -169,8 +169,8 @@ const TaskUpdatesPage = ({
                   </DataList.Item>
                   <DataList.Label minWidth="88px">Due Date</DataList.Label>
                   <DataList.Value>
-                    {task.taskItem.dueDate ? (
-                      formatDateDisplay(task.taskItem.dueDate, true)
+                    {task.taskItemConverted.dueDate ? (
+                      formatDateDisplay(task.taskItemConverted.dueDate, true)
                     ) : (
                       <Badge>
                         <GrDocumentMissing />
@@ -182,7 +182,7 @@ const TaskUpdatesPage = ({
                 <DataList.Item>
                   <DataList.Label minWidth="88px">Creation Date</DataList.Label>
                   <DataList.Value>
-                    {formatDateDisplay(task.taskItem.createdAt)}
+                    {formatDateDisplay(task.taskItemConverted.createdAt)}
                   </DataList.Value>
                 </DataList.Item>
                 <DataList.Item>
@@ -190,7 +190,7 @@ const TaskUpdatesPage = ({
                     Last Updated Date
                   </DataList.Label>
                   <DataList.Value>
-                    {formatDateDisplay(task.taskItem.updatedAt)}
+                    {formatDateDisplay(task.taskItemConverted.updatedAt)}
                   </DataList.Value>
                 </DataList.Item>
               </DataList.Root>
@@ -198,8 +198,8 @@ const TaskUpdatesPage = ({
           </Card>
         </Inset>
         <TaskUpdateLog
-          taskUpdates={task.taskUpdates}
-          taskId={task.taskItem.id}
+          taskUpdates={task.taskUpdatesConverted}
+          taskId={task.taskItemConverted.id}
         />
       </Card>
     </Box>

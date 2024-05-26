@@ -63,7 +63,7 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
         const updatedLoan = response.data;
         setNewlyUpdatedLoan(updatedLoan);
         await loanUpdateActivity(updatedLoan);
-        router.push("/loans/pipeline");
+        router.push(`/loans/${loan.id}/loan-actions`);
       }
     } catch {
       console.error(errors);
@@ -82,8 +82,8 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
         console.log("SUCCESS: Created activity log for loan creation");
       }
       router.push("/loans/pipeline");
-    } catch {
-      console.error("Failed to create activity log for loan creation");
+    } catch (error) {
+      console.error("Failed to create activity log for loan creation due to: ", error);
       setValidationErrors("Failed to create activity log for loan creation");
     }
   };
@@ -93,13 +93,14 @@ const LoanForm = ({ loan }: { loan?: Loan }) => {
       if (updatedLoan) {
         await axios.post("/api/activitylog", {
           loanId: updatedLoan.id,
-          message: `USER updated loan details for borrower ${updatedLoan.borrowerName}.`,
+          userId: userInSession?.id,
+          message: `${userInSession?.name} updated loan details for borrower ${updatedLoan.borrowerName}.`,
         });
         console.log(`SUCCESS: Created activity log for loan update`);
         router.push("/loans/pipeline");
       }
-    } catch {
-      console.error("Failed to create activity log for loan update");
+    } catch (error) {
+      console.error("Failed to create activity log for loan edit due to: ", error);
       setValidationErrors("Failed to create activity log for loan update");
     }
   };

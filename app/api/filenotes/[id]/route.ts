@@ -1,9 +1,10 @@
 import prisma from "@/prisma/client"
 import { NextRequest, NextResponse } from "next/server"
+import { convertBigIntToString, convertObjectIdsToString } from "../../helperFunctions"
 
 export async function GET(request: NextRequest, {params} : {params : {id: string}}) {
     const loanFileNotes = await prisma.fileNotes.findMany({
-        where: {loanId: parseInt(params.id)},
+        where: {loanId: BigInt(params.id)},
         orderBy: [{important: "desc"}, {createdAt: "desc"}],
         include: {user: {select: {name: true, image: true, email: true}}}
     })
@@ -12,7 +13,9 @@ export async function GET(request: NextRequest, {params} : {params : {id: string
         return NextResponse.json({error: "Could not find any file notes for requested loan."}, {status: 404})
     }
 
-    return NextResponse.json(loanFileNotes, {status: 200})
+    const convertedLoanFileNotes = await convertObjectIdsToString(loanFileNotes)
+
+    return NextResponse.json(convertedLoanFileNotes, {status: 200})
 }
 
 export async function PATCH(request: NextRequest, response: NextResponse) {
@@ -25,8 +28,10 @@ export async function PATCH(request: NextRequest, response: NextResponse) {
                important: body.important
            }
        })
+
+       const convertedUpdatedFileNote = await convertBigIntToString(updatedFileNote)
    
-       return NextResponse.json(updatedFileNote, {status: 200})
+       return NextResponse.json(convertedUpdatedFileNote, {status: 200})
    } catch {
     return NextResponse.json({error: `An error occurred while attempting to update file note ${body.noteId}.`})
    }

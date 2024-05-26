@@ -17,7 +17,7 @@ const LoanTeamRequests = ({
 }: {
   loanTeamRequests: LoanTeamRequest[][];
 }) => {
-  const handleClick = (action: string, requestId: number) => {
+  const handleClick = (action: string, requestId: bigint) => {
     console.log(action, requestId);
     const response = fetch(`/api/loanteamrequests`, {
       method: "PUT",

@@ -14,7 +14,7 @@ const TaskUpdateLog = ({
   taskId,
 }: {
   taskUpdates: TaskUpdatesWithUser[];
-  taskId: number;
+  taskId: bigint;
 }) => {
   return (
     <div>

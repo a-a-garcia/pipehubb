@@ -40,13 +40,14 @@ const LoanDetails = ({
               if (loanKey === "id") return null;
 
               if (loan && loanKey in loan) {
-                let rawValue: string | number | Date | null =
+                let rawValue: string | number | bigint | Date | null =
                   loan[loanKey as keyof typeof loan];
-                let value: string | number | null;
+                let value: string | number | bigint | null;
 
                 if (rawValue === null) return null;
 
                 if (loanKey === "createdAt" || loanKey === "updatedAt") {
+                  if (typeof rawValue === "bigint") { throw new Error ("Unexpected BigInt for field " + loanKey);}
                   value = new Date(rawValue!).toLocaleString(undefined, {
                     year: "numeric",
                     month: "long",
@@ -57,7 +58,7 @@ const LoanDetails = ({
                 } else if (rawValue instanceof Date) {
                   throw new Error("Unexpected Date for field " + loanKey);
                 } else {
-                  value = rawValue;
+                  value = typeof rawValue === "bigint" ? rawValue.toString() : rawValue;
                 }
 
                 return (

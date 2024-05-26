@@ -48,13 +48,13 @@ export const editLoanSchema = z.object({
 })
 
 export const createActivityLogSchema = z.object({
-    loanId: z.number().min(1, "Loan ID must be at least 1."),
+    loanId: z.string().min(1, "Loan ID must be at least 1."),
 
     message: z.string().min(1, "Message cannot be blank.").max(255, "Message must be less than 255 characters.")
 })
 
 export const createFileNoteSchema = z.object({
-    loanId: z.number().min(1, "Loan ID must be at least 1."),
+    loanId: z.string().min(1, "Loan ID must be at least 1."),
 
     note: z.string().min(1, "Note cannot be blank.").max(1000, "Message must be less than 1000 characters.")
 })

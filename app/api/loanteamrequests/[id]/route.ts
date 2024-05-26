@@ -2,6 +2,18 @@ import prisma from "@/prisma/client"
 import { LoanTeamRequest } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server"
 
+function convertBigIntToString(arr: any[]): any[] {
+    return arr.map(obj => {
+        let newObj = {...obj};
+        if (newObj.id) {
+            newObj.id = BigInt(newObj.id).toString();
+        }
+        if (newObj.loanTeamId) {
+            newObj.loanTeamId = BigInt(newObj.loanTeamId).toString();
+        }
+        return newObj;
+    });
+}
 
 export async function GET(request: NextRequest, {params} : {params: {id: string}}) {
     //find all loan team requests where the user is the requestor (requesting to join a team).
@@ -43,6 +55,10 @@ export async function GET(request: NextRequest, {params} : {params: {id: string}
         })
         return {...request, requestorEmail: requestor?.email || null, teamName: teamName?.teamName || null};
     }))
+
+    outgoingLoanTeamRequests = convertBigIntToString(outgoingLoanTeamRequests);
+
+    incomingLoanTeamRequests = convertBigIntToString(incomingLoanTeamRequests)
 
     outgoingLoanTeamRequests = outgoingLoanTeamRequests.filter(request => request.status !== "CONFIRMED")
 

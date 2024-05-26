@@ -1,6 +1,7 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { createFileNoteSchema } from "@/app/validationSchemas";
+import { convertBigIntToString } from "../helperFunctions"
 
 export async function POST(request: NextRequest) {
     const body = await request.json();
@@ -22,11 +23,13 @@ export async function POST(request: NextRequest) {
     const newFileNote = await prisma.fileNotes.create({
         data: {
             userId: body.userId,
-            loanId: body.loanId,
+            loanId: BigInt(body.loanId),
             note: body.note,
             important: body.important
         }
     })
 
-    return NextResponse.json(newFileNote, {status: 201})
+    const convertedNewFileNote = await convertBigIntToString(newFileNote)
+
+    return NextResponse.json(convertedNewFileNote, {status: 201})
 }

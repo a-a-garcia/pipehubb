@@ -37,7 +37,7 @@ export async function GET(request: NextRequest, {params} : {params: {id: string}
 interface RequestsData {
     requesteeId: string;
     requestorId: string;
-    loanTeamId: number;
+    loanTeamId: bigint;
 }
 
 export async function PUT(request: NextRequest, response: NextResponse) {

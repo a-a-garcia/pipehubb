@@ -4,16 +4,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { parse } from "path";
 import { editLoanSchema } from "@/app/validationSchemas";
 import { getServerSession } from "next-auth";
+import { convertBigIntToString } from "../../helperFunctions"
 
 export async function GET(request:NextRequest, {params} : {params: {id: string}}) {
     try {
         const loan = await prisma.loan.findUnique({
-            where: {id: parseInt(params.id)}
+            where: {id: BigInt(params.id)}
         })
         if (!loan) {
             return NextResponse.json({message: "Loan not found"}, {status: 404})
         }
-        return NextResponse.json(loan, {status: 200})
+        const castedLoan = await convertBigIntToString(loan)
+        return NextResponse.json(castedLoan, {status: 200})
     }
     catch {
         return NextResponse.json({message: "An error occurred"}, {status: 500})
@@ -32,7 +34,7 @@ export async function PUT(request: NextRequest, {params} : {params: {id: string}
             )
         }
         const updatedLoan = await prisma.loan.update({
-            where: {id: parseInt(params.id)},
+            where: {id: BigInt(params.id)},
             data: {
                 transactionType: body.transactionType ? body.transactionType.trim() : undefined,
                 borrowerName: body.borrowerName ? body.borrowerName.trim() : undefined,
@@ -45,7 +47,8 @@ export async function PUT(request: NextRequest, {params} : {params: {id: string}
                 referralSource: body.referralSource ? body.referralSource.trim() : undefined
             }
         })
-        return NextResponse.json(updatedLoan, {status: 200})
+        const convertedUpdatedLoan = await convertBigIntToString(updatedLoan)
+        return NextResponse.json(convertedUpdatedLoan, {status: 200})
     } catch {
         return NextResponse.json({message: "An error occurred"}, {status: 500})
     }
@@ -55,7 +58,7 @@ export async function PATCH(request: NextRequest, { params } : {params : {id: st
     const body = await request.json();
     try {
         await prisma.loan.update( {
-            where: { id: parseInt(params.id) },
+            where: { id: BigInt(params.id) },
             data: {
                 pipelineStage: body.pipelineStage
             }
@@ -70,7 +73,7 @@ export async function DELETE(request:NextRequest, {params} : {params : {id: stri
     try {
         // locate loan to delete
         const loanToDelete = await prisma.loan.findUnique({
-           where: { id: parseInt(params.id) }
+           where: { id: BigInt(params.id) }
         })
    
         // if loan not found, return 404

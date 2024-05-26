@@ -1,13 +1,14 @@
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { createActivityLogSchema } from "../../validationSchemas";
+import { convertBigIntToString } from "../helperFunctions";
 
 export async function POST(request:NextRequest) {
     const body = await request.json()
 
     const findLoan = await prisma.loan.findUnique({
         where: {
-            id: body.loanId
+            id: BigInt(body.loanId)
         }
     })
 
@@ -23,12 +24,14 @@ export async function POST(request:NextRequest) {
 
     const newActivity = await prisma.activityLog.create({
         data: {
-            loanId: body.loanId,
+            loanId: BigInt(body.loanId),
             message: body.message,
             userId: body.userId
         }
     })
 
-    return NextResponse.json(newActivity, {status: 201})
+    const newActivityConverted = await convertBigIntToString(newActivity)
+
+    return NextResponse.json(newActivityConverted, {status: 201})
 }
 

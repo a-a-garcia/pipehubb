@@ -24,7 +24,7 @@ const DocumentChecklist = ({ loan, queryClient }: { loan: Loan, queryClient: Que
   >(null);
 
   const fetchDocumentChecklist = async (loanId: string) => {
-    const parsedLoanId = parseInt(loanId);
+    const parsedLoanId = BigInt(loanId);
     const response = await fetch(`/api/documentchecklist/${parsedLoanId}`);
     const data = await response.json();
     console.log(data)

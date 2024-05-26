@@ -35,7 +35,7 @@ const NoteForm = ({
   isEditMode: Boolean;
   isFileNotes?: Boolean;
   isTaskUpdates?: Boolean;
-  taskId?: number;
+  taskId?: bigint;
   item?: FileNotes | TaskUpdates;
 }) => {
   const [submitting, setSubmitting] = useState(false)

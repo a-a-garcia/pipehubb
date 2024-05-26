@@ -22,13 +22,12 @@ import { formatDateDisplay } from "./formatDateDisplay";
 import { useSession } from "next-auth/react";
 
 interface ChecklistItem {
-  loanId: number;
+  loanId: BigInt;
   documentName: string;
   userId: string;
   dueDate: string | null;
   important: boolean;
 }
-
 
 const ChecklistForm = ({
   loan,
@@ -83,7 +82,9 @@ const ChecklistForm = ({
         await axios.post(`/api/documentchecklist`, checklistToSubmit);
       }
     } catch {
-      console.log("An error occurred while attempting to submit the checklist.");
+      console.log(
+        "An error occurred while attempting to submit the checklist."
+      );
     }
     window.location.reload();
   };
@@ -92,7 +93,8 @@ const ChecklistForm = ({
     if (isEditMode) {
       setDocumentName(item?.documentName ? item.documentName : "");
       setDueDate(
-        item?.dueDate ? format(new Date(item.dueDate), "dd-MM-yyyy") : ""
+        //must use "yyyy-MM-dd" because the TextField component with type="date" expects it in that format.
+        item?.dueDate ? format(new Date(item.dueDate), "yyyy-MM-dd") : ""
       );
       setImportantInput(item?.important ? item.important : false);
     }
@@ -252,9 +254,22 @@ const ChecklistForm = ({
               </Button>
             </Dialog.Close>
             <Dialog.Close>
-              <Button color="blue" onClick={() => handleFinish()} disabled={checklistToSubmit.length > 0 ? false : true}>
-                Finish
-              </Button>
+              {isEditMode ? (
+                <Button
+                  color="blue"
+                  onClick={() => handleFinish()}
+                >
+                  Finish
+                </Button>
+              ) : (
+                <Button
+                  color="blue"
+                  onClick={() => handleFinish()}
+                  disabled={checklistToSubmit.length > 0 ? false : true}
+                >
+                  Finish
+                </Button>
+              )}
             </Dialog.Close>
           </Flex>
         </Dialog.Content>

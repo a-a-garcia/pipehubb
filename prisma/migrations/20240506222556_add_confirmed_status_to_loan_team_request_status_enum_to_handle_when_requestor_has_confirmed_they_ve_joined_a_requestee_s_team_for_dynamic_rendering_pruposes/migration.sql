@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `loanteamrequest` MODIFY `status` ENUM('PENDING', 'ACCEPTED', 'CONFIRMED', 'REJECTED') NOT NULL DEFAULT 'PENDING';
