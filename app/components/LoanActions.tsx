@@ -35,9 +35,8 @@ type LoanResponse = Loan & {message?: string}
 const LoanActions = ({ params, user }: { params: { id: string }, user: User }) => {
   const queryClient = useQueryClient();
   const loan = queryClient.getQueryData<LoanResponse>(["loan"]);
-  console.log(loan)
   if (loan && 'message' in loan && loan.message === 'User is not a member of the team associated with this loan') {
-    return <ErrorMessage></ErrorMessage>
+    return <ErrorMessage>{loan.message}</ErrorMessage>
   }
   
   const [editLoading, setEditLoading] = useState(false);
