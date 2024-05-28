@@ -1,5 +1,7 @@
+import prisma from "@/prisma/client";
+import { serverSessionAuth } from "./auth/authOptions";
 
-//helper function to convert bigint to string, needed to avoid serialization issues when sending response back to client
+//helper function to convert bigint to string for a single object, needed to avoid serialization issues when sending response back to client
 export async function convertBigIntToString(object: Record<string, any>) {
     const newObj:Record<string, any> = {};
 
@@ -27,7 +29,7 @@ export async function convertLoanIdsToString(loansByStage: any) {
     return loansByStage;
   }
 
-
+// helper function to convert objectIds to strings when handling responses that are an array of objects
 export async function convertObjectIdsToString(objArray: any[]) {
   return objArray.map(obj => {
     const newObj = { ...obj };
@@ -38,4 +40,24 @@ export async function convertObjectIdsToString(objArray: any[]) {
     }
     return newObj;
   });
+}
+
+export async function authenticateUserAccess(loanId: bigint) {
+  const session = await serverSessionAuth();
+  if (!session) {
+    throw new Error("User not authenticated");
+  }
+  console.log(session)
+  const loanExists = await prisma.loan.findUnique({
+    where: { id: loanId }
+  })
+  if (!loanExists) {
+    throw new Error("Loan not found")
+  }
+  const loanTeamMatch = await prisma.loanTeamMember.findFirst({
+    where: { loanTeamId: loanExists.loanTeamId, userId: session.user.id}
+  })
+  if (!loanTeamMatch) {
+    throw new Error("User does not have access to this loan.")
+  }
 }

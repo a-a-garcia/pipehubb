@@ -4,15 +4,24 @@ import { NextRequest, NextResponse } from "next/server";
 import { parse } from "path";
 import { editLoanSchema } from "@/app/validationSchemas";
 import { getServerSession } from "next-auth";
-import { convertBigIntToString } from "../../helperFunctions"
+import { authenticateUserAccess, convertBigIntToString } from "../../helperFunctions"
+import { serverSessionAuth } from "../../auth/authOptions";
 
 export async function GET(request:NextRequest, {params} : {params: {id: string}}) {
     try {
+        const userInSession = await serverSessionAuth()
         const loan = await prisma.loan.findUnique({
             where: {id: BigInt(params.id)}
         })
         if (!loan) {
             return NextResponse.json({message: "Loan not found"}, {status: 404})
+        }
+        const authenticateUser = await prisma.loanTeamMember.findFirst({
+            where: 
+            {userId: userInSession?.user.id, loanTeamId: loan.loanTeamId}
+        })
+        if (!authenticateUser) {
+            return NextResponse.json({message: "User is not a member of the team associated with this loan"}, {status: 403})
         }
         const castedLoan = await convertBigIntToString(loan)
         return NextResponse.json(castedLoan, {status: 200})

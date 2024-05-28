@@ -30,9 +30,15 @@ type User = {
   image: string
 }
 
+type LoanResponse = Loan & {message?: string}
+
 const LoanActions = ({ params, user }: { params: { id: string }, user: User }) => {
   const queryClient = useQueryClient();
-  const loan = queryClient.getQueryData<Loan>(["loan"]);
+  const loan = queryClient.getQueryData<LoanResponse>(["loan"]);
+  console.log(loan)
+  if (loan && 'message' in loan && loan.message === 'User is not a member of the team associated with this loan') {
+    return <ErrorMessage></ErrorMessage>
+  }
   
   const [editLoading, setEditLoading] = useState(false);
   const [prevStageLoading, setPrevStageLoading] = useState(false);

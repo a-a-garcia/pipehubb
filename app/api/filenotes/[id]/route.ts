@@ -1,8 +1,9 @@
 import prisma from "@/prisma/client"
 import { NextRequest, NextResponse } from "next/server"
-import { convertBigIntToString, convertObjectIdsToString } from "../../helperFunctions"
+import { authenticateUserAccess, convertBigIntToString, convertObjectIdsToString } from "../../helperFunctions"
 
 export async function GET(request: NextRequest, {params} : {params : {id: string}}) {
+
     const loanFileNotes = await prisma.fileNotes.findMany({
         where: {loanId: BigInt(params.id)},
         orderBy: [{important: "desc"}, {createdAt: "desc"}],
@@ -12,6 +13,8 @@ export async function GET(request: NextRequest, {params} : {params : {id: string
     if (!loanFileNotes) {
         return NextResponse.json({error: "Could not find any file notes for requested loan."}, {status: 404})
     }
+
+    // await authenticateUserAccess(loanFileNotes[0].loanId)
 
     const convertedLoanFileNotes = await convertObjectIdsToString(loanFileNotes)
 

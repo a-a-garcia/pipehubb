@@ -27,7 +27,6 @@ const Tasks = ({ loan }: { loan: Loan }) => {
     error,
     isPending,
   } = useQuery({ queryKey: ["taskList"], queryFn: fetchTaskList });
-  
 
   if (isPending) {
     return (
@@ -46,14 +45,20 @@ const Tasks = ({ loan }: { loan: Loan }) => {
   }
 
   return (
-    <div>
-      <TabHeader isTasks={true} loan={loan}/>
-      <Checklist
-        loan={loan}
-        taskList={taskList}
-        queryClient={queryClient}
-      />
-    </div>
+    <>
+      {loan && loan.id ? (
+        <div>
+          <TabHeader isTasks={true} loan={loan} />
+          <Checklist
+            loan={loan}
+            taskList={taskList}
+            queryClient={queryClient}
+          />
+        </div>
+      ) : (
+        <ErrorMessage>An error has occurred.</ErrorMessage>
+      )}
+    </>
   );
 };
 

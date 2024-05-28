@@ -1,7 +1,7 @@
 import { editDocumentChecklistStatusSchema } from "@/app/validationSchemas";
 import prisma from "@/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { convertObjectIdsToString, convertBigIntToString } from "../../helperFunctions";
+import { convertObjectIdsToString, convertBigIntToString, authenticateUserAccess } from "../../helperFunctions";
 
 export async function GET(request: NextRequest, {params} : {params: {id: string}}) {
     const documentChecklist = await prisma.documentChecklist.findMany({

@@ -1,6 +1,6 @@
 import prisma from "@/prisma/client"
 import { NextRequest, NextResponse } from "next/server"
-import { convertBigIntToString, convertObjectIdsToString } from "../../helperFunctions";
+import { authenticateUserAccess, convertBigIntToString, convertObjectIdsToString } from "../../helperFunctions";
 
 export async function GET(request: NextRequest, {params} : {params: {taskid : string}}){
     const taskItem = await prisma.taskList.findUnique({
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest, {params} : {params: {taskid : st
     if (!taskItem) {
         return NextResponse.json({error: "Could not find requested task item."}, {status: 404})
     }
-    
+
     const taskItemConverted = await convertBigIntToString(taskItem)
 
     const taskUpdates = await prisma.taskUpdates.findMany({
